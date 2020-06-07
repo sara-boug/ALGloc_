@@ -1,0 +1,22 @@
+
+###> symfony/framework-bundle ###
+backend/.env.local
+backend/.env.local.php
+backend/.env.*.local
+backend/config/secrets/prod/prod.decrypt.private.php
+backend/public/bundles/
+backend/var/
+backend/vendor/
+backend/config/packages
+backend/config/routes
+backend/config/routes.yaml
+backend/config/bootstrap.php
+backend/config/bundles.php
+backend/public/index.php
+backend/bin
+backend/.env
+backend/src/Kernel.php
+
+
+symfony.lock
+###< symfony/framework-bundle ###
