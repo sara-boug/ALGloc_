@@ -4,7 +4,7 @@ backend/.env.local
 backend/.env.local.php
 backend/.env.*.local
 backend/config/secrets/prod/prod.decrypt.private.php
-backend/public/bundles/
+backend/public/ 
 backend/var/
 backend/vendor/
 backend/config/packages
