@@ -15,7 +15,7 @@ class ClientController   extends AbstractController{
         public function signup(Request $request){ 
             $data = array('message' => 'i am json resposne');  
             $body = json_decode( $request ->getContent()  ,true) ;  // request body 
-            $client = new Client($body["name"] , $body["familyName"] ,
+            $client = new Client($body["name"] , $body["familyName"] , 
             $body["email"] ,  $body['password'],  $body["address"]  ,
              $body["phoneNumber"] , $body["licenseNumber"]) ; 
             
