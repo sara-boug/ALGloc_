@@ -27,16 +27,21 @@
      private $phoneNumber; 
   /** @ORM\Column(type="integer" , length=200)*/
      private $licenseNumber; 
-    
+
+     /**
+      * @ORM\OneToOne(targetEntity="App\Entity\City")
+      * @ORM\JoinColumn(name="id_City" , referencedColumnName="id")
+      */
+     private $id_City; 
      function __construct( string $name ,string $familyName , string  $email , string $password ,  string $address ,
       int  $phoneNumber , int $licenseNumber)
      {
-          $this -> name = $name; 
+          $this ->name = $name; 
           $this->familyName= $familyName; 
-          $this -> address = $email; 
-          $this -> address = $address; 
-          $this -> phoneNumber= $phoneNumber; 
-          $this -> licenseNumber = $licenseNumber; 
+          $this ->address = $email; 
+          $this ->address = $address; 
+          $this ->phoneNumber= $phoneNumber; 
+          $this ->licenseNumber = $licenseNumber; 
 
        
      }
@@ -90,13 +95,19 @@
        $this -> phoneNumber= $phoneNumber; 
     }
 
-    public function getlicenseNumber(){ 
+    public function getlicenseNumber():int{ 
       return $this ->licenseNumber; 
     }
-    public function setlicenseNumber(int $licenseNumber){ 
+    public function setlicenseNumber(int $licenseNumber):void{ 
        $this -> licenseNumber = $licenseNumber; 
     }
-
+     
+    public function  getid_City():int{ 
+      return $this ->id_City; 
+    }
+    public function  serid_City( int $id_City):void{ 
+      $this ->id_City = $id_City; 
+    }
    
 
   }
