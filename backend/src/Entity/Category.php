@@ -1,5 +1,5 @@
 <?php
-  namespace App\Entity; 
+      namespace App\Entity; 
 
   use Doctrine\Common\Collections\Collection;
   use  Doctrine\ORM\Mapping as ORM ;
@@ -19,15 +19,15 @@
             /**
              * @ORM\Column(type="string" , length=200)
             */
-            private   $name; // model name
+            private   $name_; // model name
             /**
               * @ORM\OneToMany(targetEntity="App\Entity\Model" , mappedBy="category")
              */
             private $models; 
-            function __construct(int $id , string  $name)
+            function __construct(int $id , string  $name_)
             { 
                 $this ->id =$id; 
-                $this ->name= $name ; 
+                $this ->name_= $name_ ; 
                 
             }
             function getid() :int 
@@ -38,12 +38,12 @@
                 $this ->id =$id ; 
             }
 
-            function getname() :string
+            function getname_() :string
             {  
-            return $this ->name ; 
+            return $this ->name_ ; 
             }
-            function setname(int $name) :void { 
-                $this ->name=$name ; 
+            function setname_(int $name_) :void { 
+                $this ->name_=$name_ ; 
             }
 
             public function  getmodels():Collection{ 

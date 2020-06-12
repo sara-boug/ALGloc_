@@ -15,9 +15,9 @@ use Doctrine\ORM\Mapping as ORM;
      */
     private $id; 
     /** @ORM\Column(type="string" )*/
-    private $agencyCode; 
-    /** @ORM\Column(type="integer" , length=15 )*/
-    private $phoneNumber; 
+    private $agency_code; 
+    /** @ORM\Column(type="string" , length=15 )*/
+    private $phone_number; 
     /** @ORM\Column(type="string" , length=100 )*/    
     private $email; 
     /** @ORM\Column(type="string", length=300 )*/
@@ -31,10 +31,10 @@ use Doctrine\ORM\Mapping as ORM;
         * @ORM\OneToMany(targetEntity="App\Entity\Vehicle" , mappedBy="agency")
        */
     private $vehicles; 
-      function __construct(string $agencyCode , int $phoneNumber , string $email, string $address )
+      function __construct(string $agency_code , int $phone_number , string $email, string $address )
      {
-         $this ->agencyCode = $agencyCode; 
-         $this-> $phoneNumber=$phoneNumber; 
+         $this ->agency_code = $agency_code; 
+         $this-> $phone_number=$phone_number; 
          $this ->email=$email; 
          $this->address = $address; 
      }
@@ -49,18 +49,18 @@ use Doctrine\ORM\Mapping as ORM;
         $this ->id =$id; 
     }
 
-    function getagencyCode() :string{ 
-        return $this->agencyCode; 
+    function getagency_code() :string{ 
+        return $this->agency_code; 
     }
-    function setagencyCode(string $agencyCode) :void{ 
-    $this ->agencyCode=$agencyCode; 
+    function setagency_code(string $agency_code) :void{ 
+    $this ->agency_code=$agency_code; 
     }
 
-    function getphoneNumber() :int{ 
-        return $this->phoneNumber; 
+    function getphone_number() :string{ 
+        return $this->phone_number; 
     }
-    function setphoneNumber(string $agencyCode) :void{ 
-    $this ->agencyCode=$agencyCode; 
+    function setphone_number(string $phone_number) :void{ 
+      $this ->phone_number=$phone_number; 
     }
     
     function getemail() :string{ 

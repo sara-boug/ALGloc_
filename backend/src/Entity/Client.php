@@ -16,36 +16,36 @@
            */
           private $id; 
           /** @ORM\Column(type="string" , length=200)*/
-          private $name ; 
+          private $name_ ; 
           /** @ORM\Column(type="string" , length=200)*/
-          private $familyName; 
+          private $familyname; 
           /** @ORM\Column(type="string" , length=200)*/
           private $email ; 
           /** @ORM\Column(type="string" , length=200)*/
           private $password; 
         /** @ORM\Column(type="string" , length=300)*/
           private $address ; 
-        /** @ORM\Column(type="integer" , length=200)*/
-          private $phoneNumber; 
-        /** @ORM\Column(type="integer" , length=200)*/
-          private $licenseNumber; 
+        /** @ORM\Column(type="string" , length=200)*/
+          private $phone_number; 
+        /** @ORM\Column(type="string" , length=200)*/
+          private $license_number; 
 
           /**
             * @ORM\ManyToOne(targetEntity="App\Entity\City")
             * @ORM\JoinColumn(name="city" , referencedColumnName="id")
             */
           private $city; 
-            /** @ORM\OneToMany(targetEntity="App\Entity\Contract" , mappedBy="client")*/
+            /** @ORM\OneToMany(targetEntity="App\Entity\Contract_" , mappedBy="client")*/
           private $contracts; 
-          function __construct( string $name ,string $familyName , string  $email , string $password ,  string $address ,
-            int  $phoneNumber , int $licenseNumber)
+          function __construct( string $name_ ,string $familyname , string  $email , string $password ,  string $address ,
+            string  $phone_number , string $license_number)
           {
-                $this ->name = $name; 
-                $this->familyName= $familyName; 
+                $this ->name = $name_; 
+                $this->familyname= $familyname; 
                 $this ->address = $email; 
                 $this ->address = $address; 
-                $this ->phoneNumber= $phoneNumber; 
-                $this ->licenseNumber = $licenseNumber; 
+                $this ->phone_number= $phone_number; 
+                $this ->license_number = $license_number; 
 
             
           }
@@ -56,18 +56,18 @@
             $this->id = $id; 
           }
 
-          public function getname(){ 
-            return $this -> name; 
+          public function getname_(){ 
+            return $this ->name_; 
             }
-            public function setname(string $name){ 
-              $this -> name = $name; 
+            public function setname_(string $name_){ 
+              $this ->name_ = $name_; 
             }
 
-          public function getfamilyName(){ 
-              return $this->familyName; 
+          public function getfamilyname(){ 
+              return $this->familyname; 
           }
-          public function setfamilyName( string $familyName){ 
-            $this->familyName= $familyName; 
+          public function setfamilyname( string $familyname){ 
+            $this->familyname= $familyname; 
           }
           
           public function getaddress(){ 
@@ -92,18 +92,18 @@
           }
 
 
-          public function getphoneNumber(){ 
-            return $this ->phoneNumber; 
+          public function getphone_number(){ 
+            return $this ->phone_number; 
           }
-          public function setphoneNumber(int $phoneNumber){ 
-            $this -> phoneNumber= $phoneNumber; 
+          public function setphone_number(string $phone_number){ 
+            $this ->phone_number= $phone_number; 
           }
 
-          public function getlicenseNumber():int{ 
-            return $this ->licenseNumber; 
+          public function getlicense_number():string{ 
+            return $this ->license_number; 
           }
-          public function setlicenseNumber(int $licenseNumber):void{ 
-            $this -> licenseNumber = $licenseNumber; 
+          public function setlicense_number(string $license_number):void{ 
+            $this ->license_number = $license_number; 
           }
           
           public function  getcity():City{ 

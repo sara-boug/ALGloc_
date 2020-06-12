@@ -4,10 +4,10 @@
     use DateTime;
     use Doctrine\ORM\Mapping as ORM; 
         /**
-         * @ORM\Entity(repositoryClass="App\Repository\ContractRepository")
+         * @ORM\Entity(repositoryClass="App\Repository\Contract_Repository")
          * 
          */
-        class Contract { 
+        class Contract_ { 
             /**
              * @ORM\Id
              * @ORM\GeneratedValue
@@ -16,7 +16,7 @@
             private $id;
                 /** @ORM\Column(type="integer" , length=200)*/
 
-            private $number;  // the contract Number
+            private $number_;  // the contract Number_
                 /** @ORM\Column(type="time" )*/
 
             private $departure;
@@ -25,7 +25,7 @@
             private $arrival; 
                 /** @ORM\Column(type="time" )*/
 
-            private $date;  // this date concerns the contract 
+            private $date_;  // this date concerns the contract 
                 /**
                  * @ORM\ManyToOne(targetEntity="App\Entity\Client")
                  * @ORM\JoinColumn(name="client" , referencedColumnName="id")
@@ -40,12 +40,12 @@
                  */
             private $invoices; 
 
-            function __construct(int $number,   DateTime $departure, DateTime  $arrival, DateTime $date )
+            function __construct(int $number_,   DateTime $departure, DateTime  $arrival, DateTime $date_ )
             {
-                $this ->number=$number; 
+                $this ->number_=$number_; 
                 $this->departure=$departure; 
                 $this->arrival=$arrival; 
-                $this->date=$date; 
+                $this->date_=$date_; 
                 
             }
             public function getid():int{ 
@@ -55,11 +55,11 @@
             $this->id = $id; 
             }
             
-            public function getnumber():int{ 
-                return $this->number; 
+            public function getnumber_():int{ 
+                return $this->number_; 
             }
-            public function setnumber(int $number):void{ 
-                $this->number=$number; 
+            public function setnumber_(int $number_):void{ 
+                $this->number_=$number_; 
             }
 
             public function getdeparture():DateTime{ 
@@ -76,17 +76,17 @@
             $this->arrival= $arrival; 
             }
 
-            public function getdate():DateTime{ 
-                return $this ->date; 
+            public function getdate_():DateTime{ 
+                return $this ->date_; 
             }
-            public function setdate(DateTime $date){ 
-            $this->date= $date; 
+            public function setdate_(DateTime $date_){ 
+            $this->date_= $date_; 
             }
 
-            function getagency() :int{ 
+            function getagency() :Agency{ 
                 return $this->agency; 
             }
-            function setagency(int $agency) :void { 
+            function setagency(Agency $agency) :void { 
                     $this->agency = $agency;
             }
          

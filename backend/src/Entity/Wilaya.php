@@ -16,15 +16,15 @@ use  Doctrine\ORM\Mapping as ORM ;
         /**
          * @ORM\Column(type="string" , length=200)
          */
-        private $name; 
+        private $name_; 
         /**
          * @ORM\OneToMany(targetEntity="App\Entity\City" , mappedBy="wilaya")
          */
         private $cities; 
-        function __construct(int $id , string  $name)
+        function __construct(int $id , string  $name_)
         { 
              $this ->id =$id; 
-             $this ->name= $name ; 
+             $this ->name_= $name_ ; 
             
         }
         function getid() :int 
@@ -37,10 +37,10 @@ use  Doctrine\ORM\Mapping as ORM ;
 
         function getname() :string
         {  
-           return $this ->name ; 
+           return $this ->name_ ; 
         }
-        function setname(int $name) :void { 
-             $this ->name=$name ; 
+        function setname(int $name_) :void { 
+             $this ->name_=$name_ ; 
         }
 
         function getcities() :Collection

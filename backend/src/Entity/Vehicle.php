@@ -13,23 +13,23 @@
          */
     private $id; 
             /** @ORM\Column(type="string" , length=200)*/
-    private $registrationNummer; 
+    private $registration_number; 
             /** @ORM\Column(type="float" , length=200)*/
-    private $rentalPrice; 
+    private $rental_price; 
             /** @ORM\Column(type="float" , length=200)*/
-    private $inssurancePrice; 
+    private $inssurance_price; 
             /** @ORM\Column(type="integer" , length=200)*/
-    private $passengerNumber; 
+    private $passenger_number; 
             /** @ORM\Column(type="blob" , length=200)*/
-    private $image; 
+    private $image_; 
             /** @ORM\Column(type="integer" )*/
-    private $suitcaseNumber; 
+    private $suitcase_number; 
             /** @ORM\Column(type="string" , length=200)*/
-    private $state; 
+    private $state_; 
             /** @ORM\Column(type="string" , length=200)*/
     private $gearbox; 
             /** @ORM\Column(type="string" , length=200)*/
-    private $status; 
+    private $status_; 
            /**@ORM\ManyToOne(targetEntity="App\Entity\Agency")
             * @ORM\JoinColumn(name="agency" , referencedColumnName="id")
             */
@@ -40,17 +40,18 @@
             */
     private $model; 
 
-    function __construct( int $registrationNumber, float $rentalPrice, float $inssurancePrice,
-    int $passengerNumber , BlobType $image , string   $state,  string $gearbox , string $status )
+    function __construct( string $registration_number, float $rental_price, float $inssurance_price,
+    int $passenger_number , BlobType $image_ , string $suitcase_number , string   $state_,  string $gearbox , string $status_ )
     {
-        $this->registrationNummer = $registrationNumber;
-        $this->rentalPrice =$rentalPrice; 
-        $this->inssurancePrice=$inssurancePrice; 
-        $this->passengerNumber=$passengerNumber; 
-        $this->image=$image; 
-        $this->state=$state; 
+        $this->registrationNummer = $registration_number;
+        $this->rental_price =$rental_price; 
+        $this->inssurance_price=$inssurance_price; 
+        $this->passenger_number=$passenger_number; 
+        $this->image_=$image_; 
+        $this->suitcase_number=$suitcase_number; 
+        $this->state_=$state_; 
         $this->$gearbox=$gearbox; 
-        $this->$status; 
+        $this->$status_ =$status_; 
 
     }
 
@@ -61,69 +62,69 @@
             $this ->id=$id; 
         }
 
-        function getregistrationNumber():string{ 
-            return $this->registrationNummer; 
+        function getregistration_number():string{ 
+            return $this->registration_number; 
         }
-        function setregistrationNumber( int $registrationNumber) :void { 
-            $this ->registrationNummer = $registrationNumber; 
+        function setregistration_number( string $registration_number) :void { 
+            $this ->registration_number = $registration_number; 
         }
 
         
-        function getrentalPrice():float{ 
-            return $this ->rentalPrice; 
+        function getrental_price():float{ 
+            return $this ->rental_price; 
         }
-        function setrentalPrice( int $rentalPrice ) :void { 
-            $this ->rentalPrice=$rentalPrice; 
+        function setrental_price(  float $rental_price ) :void { 
+            $this ->rental_price=$rental_price; 
         }
     
-        function getinssurancePrice():float{ 
-            return $this ->inssurancePrice; 
+        function getinssurance_price():float{ 
+            return $this ->inssurance_price; 
         }
-        function setinssurancePrice( float $inssurancePrice ) :void { 
-            $this ->inssurancePrice=$inssurancePrice; 
-        }
-
-        function getpassengerNumber():float{ 
-            return $this ->passengerNumber; 
-        }
-        function setpassengerNumber( int $passengerNumber ) :void { 
-            $this ->passengerNumber=$passengerNumber; 
+        function setinssurance_price( float $inssurance_price ) :void { 
+            $this ->inssurance_price=$inssurance_price; 
         }
 
-        function getimage():BlobType{ 
-            return $this ->image; 
+        function getpassenger_number():int{ 
+            return $this ->passenger_number; 
         }
-        function setimage( BinaryType $image ) :void { 
-            $this ->image=$image; 
-        }
-
-        function getsuitcaseNumber():int { 
-            return $this ->suitcaseNumber; 
-        }
-        function setsuitcaseNumber( int $suitcaseNumber ) :void { 
-            $this ->suitcaseNumber=$suitcaseNumber; 
+        function setpassenger_number( int $passenger_number ) :void { 
+            $this ->passenger_number=$passenger_number; 
         }
 
-        function getstate():string{ 
-            return $this ->state; 
+        function getimage_():BlobType{ 
+            return $this ->image_; 
         }
-        function setstate( string $state ) :void { 
-            $this ->state=$state; 
+        function setimage_( BinaryType $image_ ) :void { 
+            $this ->image_=$image_; 
+        }
+
+        function getsuitcase_number():int { 
+            return $this ->suitcase_number; 
+        }
+        function setsuitcase_number( int $suitcase_number ) :void { 
+            $this ->suitcase_number=$suitcase_number; 
+        }
+
+        function getstate_():string{ 
+            return $this ->state_; 
+        }
+        function setstate_( string $state_ ) :void { 
+            $this ->state_=$state_; 
         }
 
 
-        function getgearbox():float{ 
+        function getgearbox():string{ 
             return $this ->gearbox; 
         }
-        function setgearbox( float $gearbox) :void { 
+        function setgearbox( string $gearbox) :void { 
             $this ->gearbox=$gearbox; 
         }
 
-        function getstatus():string{ 
-            return $this ->status; 
+        function getstatus_():string{ 
+            return $this ->status_; 
         }
-        function setstatus( string $status) :void { 
-            $this ->status=$status; 
+        function setstatus_( string $status_) :void { 
+            $this ->status_=$status_; 
         }
         
         function getagency() : Agency{ 

@@ -17,7 +17,7 @@
             /** 
              * @ORM\Column(type="time") 
             */
-            private $date; 
+            private $date_; 
             /**
              * @ORM\Column(type="float") 
             */
@@ -27,14 +27,14 @@
             */
             private $paid; 
             /**
-             * @ORM\ManyToOne(targetEntity="App\Entity\Contract") 
-             * @ORM\JoinColumn(name="contract" , referencedColumnName="id")
+             * @ORM\ManyToOne(targetEntity="App\Entity\Contract_") 
+             * @ORM\JoinColumn(name="contract_" , referencedColumnName="id")
             */
-            private $contract; 
+            private $contract_; 
 
-            function __construct(DateTime $date , float $amount ,bool $paid )
+            function __construct(DateTime $date_ , float $amount ,bool $paid )
             {
-                $this->date=$date; 
+                $this->date=$date_; 
                 $this->$amount=$amount; 
                 $this -> $paid=$paid; 
                 
@@ -45,11 +45,11 @@
             public function setid(int $id){ 
             $this->id = $id; 
             }
-            public function getdate():DateTime{ 
-                return $this ->date; 
+            public function getdate_():DateTime{ 
+                return $this ->date_; 
             }
-            public function setdate(DateTime $date) :void { 
-                $this->date= $date; 
+            public function setdate_(DateTime $date_) :void { 
+                $this->date_= $date_; 
             }
 
             public function getamount():float{ 
@@ -67,11 +67,11 @@
             }
         
 
-            public function getcontract():Contract{ 
-                return $this ->contract; 
+            public function getcontract_():Contract_{ 
+                return $this ->contract_; 
             }
-            public function setcontract(Contract $contract){ 
-                $this->contract= $contract; 
+            public function setcontract_(Contract_ $contract_){ 
+                $this->contract_= $contract_; 
             }
 
             
