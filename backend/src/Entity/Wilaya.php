@@ -1,6 +1,8 @@
 <?php 
- namespace App\Entity; 
- use  Doctrine\ORM\Mapping as ORM ; 
+ namespace App\Entity;
+
+use Doctrine\Common\Collections\Collection;
+use  Doctrine\ORM\Mapping as ORM ; 
  /**
   * @ORM\Entity(repositoryClass="App\Repository\WilayaRepository")
   */
@@ -15,6 +17,10 @@
          * @ORM\Column(type="string" , length=200)
          */
         private $name; 
+        /**
+         * @ORM\OneToMany(targetEntity="App\Entity\City" , mappedBy="wilaya")
+         */
+        private $cities; 
         function __construct(int $id , string  $name)
         { 
              $this ->id =$id; 
@@ -35,6 +41,14 @@
         }
         function setname(int $name) :void { 
              $this ->name=$name ; 
+        }
+
+        function getcities() :Collection
+        {  
+           return $this ->cities ; 
+        }
+        function setcities(Collection $cities) :void { 
+             $this ->cities =$cities ; 
         }
 
    

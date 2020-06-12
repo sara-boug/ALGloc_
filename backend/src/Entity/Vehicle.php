@@ -1,6 +1,7 @@
     <?php
 
-    use Doctrine\DBAL\Types\BinaryType;
+use App\Entity\Agency;
+use Doctrine\DBAL\Types\BinaryType;
     use Doctrine\DBAL\Types\BlobType;
     use Doctrine\ORM\Mapping as ORM; 
     /** @ORM/Entity(repositoryName="App\Entity\VehicleRepository") */
@@ -29,13 +30,13 @@
     private $gearbox; 
             /** @ORM\Column(type="string" , length=200)*/
     private $status; 
-           /**@ORM\OneToOne(targetEntity="App\Entity\Agency")
-            * @ORM\JoinColumn(name="id_Agency" , referencedColumnName="id")
+           /**@ORM\OneToMany(targetEntity="App\Entity\Agency")
+            * @ORM\JoinColumn(name="agency" , referencedColumnName="id")
             */
-    private $id_Agency; 
+    private $agency; 
 
     function __construct( int $registrationNumber, float $rentalPrice, float $inssurancePrice,
-    int $passengerNumber , BlobType $image , string   $state,  string $gearbox , string $status)
+    int $passengerNumber , BlobType $image , string   $state,  string $gearbox , string $status )
     {
         $this->registrationNummer = $registrationNumber;
         $this->rentalPrice =$rentalPrice; 
@@ -120,11 +121,11 @@
             $this ->status=$status; 
         }
         
-        function getid_Agency() :int{ 
-           return $this->id_Agency; 
+        function getagency() : Agency{ 
+           return $this->agency; 
         }
-        function setid_Agency(int $id_Agency) :void { 
-               $this->id_Agency = $id_Agency;
+        function setagency(Agency $agency) :void { 
+               $this->agency = $agency;
         }
     }
 

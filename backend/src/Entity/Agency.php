@@ -1,6 +1,8 @@
 <?php 
- namespace App\Entity; 
- use Doctrine\ORM\Mapping as ORM; 
+ namespace App\Entity;
+
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM; 
 
  /**
   * @ORM\repositoryEntity(repositoryClass="App\Repository\AgencyRepository")
@@ -21,10 +23,14 @@
     /** @ORM\Column(type="string", length=300 )*/
     private $address; 
     /**
-      * @ORM\OneToOne(targetEntity="App\Entity\City")
-      * @ORM\JoinColumn(name="id_City" , referencedColumnName="id")
+      * @ORM\ManyToOne(targetEntity="App\Entity\City")
+      * @ORM\JoinColumn(name="city" , referencedColumnName="id")
       */
-    private  $id_City; 
+    private  $city; 
+       /**
+        * @ORM\OneToMany(targetEntity="App\Entity\Vehicle" , mappedBy="agency")
+       */
+    private $vehicles; 
       function __construct(string $agencyCode , int $phoneNumber , string $email, string $address )
      {
          $this ->agencyCode = $agencyCode; 
@@ -71,14 +77,21 @@
     $this ->address=$address; 
     }
 
-    public function  getid_City():int{ 
-        return $this ->id_City; 
+    public function  getcity():City{ 
+        return $this ->city; 
       }
-      public function  serid_City( int $id_City):void{ 
-        $this ->id_City = $id_City; 
+      public function  setcity( City $city):void{ 
+        $this ->city = $city; 
       }
      
-  
+      public function  getvehicles():Collection{ 
+        return $this ->vehicles; 
+      }
+      public function  setvehicles( Collection $vehicles):void{ 
+        $this ->vehicles= $vehicles; 
+      }
+
+   
  }
 
 ?> 

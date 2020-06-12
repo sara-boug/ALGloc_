@@ -1,6 +1,8 @@
 <?php 
- namespace App\Entity; 
- use  Doctrine\ORM\Mapping as ORM ; 
+ namespace App\Entity;
+
+use Doctrine\Common\Collections\Collection;
+use  Doctrine\ORM\Mapping as ORM ; 
   /**
   * @ORM\Entity(repositoryClass="App\Repository\CityRepository")
   */
@@ -16,10 +18,14 @@
          */
         private $name;
         /**
-         *@ORM\OneToOne(targetEntity="App\Entity\Wilaya")
-         *@ORM\JoinColumn(name="id_wilaya" , referencedColumnName="id")
+         *@ORM\ManyToOne(targetEntity="App\Entity\Wilaya")
+         *@ORM\JoinColumn(name="wilaya" , referencedColumnName="id")
          */
-        private $id_wilaya; 
+        private $wilaya; 
+         /**
+          * @ORM\OneToMany(targetEntity="App\Entity\Client" , mappeBy="city")
+          */
+         private $clients;
         function __construct(int $id , string  $name)
         { 
              $this ->id =$id; 
@@ -42,13 +48,20 @@
              $this ->name=$name ; 
         }
          
-        function getid_wilaya() :string
+        function getid_wilaya() :Wilaya
         {  
-           return $this ->id_wilaya ; 
+           return $this ->wilaya ; 
         }
-        function setid_wilaya(int $id_wilaya) :void { 
-             $this ->id_wilaya=$id_wilaya ; 
+        function setid_wilaya(Wilaya $wilaya) :void { 
+             $this ->wilaya=$wilaya ; 
         }
+        
+        function getclients() :Collection{ 
+           return $this->clients; 
+        }
+        function setclients(Collection $clients) :void{ 
+            $this->clients = $clients; 
+       }
 
    
 

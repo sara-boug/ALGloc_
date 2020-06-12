@@ -29,10 +29,10 @@
      private $licenseNumber; 
 
      /**
-      * @ORM\OneToOne(targetEntity="App\Entity\City")
-      * @ORM\JoinColumn(name="id_City" , referencedColumnName="id")
+      * @ORM\ManyToOne(targetEntity="App\Entity\City")
+      * @ORM\JoinColumn(name="city" , referencedColumnName="id")
       */
-     private $id_City; 
+     private $city; 
      function __construct( string $name ,string $familyName , string  $email , string $password ,  string $address ,
       int  $phoneNumber , int $licenseNumber)
      {
@@ -102,11 +102,11 @@
        $this -> licenseNumber = $licenseNumber; 
     }
      
-    public function  getid_City():int{ 
-      return $this ->id_City; 
+    public function  getcity():City{ 
+      return $this ->city; 
     }
-    public function  serid_City( int $id_City):void{ 
-      $this ->id_City = $id_City; 
+    public function  setcity( City $city):void{ 
+      $this ->city = $city; 
     }
    
 
