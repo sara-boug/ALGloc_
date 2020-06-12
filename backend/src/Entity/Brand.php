@@ -1,6 +1,7 @@
 <?php
-use Doctrine\Common\Collections\Collection;
-use  Doctrine\ORM\Mapping as ORM ;
+    namespace App\Entity; 
+    use Doctrine\Common\Collections\Collection;
+    use  Doctrine\ORM\Mapping as ORM ;
 
    /**
    * @ORM\Entity(repositoryClass="App\Repository\ModelRepository")
@@ -56,4 +57,3 @@ use  Doctrine\ORM\Mapping as ORM ;
  
 ?> 
 
-?>

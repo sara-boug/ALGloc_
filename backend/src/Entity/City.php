@@ -1,8 +1,7 @@
 <?php 
- namespace App\Entity;
-
-use Doctrine\Common\Collections\Collection;
-use  Doctrine\ORM\Mapping as ORM ; 
+     namespace App\Entity;
+     use Doctrine\Common\Collections\Collection;
+     use  Doctrine\ORM\Mapping as ORM ; 
   /**
   * @ORM\Entity(repositoryClass="App\Repository\CityRepository")
   */
@@ -23,11 +22,11 @@ use  Doctrine\ORM\Mapping as ORM ;
          */
         private $wilaya; 
          /**
-          * @ORM\OneToMany(targetEntity="App\Entity\Client" , mappeBy="city")
+          * @ORM\OneToMany(targetEntity="App\Entity\Client" , mappedBy="city")
           */
          private $clients;
           /**
-          * @ORM\OneToMany(targetEntity="App\Entity\Agency" , mappeBy="city")
+          * @ORM\OneToMany(targetEntity="App\Entity\Agency" , mappedBy="city")
           */
          private $agencies; 
         function __construct(int $id , string  $name)

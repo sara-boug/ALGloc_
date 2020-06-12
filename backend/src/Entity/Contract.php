@@ -1,7 +1,7 @@
 <?php
-
-use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\DateType;
+    namespace App\Entity; 
+    use Doctrine\Common\Collections\Collection;
+    use DateTime;
     use Doctrine\ORM\Mapping as ORM; 
         /**
          * @ORM\Entity(repositoryClass="App\Repository\ContractRepository")
@@ -23,7 +23,7 @@ use Doctrine\DBAL\Types\DateType;
                 /** @ORM\Column(type="time" )*/
 
             private $arrival; 
-                /** @ORM\Column(type="time" , length=200)*/
+                /** @ORM\Column(type="time" )*/
 
             private $date;  // this date concerns the contract 
                 /**
@@ -40,7 +40,7 @@ use Doctrine\DBAL\Types\DateType;
                  */
             private $invoices; 
 
-            function __construct(int $number,   DateType $departure, DateType  $arrival, DateType $date )
+            function __construct(int $number,   DateTime $departure, DateTime  $arrival, DateTime $date )
             {
                 $this ->number=$number; 
                 $this->departure=$departure; 
@@ -104,7 +104,7 @@ use Doctrine\DBAL\Types\DateType;
             function setvehicle(Vehicle $vehicle) :void { 
                     $this->vehicle = $vehicle;
             }
-    
+ 
             function getinvoices() :Collection { 
                 return $this->invoices; 
             }
@@ -116,5 +116,3 @@ use Doctrine\DBAL\Types\DateType;
 
 
     }
-
-?> 

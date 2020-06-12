@@ -1,10 +1,10 @@
-    <?php
+<?php
+    namespace App\Entity;
 
-use App\Entity\Agency;
-use Doctrine\DBAL\Types\BinaryType;
+    use Doctrine\DBAL\Types\BinaryType;
     use Doctrine\DBAL\Types\BlobType;
     use Doctrine\ORM\Mapping as ORM; 
-    /** @ORM/Entity(repositoryName="App\Entity\VehicleRepository") */
+    /** @ORM\Entity(repositoryClass="App\Entity\VehicleRepository") */
     class Vehicle { 
         /**
          * @ORM\Id
@@ -22,7 +22,7 @@ use Doctrine\DBAL\Types\BinaryType;
     private $passengerNumber; 
             /** @ORM\Column(type="blob" , length=200)*/
     private $image; 
-            /** @ORM\Column(type="intege" )*/
+            /** @ORM\Column(type="integer" )*/
     private $suitcaseNumber; 
             /** @ORM\Column(type="string" , length=200)*/
     private $state; 
@@ -145,4 +145,4 @@ use Doctrine\DBAL\Types\BinaryType;
 
     
 
-    ?>
+?>
