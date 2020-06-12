@@ -1,6 +1,8 @@
 <?php 
     namespace App\Entity;
-    use DateTime;
+
+use Contract;
+use DateTime;
     use Doctrine\ORM\Mapping as ORM; 
     /**@ORM/Entity(repositoryName="App\Entity\InvoiceRepository") */
     class Invoice  {
@@ -17,10 +19,10 @@
         /**@ORM/Column(type="boolean") */
         private $paid; 
         /**
-         * @ORM\OneToOne(targetEntity="App\Entity\Contract") 
-         * @ORM\JoinColumn(name="id_Contract" , referencedColumnName="id")
+         * @ORM\ManyToOne(targetEntity="App\Entity\Contract") 
+         * @ORM\JoinColumn(name="contract" , referencedColumnName="id")
         */
-        private $id_Contract; 
+        private $contract; 
         public function getid():int{ 
             return $this ->id; 
         }
@@ -49,11 +51,11 @@
         }
        
 
-        public function getid_Contract():int{ 
-            return $this ->id_Contract; 
+        public function getcontract():Contract{ 
+            return $this ->contract; 
         }
-        public function setid_Contract(int $id_Contract){ 
-            $this->id_Contract= $id_Contract; 
+        public function setcontract(Contract $contract){ 
+            $this->contract= $contract; 
         }
 
         

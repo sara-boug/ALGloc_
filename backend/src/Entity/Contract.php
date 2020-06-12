@@ -1,6 +1,7 @@
 <?php
 
-    use Doctrine\DBAL\Types\DateType;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\DateType;
     use Doctrine\ORM\Mapping as ORM; 
         /**
          * @ORM\Entity(repositoryClass="App\Repository\ContractRepository")
@@ -26,14 +27,19 @@
 
             private $date;  // this date concerns the contract 
                 /**
-                 * @ORM\OneToOne(targetEntity="App\Entity\Client")
-                 * @ORM\JoinColumn(name="id_Client" , referencedColumnName="id")
+                 * @ORM\ManyToOne(targetEntity="App\Entity\Client")
+                 * @ORM\JoinColumn(name="client" , referencedColumnName="id")
                 */
-            private $id_Client; 
-                /**@ORM\OneToOne(targetEntity="App\Entity\Agency")
-                * @ORM\JoinColumn(name="id_Agency" , referencedColumnName="id")
+            private $client; 
+                /**@ORM\ManyToOne(targetEntity="App\Entity\Vehicle")
+                * @ORM\JoinColumn(name="vehicle" , referencedColumnName="id")
                 */
-                private $id_Agency; 
+            private $vehicle;           
+                /**
+                 * @ORM\OneToMany(targetEntity="App\Entity\Invoice" , mappedBy="contract")
+                 */
+            private $invoices; 
+
             function __construct(int $number,   DateType $departure, DateType  $arrival, DateType $date )
             {
                 $this ->number=$number; 
@@ -77,21 +83,37 @@
             $this->date= $date; 
             }
 
-            function getid_Agency() :int{ 
-                return $this->id_Agency; 
+            function getagency() :int{ 
+                return $this->agency; 
             }
-            function setid_Agency(int $id_Agency) :void { 
-                    $this->id_Agency = $id_Agency;
+            function setagency(int $agency) :void { 
+                    $this->agency = $agency;
+            }
+         
+
+            function getclient() :Client{ 
+                return $this->client; 
+            }
+            function setclient(Client $client) :void { 
+                    $this->client = $client;
+            }
+ 
+            function getvehicle() :Vehicle{ 
+                return $this->vehicle; 
+            }
+            function setvehicle(Vehicle $vehicle) :void { 
+                    $this->vehicle = $vehicle;
+            }
+    
+            function getinvoices() :Collection { 
+                return $this->invoices; 
+            }
+            function setinvoices(Collection $invoices) :void { 
+                    $this->invoices = $invoices;
             }
 
-            function getid_Client() :int{ 
-                return $this->id_Client; 
-            }
-            function setid_Client(int $id_Client) :void { 
-                    $this->id_Client = $id_Client;
-            }
-    
-    
+            
+
 
     }
 

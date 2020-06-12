@@ -26,6 +26,10 @@ use  Doctrine\ORM\Mapping as ORM ;
           * @ORM\OneToMany(targetEntity="App\Entity\Client" , mappeBy="city")
           */
          private $clients;
+          /**
+          * @ORM\OneToMany(targetEntity="App\Entity\Agency" , mappeBy="city")
+          */
+         private $agencies; 
         function __construct(int $id , string  $name)
         { 
              $this ->id =$id; 
@@ -62,6 +66,14 @@ use  Doctrine\ORM\Mapping as ORM ;
         function setclients(Collection $clients) :void{ 
             $this->clients = $clients; 
        }
+
+       function getagencies() :Collection{ 
+          return $this->agencies; 
+       }
+       function setagencies(Collection $agencies) :void{ 
+           $this->agencies = $agencies; 
+      }
+
 
    
 

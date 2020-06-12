@@ -18,11 +18,11 @@ use Doctrine\DBAL\Types\BinaryType;
     private $rentalPrice; 
             /** @ORM\Column(type="float" , length=200)*/
     private $inssurancePrice; 
-            /** @ORM\Column(type="int" , length=200)*/
+            /** @ORM\Column(type="integer" , length=200)*/
     private $passengerNumber; 
             /** @ORM\Column(type="blob" , length=200)*/
     private $image; 
-            /** @ORM\Column(type="int" )*/
+            /** @ORM\Column(type="intege" )*/
     private $suitcaseNumber; 
             /** @ORM\Column(type="string" , length=200)*/
     private $state; 
@@ -30,10 +30,15 @@ use Doctrine\DBAL\Types\BinaryType;
     private $gearbox; 
             /** @ORM\Column(type="string" , length=200)*/
     private $status; 
-           /**@ORM\OneToMany(targetEntity="App\Entity\Agency")
+           /**@ORM\ManyToOne(targetEntity="App\Entity\Agency")
             * @ORM\JoinColumn(name="agency" , referencedColumnName="id")
             */
-    private $agency; 
+    private $agency;   
+            /**
+            * @ORM\ManyToOne(targetEntity="App\Entity\Model")
+            * @ORM\JoinColumn(name="model" , referencedColumnName="id")
+            */
+    private $model; 
 
     function __construct( int $registrationNumber, float $rentalPrice, float $inssurancePrice,
     int $passengerNumber , BlobType $image , string   $state,  string $gearbox , string $status )
@@ -127,6 +132,15 @@ use Doctrine\DBAL\Types\BinaryType;
         function setagency(Agency $agency) :void { 
                $this->agency = $agency;
         }
+
+
+        function getmodel() : Model{ 
+            return $this->model; 
+         }
+         function setmodel(Model $model) :void { 
+                $this->model = $model;
+         }
+ 
     }
 
     
