@@ -39,6 +39,11 @@
                  * @ORM\OneToMany(targetEntity="App\Entity\Invoice" , mappedBy="contract")
                  */
             private $invoices; 
+                /**
+                 * @ORM\ManyToOne(targetEntity="App\Entity\Agency")
+                * @ORM\JoinColumn(name="arrival_agency" , referencedColumnName="id")
+                */
+            private $arrival_agency; 
 
             function __construct(int $number_,   DateTime $departure, DateTime  $arrival, DateTime $date_ )
             {
@@ -110,6 +115,13 @@
             }
             function setinvoices(Collection $invoices) :void { 
                     $this->invoices = $invoices;
+            }
+
+            function getarrival_agency() :Agency { 
+                return $this->arrival_agency; 
+            }
+            function setarrival_agency(Agency $arrival_agency) :void { 
+                    $this->arrival_agency = $arrival_agency;
             }
 
             

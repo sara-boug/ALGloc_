@@ -12,23 +12,25 @@
          * @ORM\Column(type="integer")
          */
     private $id; 
-            /** @ORM\Column(type="string" , length=200)*/
+            /** @ORM\Column(type="string" )*/
     private $registration_number; 
-            /** @ORM\Column(type="float" , length=200)*/
+            /** @ORM\Column(type="float" )*/
     private $rental_price; 
-            /** @ORM\Column(type="float" , length=200)*/
+            /** @ORM\Column(type="float" )*/
     private $inssurance_price; 
-            /** @ORM\Column(type="integer" , length=200)*/
+            /** @ORM\Column(type="float" )*/
+    private  $deposit; 
+            /** @ORM\Column(type="integer" )*/
     private $passenger_number; 
-            /** @ORM\Column(type="blob" , length=200)*/
+            /** @ORM\Column(type="blob" )*/
     private $image_; 
             /** @ORM\Column(type="integer" )*/
     private $suitcase_number; 
-            /** @ORM\Column(type="string" , length=200)*/
+            /** @ORM\Column(type="string"  , length=200)*/
     private $state_; 
-            /** @ORM\Column(type="string" , length=200)*/
+            /** @ORM\Column(type="string" , length=100)*/
     private $gearbox; 
-            /** @ORM\Column(type="string" , length=200)*/
+            /** @ORM\Column(type="string" , length=300)*/
     private $status_; 
            /**@ORM\ManyToOne(targetEntity="App\Entity\Agency")
             * @ORM\JoinColumn(name="agency" , referencedColumnName="id")
@@ -82,6 +84,13 @@
         }
         function setinssurance_price( float $inssurance_price ) :void { 
             $this ->inssurance_price=$inssurance_price; 
+        }
+
+        function getdeposit():float{ 
+            return $this ->deposit; 
+        }
+        function setideposit( float $deposit ) :void { 
+            $this ->deposit=$deposit; 
         }
 
         function getpassenger_number():int{ 
