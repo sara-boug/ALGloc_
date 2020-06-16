@@ -1,5 +1,5 @@
 <?php
-    namespace App\controllers;
+    namespace App\controllers\client;
     use Symfony\Component\Validator\Validator\ValidatorInterface;
     use App\Entity\Client; 
     use Symfony\Component\Routing\Annotation\Route;

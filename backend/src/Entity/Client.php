@@ -5,7 +5,7 @@
     use Doctrine\ORM\Mapping as ORM;
     use Symfony\Component\Validator\Constraints as Assert;
     use Symfony\Component\Security\Core\User\UserInterface;
-    /**
+     /**
      * @ORM\Entity(repositoryClass="App\Repository\ClientRepository")
      *
      */
@@ -20,11 +20,7 @@
         /** @ORM\Column(type="string" , length=200)
          * @Assert\NotBlank
          */
-        private $name_;
-        /** @ORM\Column(type="string" , length=200)
-         * @Assert\NotBlank
-         */
-        private $familyname;
+        private $fullname_;
         /** @ORM\Column(type="string" , length=200)
          * @Assert\NotBlank
          * @Assert\Email(message ="email is not valid")
@@ -54,9 +50,12 @@
         private $city;
         /** @ORM\OneToMany(targetEntity="App\Entity\Contract_" , mappedBy="client")*/
         private $contracts;
-       /* public function __construct1(string $name_, string $familyname, string $email, string $password, string $address,
+        /**@ORM\Column(type="json") */
+        private  $roles =[]; 
+ 
+       /* public function __construct1(string $fullname_, string $familyname, string $email, string $password_, string $address,
             string $phone_number, string $license_number) {
-            $this->name = $name_;
+            $this->name = $fullname_;
             $this->familyname = $familyname;
             $this->address = $email;
             $this->address = $address;
@@ -77,56 +76,48 @@
             $this->id = $id;
         }
 
-        public function getname_()
+        public function getfullname_()
         {
-            return $this->name_;
+            return $this->fullname_;
         }
-        public function setname_(string $name_)
+        public function setfullname_(string $fullname_)
         {
-            $this->name_ = $name_;
-        }
-
-        public function getfamilyname()
-        {
-            return $this->familyname;
-        }
-        public function setfamilyname(string $familyname)
-        {
-            $this->familyname = $familyname;
+            $this->fullname_ = $fullname_;
         }
 
-        public function getaddress()
+
+        public function getaddress():string
         {
             return $this->address;
         }
-        public function setaddress(string $address)
+        public function setaddress(string $address):void
         {
             $this->address = $address;
         }
 
-        public function getemail()
+        public function getemail():string
         {
             return $this->email;
         }
-        public function setemail(string $email)
+        public function setemail(string $email):void
         {
             $this->email = $email;
         }
 
-        public function getpassword()
+        public function getPassword():string // start by P because it's an  abstract method 
         {
             return $this->password;
         }
-        public function setpassword(string $password)
+        public function setPassword(string $password):void
         {
             $this->password = $password;
         }
 
-        public function getphone_number()
+        public function getphone_number():string
         {
             return $this->phone_number;
         }
-        public function setphone_number(string $phone_number)
+        public function setphone_number(string $phone_number):void 
         {
             $this->phone_number = $phone_number;
         }
@@ -158,9 +149,11 @@
             $this->contracts = $contracts;
         }
 
-        public function getRoles()
+        public function getRoles(): array
         {
-            
+            $roles= $this->roles; 
+            $roles [] = 'ROLE_USER'; 
+            return array_unique( $roles); 
         }
         
 
