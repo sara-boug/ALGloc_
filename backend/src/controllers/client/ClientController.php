@@ -1,13 +1,15 @@
 <?php
     namespace App\controllers\client;
     use Symfony\Component\Validator\Validator\ValidatorInterface;
-    use App\Entity\Client; 
+    use App\Entity\Client;
+    use App\security\TokenAuthenticator;
     use Symfony\Component\Routing\Annotation\Route;
     use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
     use Symfony\Component\HttpFoundation\Request;
     use Symfony\Component\HttpFoundation\Response;
     use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface; 
     use Exception;
+use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 
 class ClientController extends AbstractController
     {       
@@ -34,10 +36,8 @@ class ClientController extends AbstractController
              try {
                 $entityManager = $this->getDoctrine() ->getManager(); 
                 $body = json_decode($request->getContent(), true); // request body 
-                $client = new Client(); 
-      
-                $client ->setname_($body["name_"]); 
-                $client->setfamilyname($body["familyname"]);
+                $client = new Client();      
+                $client ->setfullname_($body["fullname_"] ); 
                 $client ->setemail($body["email"]);
                 $client ->setpassword( $body['password']); 
                 $client ->setaddress($body["address"]); 
@@ -55,13 +55,61 @@ class ClientController extends AbstractController
                 $entityManager ->persist($client); 
                 //executing the query 
                 $entityManager ->flush(); 
+
                 return $this ->response(json_encode($body), Response::HTTP_OK);
              } catch( Exception $e) {                 
-                 print($e); 
+                 echo($e->getMessage()); 
                  return $this -> response(   "error" , Response::HTTP_BAD_REQUEST); 
               }        
         }
        
+         
+        /**
+         * @Route("/login" , name="login" , methods ={"post"}) 
+        */
+       public function login(TokenAuthenticator $authenticator , GuardAuthenticatorHandler $handler 
+       , Request $request) :Response { 
+            try { 
+               // in order to get user repos
+              $repos=  $this ->getDoctrine() ->getRepository(Client::class);
+              // extracting the body content
+              $body = json_decode($request ->getContent() , true); 
+              if( !empty($body['email'] ) && !empty($body['password'])) {
+                    $client =  $repos ->findOneBy(['email' => $body['email'] ]);
+                  if($client !=null) {  
+                      echo(  $client->getPassword());
+                       $verify= $this->passwordEncoder ->isPasswordValid(
+                           $client , 
+                           $body['password']
+                       ); 
+                       if($verify==true) { 
+                        return $this ->response(json_encode( ['message' => 'login success']) 
+                        , Response::HTTP_OK); 
+    
+                       } else { 
+                        return $this ->response(json_encode( ['error' => 'singup up']) 
+                        , Response::HTTP_BAD_REQUEST); 
+        
+    
+                       }
+
+                  } else { 
+                    return $this ->response(json_encode( ['error' => 'singup up']) 
+                    , Response::HTTP_BAD_REQUEST); 
+    
+                  }
+              } else { 
+                return $this ->response(json_encode( ['error' => 'empty values not accepted']) 
+                , Response::HTTP_BAD_REQUEST); 
+
+              }
+              
+            }catch (Exception $e ) { 
+                $exception = array("error" => $e->getMessage()) ; 
+                return $this ->response(json_encode($exception) , Response::HTTP_BAD_REQUEST); 
+
+            }
+       }
 
         
 

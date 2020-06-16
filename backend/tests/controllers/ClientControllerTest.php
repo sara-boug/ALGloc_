@@ -16,18 +16,18 @@
                $clientRepos= static::$container->get(ClientRepository::class);
                $clientRepos->deleteAll(); 
    
-               $data= array(  'name_'  => 'sara' , 
-                              'familyname' => 'bouglam' , 
+               $data= array(  
+                              'fullname_' => 'bouglam' , 
                               'email' => 'saraboug@gmail.com', 
                               'password' => 'sarasara' , 
                               'address' => 'Algeria ouled fayet', 
                               'phone_number' =>  '123456789' , 
                               'license_number' =>   '14782'
             );
-               $client ->request('POST' , '/signup' ,[] ,[],['Content_Type' => 'Application/json'] , json_encode($data)) ; 
+               $client ->request('POST' , '/signup' ,[] ,[],['Content_Type' => 'Application/json'] , json_encode($data)) ;
+                print($client->getResponse() ->getContent()) ;
                $this->assertEquals( 200 , $client->getResponse() ->getStatusCode());   
-               $this->assertEquals( json_encode($data) , $client ->getResponse()->getContent());    
-                  
+                   
             }
 
       }

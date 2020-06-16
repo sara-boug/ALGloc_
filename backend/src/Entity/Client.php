@@ -52,6 +52,8 @@
         private $contracts;
         /**@ORM\Column(type="json") */
         private  $roles =[]; 
+        /** @ORM\Column(type="string" , unique =true , nullable=true) */
+        private $api_token; 
  
        /* public function __construct1(string $fullname_, string $familyname, string $email, string $password_, string $address,
             string $phone_number, string $license_number) {
@@ -171,7 +173,15 @@
         {
             
         }
+
+        public function getapi_token() : string { 
+           return $this->api_token; 
+        }
         
+        public function setapi_token(string $api_token){ 
+             $this->api_token = $api_token; 
+        }
+
         
         
 
