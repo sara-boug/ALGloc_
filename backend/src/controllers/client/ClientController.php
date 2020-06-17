@@ -65,7 +65,7 @@ class ClientController extends AbstractController
        
          
         /**
-         * @Route("/login" , name="login" , methods ={"post"}) 
+         * @Route("/login" , name="login" , methods ={"GET"}) 
         */
        public function login(TokenAuthenticator $authenticator , GuardAuthenticatorHandler $handler 
        , Request $request) :Response { 
@@ -77,14 +77,16 @@ class ClientController extends AbstractController
               if( !empty($body['email'] ) && !empty($body['password'])) {
                     $client =  $repos ->findOneBy(['email' => $body['email'] ]);
                   if($client !=null) {  
-                      echo(  $client->getPassword());
                        $verify= $this->passwordEncoder ->isPasswordValid(
                            $client , 
                            $body['password']
                        ); 
                        if($verify==true) { 
-                        return $this ->response(json_encode( ['message' => 'login success']) 
-                        , Response::HTTP_OK); 
+                          echo( $authenticator ->getCredentials($request)); 
+
+                          $token= $handler->authenticateUserAndHandleSuccess( $client , $request, $authenticator,'guard');
+                            return $this ->response(json_encode( ['message' => 'success']) 
+                            , Response::HTTP_OK); 
     
                        } else { 
                         return $this ->response(json_encode( ['error' => 'singup up']) 

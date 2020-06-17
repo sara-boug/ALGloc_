@@ -26,7 +26,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator {
       
      public function getCredentials( Request $request)
      {
-        return $request ->header ->has('X-AUTH-TOKEN'); 
+        return $request ->headers->get('X-AUTH-TOKEN'); 
 
      }
      public function getUser($credentials, UserProviderInterface $userProvider)
@@ -44,9 +44,9 @@ class TokenAuthenticator extends AbstractGuardAuthenticator {
          return true; 
          
      } 
-     public function onAuthenticationSuccess(\Symfony\Component\HttpFoundation\Request $request, TokenInterface $token, $providerKey)
+     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
      {
-         return null; 
+         return new Response(json_encode( ['message' => 'login success']), Response::HTTP_OK); 
      }
       public function onAuthenticationFailure( Request $request, AuthenticationException $exception)
      {
@@ -67,7 +67,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator {
 
      public function supportsRememberMe()
      {
-          return null ; 
+          return false; 
      }
 
     
