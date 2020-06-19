@@ -8,13 +8,17 @@
     use Symfony\Component\HttpFoundation\Response;
     use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface; 
     use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface; 
+    use App\security\TokenAuthenticator; 
+
     use Exception;
 
 class ClientController extends AbstractController
     {       
+        private $auth; 
         private $passwordEncoder; 
-            public function __construct(UserPasswordEncoderInterface $passwordEncoder)
-            {
+            public function __construct( TokenAuthenticator $auth    , UserPasswordEncoderInterface $passwordEncoder)
+            {    
+                $this->auth = $auth;
                 $this ->passwordEncoder = $passwordEncoder; 
                 
             }
@@ -64,7 +68,7 @@ class ClientController extends AbstractController
        
          
         /**
-         * @Route("/login" , name="login_path" , methods ={"POST" , "GET"}) 
+         * @Route("/login" , name="login_path" , methods ={"POST"}) 
         */
        public function login( Request $request ,JWTTokenManagerInterface  $generateToken) :Response { 
             try { 
@@ -79,9 +83,9 @@ class ClientController extends AbstractController
                        $verify= $this->passwordEncoder ->isPasswordValid($client ,$body['password']); 
                        if($verify==true) { 
                            $token  =$generateToken ->create($client); 
-                           $client ->setapi_token($token); // attribute in the client entity
+                            $client ->setapi_token($token); // attribute in the client entity
                            $entityManager ->persist($client); 
-                           $entityManager ->flush();           
+                           $entityManager ->flush();       
                            return $this ->response(json_encode( ['message' => "login success"]) , Response::HTTP_OK); 
                        } else { 
                         return $this ->response(json_encode( ['error' => 'bad credentials']) 
@@ -106,17 +110,26 @@ class ClientController extends AbstractController
 
             }
        }
-
-        
-
          
+    
+           
         /**
-         * @Route("/logout" , name="logout_path" , methods ={"POST"}) 
+         * @Route("/logout" , name="logout_path" , methods ={"GET"}) 
         */
         public function logout() :Response{ 
-        return $this ->response(json_encode( ['message' => "logout success"]) , Response::HTTP_OK); 
+
+        return $this ->response(json_encode( ['message' => "role User"]) , Response::HTTP_OK); 
 
 
+       }
+
+        /**
+         * @Route("/profile/" , name="sample" , methods ={"GET"}) 
+        */
+        public function sample() :Response{ 
+            echo($this ->getUser());
+            $this->denyAccessUnlessGranted('ROLE_USER');
+            return $this ->response(json_encode( ['message' => "role User"]) , Response::HTTP_OK);     
        }
 
 

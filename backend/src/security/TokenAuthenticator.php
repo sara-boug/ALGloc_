@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
 use Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\AuthorizationHeaderTokenExtractor;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -17,7 +18,7 @@ use \Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class TokenAuthenticator extends AbstractGuardAuthenticator
 {
-
+    
     private $jwtEncoder;
     private $em;
     public function __construct(JWTEncoderInterface $jwtEncoder, EntityManagerInterface $em)
@@ -25,11 +26,11 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         $this->jwtEncoder = $jwtEncoder;
         $this->em = $em;
 
-    }
-
+    } 
+ 
     public function supports(Request $request)
     {
-
+          return true; 
     }
 
     public function getCredentials(Request $request)
@@ -40,6 +41,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         );
         $token = $extractor->extract($request);
         if (!$token) {
+            print("no header found"); 
             return;
         }
         return $token;
@@ -49,8 +51,8 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     {
         try {
             if ($credentials === null) {return null;}
-
-            //$data = $this->Jwtencoder->decode($credentials);
+               
+            $data = $this->jwtEncoder->decode($credentials);
             return $this->em->getRepository(Client::class)
                 ->findOneBy(['api_token' => $credentials]);
         } catch (JWTDecodeFailureException $e) {
@@ -65,20 +67,21 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     }
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        return new Response(json_encode(['message' => 'login success']), Response::HTTP_OK);
+        return new Response(json_encode(['message' => 'login success from Api']), Response::HTTP_OK);
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
-    {
-        $data = [
-            'message' => strtr($exception->getMessageKey, $exception->getMessageData),
+    {  
+        echo($exception);
+       $data = [
+            'message' => [$exception->getMessageKey(), $exception->getMessageData()]
         ];
         return new Response(json_encode($data), Response::HTTP_UNAUTHORIZED);
     }
 
     public function start(Request $request, AuthenticationException $authException = null)
     {
-        $data = [
+         $data = [
             'message' => ' Authentication required',
         ];
         return new Response(json_encode($data), Response::HTTP_UNAUTHORIZED);
@@ -88,5 +91,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     {
         return false;
     }
-
-}
+ 
+ 
+   
+}  

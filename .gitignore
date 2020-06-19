@@ -16,7 +16,7 @@ backend/public/index.php
 backend/bin
 backend/.env
 backend/src/Kernel.php
-
+/LoginForm.php
 
 symfony.lock
 ###< symfony/framework-bundle ###
