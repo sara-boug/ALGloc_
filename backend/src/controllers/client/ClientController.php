@@ -86,7 +86,8 @@ class ClientController extends AbstractController
                             $client ->setapi_token($token); // attribute in the client entity
                            $entityManager ->persist($client); 
                            $entityManager ->flush();       
-                           return $this ->response(json_encode( ['message' => "login success"]) , Response::HTTP_OK); 
+                           return $this ->response(json_encode( ['message' => "login success" , 
+                                                         'token' =>$client ->getapi_token()]) , Response::HTTP_OK); 
                        } else { 
                         return $this ->response(json_encode( ['error' => 'bad credentials']) 
                         , Response::HTTP_BAD_REQUEST); 
@@ -127,8 +128,8 @@ class ClientController extends AbstractController
          * @Route("/profile/" , name="sample" , methods ={"GET"}) 
         */
         public function sample() :Response{ 
-            echo($this ->getUser());
-            $this->denyAccessUnlessGranted('ROLE_USER');
+            $this->denyAccessUnlessGranted('ROLE_USER'); 
+            print($this ->getUser()->getemail());
             return $this ->response(json_encode( ['message' => "role User"]) , Response::HTTP_OK);     
        }
 

@@ -53,8 +53,10 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
             if ($credentials === null) {return null;}
                
             $data = $this->jwtEncoder->decode($credentials);
-            return $this->em->getRepository(Client::class)
+             print($data['username']) ; 
+             $user= $this->em->getRepository(Client::class)
                 ->findOneBy(['api_token' => $credentials]);
+             return $user;
         } catch (JWTDecodeFailureException $e) {
             throw new CustomUserMessageAuthenticationException("invvalid token");
         }
@@ -67,7 +69,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     }
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        return new Response(json_encode(['message' => 'login success from Api']), Response::HTTP_OK);
+      //  return new Response(json_encode(['message' => 'login success from Api']), Response::HTTP_OK);
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)

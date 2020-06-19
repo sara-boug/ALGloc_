@@ -8,6 +8,8 @@ backend/public/
 backend/var/
 backend/vendor/
 backend/config/packages
+backend/config/jwt
+
 backend/config/routes
 backend/config/routes.yaml
 backend/config/bootstrap.php
