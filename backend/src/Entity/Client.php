@@ -21,7 +21,7 @@
          * @Assert\NotBlank
          */
         private $fullname_;
-        /** @ORM\Column(type="string" , length=200)
+        /** @ORM\Column(type="string" , length=200 , unique =true )
          * @Assert\NotBlank
          * @Assert\Email(message ="email is not valid")
          */
@@ -52,7 +52,7 @@
         private $contracts;
         /**@ORM\Column(type="json") */
         private  $roles =[]; 
-        /** @ORM\Column(type="string" , unique =true , nullable=true) */
+        /** @ORM\Column(type="text" , nullable= true ) */
         private $api_token; 
  
        /* public function __construct1(string $fullname_, string $familyname, string $email, string $password_, string $address,
@@ -174,11 +174,11 @@
             
         }
 
-        public function getapi_token() : string { 
+        public function getapi_token()  { 
            return $this->api_token; 
         }
         
-        public function setapi_token(string $api_token){ 
+        public function setapi_token($api_token){ 
              $this->api_token = $api_token; 
         }
 

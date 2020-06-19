@@ -2,14 +2,13 @@
     namespace App\controllers\client;
     use Symfony\Component\Validator\Validator\ValidatorInterface;
     use App\Entity\Client;
-    use App\security\TokenAuthenticator;
     use Symfony\Component\Routing\Annotation\Route;
     use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
     use Symfony\Component\HttpFoundation\Request;
     use Symfony\Component\HttpFoundation\Response;
     use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface; 
+    use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface; 
     use Exception;
-use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 
 class ClientController extends AbstractController
     {       
@@ -65,38 +64,32 @@ class ClientController extends AbstractController
        
          
         /**
-         * @Route("/login" , name="login" , methods ={"GET"}) 
+         * @Route("/login" , name="login_path" , methods ={"POST" , "GET"}) 
         */
-       public function login(TokenAuthenticator $authenticator , GuardAuthenticatorHandler $handler 
-       , Request $request) :Response { 
+       public function login( Request $request ,JWTTokenManagerInterface  $generateToken) :Response { 
             try { 
                // in order to get user repos
               $repos=  $this ->getDoctrine() ->getRepository(Client::class);
+              $entityManager = $this->getDoctrine() ->getManager(); 
               // extracting the body content
               $body = json_decode($request ->getContent() , true); 
               if( !empty($body['email'] ) && !empty($body['password'])) {
                     $client =  $repos ->findOneBy(['email' => $body['email'] ]);
                   if($client !=null) {  
-                       $verify= $this->passwordEncoder ->isPasswordValid(
-                           $client , 
-                           $body['password']
-                       ); 
+                       $verify= $this->passwordEncoder ->isPasswordValid($client ,$body['password']); 
                        if($verify==true) { 
-                          echo( $authenticator ->getCredentials($request)); 
-
-                          $token= $handler->authenticateUserAndHandleSuccess( $client , $request, $authenticator,'guard');
-                            return $this ->response(json_encode( ['message' => 'success']) 
-                            , Response::HTTP_OK); 
-    
+                           $token  =$generateToken ->create($client); 
+                           $client ->setapi_token($token); // attribute in the client entity
+                           $entityManager ->persist($client); 
+                           $entityManager ->flush();           
+                           return $this ->response(json_encode( ['message' => "login success"]) , Response::HTTP_OK); 
                        } else { 
-                        return $this ->response(json_encode( ['error' => 'singup up']) 
+                        return $this ->response(json_encode( ['error' => 'bad credentials']) 
                         , Response::HTTP_BAD_REQUEST); 
-        
-    
                        }
 
                   } else { 
-                    return $this ->response(json_encode( ['error' => 'singup up']) 
+                    return $this ->response(json_encode( ['error' => 'bad credentials']) 
                     , Response::HTTP_BAD_REQUEST); 
     
                   }
@@ -107,6 +100,7 @@ class ClientController extends AbstractController
               }
               
             }catch (Exception $e ) { 
+                echo($e);
                 $exception = array("error" => $e->getMessage()) ; 
                 return $this ->response(json_encode($exception) , Response::HTTP_BAD_REQUEST); 
 
@@ -114,6 +108,16 @@ class ClientController extends AbstractController
        }
 
         
+
+         
+        /**
+         * @Route("/logout" , name="logout_path" , methods ={"POST"}) 
+        */
+        public function logout() :Response{ 
+        return $this ->response(json_encode( ['message' => "logout success"]) , Response::HTTP_OK); 
+
+
+       }
 
 
 

@@ -8,6 +8,7 @@
         "doctrine/annotations": "^1.10",
         "doctrine/doctrine-migrations-bundle": "^2.1",
         "doctrine/migrations": "^2.2",
+        "lexik/jwt-authentication-bundle": "^2.8",
         "sensio/framework-extra-bundle": "^5.5",
         "symfony/console": "4.4.*",
         "symfony/dotenv": "4.4.*",
