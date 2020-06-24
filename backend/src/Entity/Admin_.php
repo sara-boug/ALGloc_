@@ -2,11 +2,10 @@
     namespace App\Entity;
 
     use Doctrine\ORM\Mapping as ORM;
-use PhpParser\Node\Expr\Cast\String_;
-use Symfony\Component\Validator\Constraints as Assert;
+    use Symfony\Component\Validator\Constraints as Assert;
     use Symfony\Component\Security\Core\User\UserInterface;
     /**
-     * @ORM\Entity(repositoryClass="App\Repository\AdminRepository")
+     * @ORM\Entity(repositoryClass="App\Repository\Admin_Repository")
      *
      */
     class Admin_  implements UserInterface

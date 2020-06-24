@@ -5,7 +5,7 @@
 
 
         /**
-         * @ORM\Entity(repositoryClass="App\Entity\InvoiceRepository") 
+         * @ORM\Entity(repositoryClass="App\Repository\InvoiceRepository") 
          */
         class Invoice  {
             /**

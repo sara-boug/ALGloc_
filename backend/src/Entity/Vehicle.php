@@ -4,7 +4,7 @@
     use Doctrine\DBAL\Types\BinaryType;
     use Doctrine\DBAL\Types\BlobType;
     use Doctrine\ORM\Mapping as ORM; 
-    /** @ORM\Entity(repositoryClass="App\Entity\VehicleRepository") */
+    /** @ORM\Entity(repositoryClass="App\Repository\VehicleRepository") */
     class Vehicle { 
         /**
          * @ORM\Id

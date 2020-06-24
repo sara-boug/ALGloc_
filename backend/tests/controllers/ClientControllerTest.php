@@ -2,9 +2,6 @@
    namespace App\tests\controllers; 
       use App\Repository\ClientRepository;
       use Symfony\Bundle\FrameworkBundle\Test\WebTestCase; 
-      use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase; 
-      
-
       class  ClientControllerTest  extends WebTestCase   { 
          private $token ; 
             // testing the signup route
@@ -15,10 +12,7 @@
          
          }
             // testing singup function
-            public function  singup($client ){ 
-               $clientRepos= static::$container->get(ClientRepository::class);
-               $clientRepos->deleteAll(); 
-   
+            public function  singup($client ){     
                $data= array(  
                               'fullname_' => 'bouglam' , 
                               'email' => 'saraboug@gmail.com', 
