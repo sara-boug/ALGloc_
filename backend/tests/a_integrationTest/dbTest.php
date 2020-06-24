@@ -1,6 +1,5 @@
 <?php 
 namespace tests\a_integerationTest;
-
     use App\Entity\Admin_;
     use App\Entity\Agency;
     use App\Entity\Category;
@@ -49,7 +48,6 @@ class dbTest  extends KernelTestCase{
             if($databasePlateform ->supportsForeignKeyConstraints()) { 
                 $connection->query('set FOREIGN_KEY_CHECKS=1'); 
             }
-
 
         }
         private function getEntityManager() : EntityManager{ 

@@ -2,7 +2,8 @@
    namespace App\tests\controllers; 
       use App\Repository\ClientRepository;
       use Symfony\Bundle\FrameworkBundle\Test\WebTestCase; 
-      class  ClientControllerTest  extends WebTestCase   { 
+      class  ClientControllerTest  extends WebTestCase   {           
+         // token used for the header 
          private $token ; 
             // testing the signup route
          public function testShowPost(){ 

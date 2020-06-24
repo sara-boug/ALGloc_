@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-namespace DoctrineMigrations;
-
-use Doctrine\DBAL\Schema\Schema;
-use Doctrine\Migrations\AbstractMigration;
+ namespace DoctrineMigrations;
+  use Doctrine\DBAL\Schema\Schema;
+ use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
@@ -18,10 +17,9 @@ final class Version20200618221212 extends AbstractMigration
     }
 
     public function up(Schema $schema) : void
-    {
-        // this up() migration is auto-generated, please modify it to your needs
+    {   
+         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
-
         $this->addSql('CREATE TABLE admin_ (id INT AUTO_INCREMENT NOT NULL, email VARCHAR(200) NOT NULL, password VARCHAR(200) NOT NULL, roles JSON NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
         $this->addSql('CREATE TABLE agency (id INT AUTO_INCREMENT NOT NULL, city INT DEFAULT NULL, agency_code VARCHAR(255) NOT NULL, phone_number VARCHAR(15) NOT NULL, email VARCHAR(100) NOT NULL, address VARCHAR(300) NOT NULL, INDEX IDX_70C0C6E62D5B0234 (city), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
         $this->addSql('CREATE TABLE brand (id INT AUTO_INCREMENT NOT NULL, name_ VARCHAR(200) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
@@ -42,6 +40,7 @@ final class Version20200618221212 extends AbstractMigration
         $this->addSql('ALTER TABLE model ADD CONSTRAINT FK_D79572D964C19C1 FOREIGN KEY (category) REFERENCES category (id)');
         $this->addSql('ALTER TABLE model ADD CONSTRAINT FK_D79572D91C52F958 FOREIGN KEY (brand) REFERENCES brand (id)');
         $this->addSql('ALTER TABLE vehicle ADD CONSTRAINT FK_1B80E486D79572D9 FOREIGN KEY (model) REFERENCES model (id)');
+    
     }
 
     public function down(Schema $schema) : void
