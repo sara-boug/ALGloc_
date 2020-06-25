@@ -1,5 +1,7 @@
 <?php
     namespace App\controllers\client;
+
+    use App\Entity\City;
     use Symfony\Component\Validator\Validator\ValidatorInterface;
     use App\Entity\Client;
     use Symfony\Component\Routing\Annotation\Route;
@@ -8,15 +10,14 @@
     use Symfony\Component\HttpFoundation\Response;
     use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface; 
     use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface; 
-    use App\security\TokenAuthenticator; 
-
+    use App\security\ClientAuth; 
     use Exception;
 
 class ClientController extends AbstractController
     {       
         private $auth; 
         private $passwordEncoder; 
-            public function __construct( TokenAuthenticator $auth    , UserPasswordEncoderInterface $passwordEncoder)
+            public function __construct( ClientAuth $auth    , UserPasswordEncoderInterface $passwordEncoder)
             {    
                 $this->auth = $auth;
                 $this ->passwordEncoder = $passwordEncoder; 
@@ -46,6 +47,10 @@ class ClientController extends AbstractController
                 $client ->setaddress($body["address"]); 
                 $client->setphone_number($body["phone_number"]);
                 $client ->setlicense_number($body["license_number"]);
+                // finding the city object 
+                 $city = $entityManager->getRepository(City::class) ->findOneBy([
+                     'id' => $body["city"]["id"] , 'name_' =>$body["city"]["name_"]]);  
+                 $client->setcity($city); 
                 $errors=$validator ->validate($client);  // validating the user input
                 if(count($errors)>0) {                 
                     $errorsJson= json_encode(  array( "error" =>(string)$errors));
@@ -55,7 +60,8 @@ class ClientController extends AbstractController
                 $client ->setpassword( $this->passwordEncoder->encodePassword($client , $body['password'])); 
                  unset($body['password']);
                 // inserting the data into the database 
-                $entityManager ->persist($client); 
+                 $entityManager ->persist($client); 
+
                 //executing the query 
                 $entityManager ->flush(); 
 

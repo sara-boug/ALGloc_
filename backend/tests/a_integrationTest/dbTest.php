@@ -5,10 +5,8 @@ namespace tests\a_integerationTest;
     use App\Entity\Category;
     use App\Entity\Model;
     use App\Entity\Vehicle;
-    use App\Entity\Wilaya;
     use App\Entity\Brand; 
     use App\Entity\Invoice; 
-    use App\Entity\City; 
     use App\Entity\Client; 
     use App\Entity\Contract_; 
     use Doctrine\ORM\EntityManager;
@@ -18,9 +16,9 @@ class dbTest  extends KernelTestCase{
          
          public function testShowPost(){ 
             self::bootKernel(); 
-            $entities=  [Admin_::class , Agency::class , Brand::class , Category::class , City::class , 
+            $entities=  [Admin_::class , Agency::class , Brand::class , Category::class , 
             Client::class , Contract_::class ,Invoice::class , Model::class , 
-            Vehicle::class , Wilaya::class ];
+            Vehicle::class  ];
             $this->truncateEntities( $entities ); 
  
   

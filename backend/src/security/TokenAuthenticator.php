@@ -1,21 +1,16 @@
 <?php
 namespace App\security;
 
-use App\Entity\Client;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
-use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
-use Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\AuthorizationHeaderTokenExtractor;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
+ use Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\AuthorizationHeaderTokenExtractor;
+ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 use \Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
+use Symfony\Component\Security\Core\User\UserProviderInterface;
 class TokenAuthenticator extends AbstractGuardAuthenticator
 {
     
@@ -32,7 +27,11 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     {
           return true; 
     }
-
+    
+    public function getUser($credentials,  UserProviderInterface $userProvider)
+    {
+        
+    }
     public function getCredentials(Request $request)
     {
         $extractor = new AuthorizationHeaderTokenExtractor(
@@ -46,20 +45,6 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         }
         return $token;
 
-    }
-    public function getUser($credentials, UserProviderInterface $userProvider)
-    {
-        try {
-            if ($credentials === null) {return null;}
-               
-            $data = $this->jwtEncoder->decode($credentials);
-             print($data['username']) ; 
-             $user= $this->em->getRepository(Client::class)
-                ->findOneBy(['api_token' => $credentials]);
-             return $user;
-        } catch (JWTDecodeFailureException $e) {
-            throw new CustomUserMessageAuthenticationException("invvalid token");
-        }
     }
 
     public function checkCredentials($credentials, UserInterface $client)

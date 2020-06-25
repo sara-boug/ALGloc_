@@ -15,12 +15,16 @@
             // testing singup function
             public function  singup($client ){     
                $data= array(  
-                              'fullname_' => 'bouglam' , 
-                              'email' => 'saraboug@gmail.com', 
-                              'password' => 'sarasara' , 
-                              'address' => 'Algeria ouled fayet', 
-                              'phone_number' =>  '123456789' , 
-                              'license_number' =>   '14782'
+                               'fullname_' => 'bouglam' , 
+                               'email' => 'saraboug@gmail.com', 
+                               'password' => 'sarasara' , 
+                               'address' => 'Algeria ouled fayet', 
+                               'phone_number' => '123456789' , 
+                               'license_number' => '14782', 
+                               'city' => array(
+                                  'id'=> 1, 
+                                  'name_'=>'algiers'
+                               )
             );
                $client ->request('POST' , '/signup' ,[] ,[],['Content_Type' => 'Application/json'] , json_encode($data)) ;
                 $this->assertEquals( 200 , $client->getResponse() ->getStatusCode());   
@@ -38,8 +42,9 @@
          } 
 
          // setting the header for each request
-         public function   setup_header() { 
-
+         public function   setup_header() {
+               // setting up authorization header for all the routes requring authorization
+                return [ 'Authorization' => 'Bearer '.$this->token]; 
          }
 
       }

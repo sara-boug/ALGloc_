@@ -40,7 +40,7 @@ use  Doctrine\ORM\Mapping as ORM ;
            return $this ->name_ ; 
         }
         function setname(int $name_) :void { 
-             $this ->name_=$name_ ; 
+             $this ->name_=strtolower( trim($name_)) ; 
         }
 
         function getcities() :Collection

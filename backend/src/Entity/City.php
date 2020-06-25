@@ -48,7 +48,7 @@
            return $this ->name_ ; 
         }
         function setname_(int $name_) :void { 
-             $this ->name_=$name_ ; 
+             $this ->name_=strtolower(trim($name_) ); 
         }
          
         function getwilaya() :Wilaya

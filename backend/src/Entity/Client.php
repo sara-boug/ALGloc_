@@ -84,7 +84,7 @@
         }
         public function setfullname_(string $fullname_)
         {
-            $this->fullname_ = $fullname_;
+            $this->fullname_ =strtolower( trim( $fullname_));
         }
 
 
@@ -94,7 +94,7 @@
         }
         public function setaddress(string $address):void
         {
-            $this->address = $address;
+            $this->address = trim($address);
         }
 
         public function getemail():string
@@ -103,7 +103,7 @@
         }
         public function setemail(string $email):void
         {
-            $this->email = $email;
+            $this->email = trim($email);
         }
 
         public function getPassword():string // start by P because it's an  abstract method 
@@ -112,7 +112,7 @@
         }
         public function setPassword(string $password):void
         {
-            $this->password = $password;
+            $this->password =trim( $password);
         }
 
         public function getphone_number():string
@@ -121,7 +121,7 @@
         }
         public function setphone_number(string $phone_number):void 
         {
-            $this->phone_number = $phone_number;
+            $this->phone_number = trim($phone_number);
         }
 
         public function getlicense_number(): string
@@ -130,7 +130,7 @@
         }
         public function setlicense_number(string $license_number): void
         {
-            $this->license_number = $license_number;
+            $this->license_number =trim( $license_number);
         }
 
         public function getcity(): City

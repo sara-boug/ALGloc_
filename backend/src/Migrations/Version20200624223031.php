@@ -6,27 +6,45 @@
 
     use Doctrine\DBAL\Schema\Schema;
     use Doctrine\Migrations\AbstractMigration;
+    use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface; 
+    use App\Entity\Admin_;
+    use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface; 
 
     /**
      * Auto-generated Migration: Please modify to your needs!
      */
     final class Version20200624223031 extends AbstractMigration
-    {
+    {  
+        private $passwordEncoder; 
+        private $params; 
+        public function __construct(    UserPasswordEncoderInterface $passwordEncoder ,ContainerBagInterface $params)
+        {    
+            $this ->passwordEncoder = $passwordEncoder; 
+            $this->params = $params; 
+            
+        }
+
         public function getDescription() : string
         {
             return '';
         }
 
         public function preUp(Schema $schema) : void
-        {
-            $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
-            $this ->addSql('INSERT INTO `wilaya` ( id , name_ ) VALUES
+        {  
+            $admin = new Admin_(); 
+            $admin->setemail($this->params ->get('env.email')); 
+           $encodedPsw=$this->passwordEncoder->encodePassword(  $admin , "adminpageadmin123456789"); 
+           $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+           $this->addSql('INSERT INTO admin_ ( email , password ) Values 
+            ("admin@gmail.com" , )'); 
+          
+          $this ->addSql('INSERT INTO `wilaya` ( id , name_ ) VALUES
                     ( 1,"Adrar"),
                     ( 2,"Chlef"),
                     ( 3,"Laghouat"),
                     ( 4,"Oum El Bouaghi"),
                     ( 5,"Batna"),
-                    (6, "Béjaïa"),
+                     (6, "Béjaïa"),
                     ( 7,"Biskra"),
                     ( 8,"Béchar"),
                     ( 9,"Blida"),
@@ -41,12 +59,12 @@
                     ( 18,"Jijel"),
                     ( 19,"Sétif"),
                     ( 20,"Saïda"),
-                    (21,"Skikda"),
+                    ( 21,"Skikda"),
                     ( 22,"Sidi Bel Abbès"),
                     ( 23,"Annaba"),
                     ( 24,"Guelma"),
                     ( 25,"Constantine"),
-                    (26,"Médéa"),
+                    ( 26,"Médéa"),
                     ( 27,"Mostaganem"),
                     ( 28,"MSila"),
                     ( 29,"Mascara"),
@@ -69,6 +87,16 @@
                     ( 46,"Aïn Témouchent"),
                     ( 47,"Ghardaïa"),
                     ( 48,"Relizane");'); 
+            // Reno , pegeo , skoda , folkswagen , hyundai , kea , nisan , from 
+            // popular car brands  in algeria 
+            $this -> addSql('INSERT INTO model ( name_) values 
+                (reno) , (pegeot) , (skoda) , (folkswagen) , (hyundai),(kea) , (nisan)'); 
+            // inserting typical car  categories
+            $this->addSql(' INSERT INTO category (name_) values 
+             (mini) , (intermidiate) , (suv) ,(economy) , (luxury),(compact) , (offroad 4x4) 
+             , (compact cabrio), (pick up)
+            ');
+    
         
         } 
         public function up( Schema $schema): void
@@ -87,9 +115,6 @@
             ( "Annaba",23),
             ( "Sidi-Bel-Abbess",22),
             ( "Blida" , 9)' ) ; 
-
-    
-
 
         }
         public function down(Schema $schema) : void
