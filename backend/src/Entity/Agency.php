@@ -1,6 +1,6 @@
 <?php 
  namespace App\Entity;
-
+use Symfony\Component\Validator\Constraint as  ASSERT; 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM; 
 
@@ -14,13 +14,22 @@ use Doctrine\ORM\Mapping as ORM;
      * @ORM\Column(type="integer")
      */
     private $id; 
-    /** @ORM\Column(type="string" )*/
+    /** @ORM\Column(type="string" )
+     * @ASSERT\NotBlank
+    */
     private $agency_code; 
-    /** @ORM\Column(type="string" , length=15 )*/
+    /** @ORM\Column(type="string" , length=15 )
+     * @ASSERT\NotBlank
+    */
     private $phone_number; 
-    /** @ORM\Column(type="string" , length=100 )*/    
+    /** @ORM\Column(type="string" , length=100 )
+     * @ASSERT\NotBlank
+     * @ASSERT\Email(message="invalid email")
+     * */    
     private $email; 
-    /** @ORM\Column(type="string", length=300 )*/
+    /** @ORM\Column(type="string", length=300 )
+     * @ASSERT\NotBlank
+    */
     private $address; 
     /**
       * @ORM\ManyToOne(targetEntity="App\Entity\City")
@@ -31,16 +40,6 @@ use Doctrine\ORM\Mapping as ORM;
         * @ORM\OneToMany(targetEntity="App\Entity\Vehicle" , mappedBy="agency")
        */
     private $vehicles; 
-      function __construct(string $agency_code , int $phone_number , string $email, string $address )
-     {
-         $this ->agency_code = $agency_code; 
-         $this-> $phone_number=$phone_number; 
-         $this ->email=$email; 
-         $this->address = $address; 
-     }
-
-    function __construct2() {    /*empty construtor*/ }
-    
     //getters and setters
     function getid() :int{ 
         return $this-> id; 

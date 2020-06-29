@@ -3,7 +3,7 @@ namespace App\tests\controllers\admin;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class AdminControllerTest extends WebTestCase
+class a_AdminControllerTest extends WebTestCase
 {
     private $client = null;
     public function setUp()
@@ -14,11 +14,12 @@ class AdminControllerTest extends WebTestCase
     public function testShowPost()
     {
         $this->logIn();
-        $this->client->request('GET', '/admin/agency', [], [], ['CONTENT_TYPE' => 'application/json']);
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $this->client->request('Get', '/admin/logout');
+        echo ($this->client->getResponse()->getContent());
+        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
 
     }
-    private function logIn()
+    protected function logIn()
     {
 
         $this->client->request('POST', '/admin/login', [],
