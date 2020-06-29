@@ -1,5 +1,5 @@
 <?php 
-   namespace App\tests\controllers; 
+   namespace App\tests\controllers\client; 
       use App\Repository\ClientRepository;
       use Symfony\Bundle\FrameworkBundle\Test\WebTestCase; 
       class  ClientControllerTest  extends WebTestCase   {           

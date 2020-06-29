@@ -16,8 +16,8 @@ class dbTest  extends KernelTestCase{
          
          public function testShowPost(){ 
             self::bootKernel(); 
-            $entities=  [Admin_::class , Agency::class , Brand::class , Category::class , 
-            Client::class , Contract_::class ,Invoice::class , Model::class , 
+            $entities=  [Agency::class ,  
+            Client::class , Contract_::class ,Invoice::class ,
             Vehicle::class  ];
             $this->truncateEntities( $entities ); 
  
