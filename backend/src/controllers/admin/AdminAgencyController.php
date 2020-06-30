@@ -45,8 +45,8 @@
              if(count($error)>0) {  
                  return new JsonResponse( json_encode(['error'=> (string) $error]) , 400);
                 }
-             $this->entityManager->persiste($agency); 
-             $this->entityManager->flush();
+             $this->entityManager()->persist($agency); 
+             $this->entityManager()->flush();
              return new JsonResponse(["success" =>$agency], Response::HTTP_CREATED); 
            
          }catch(Exception $e) { 

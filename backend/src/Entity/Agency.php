@@ -1,6 +1,6 @@
 <?php 
  namespace App\Entity;
-use Symfony\Component\Validator\Constraint as  ASSERT; 
+use Symfony\Component\Validator\Constraints as  Assert; 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM; 
 
@@ -15,20 +15,20 @@ use Doctrine\ORM\Mapping as ORM;
      */
     private $id; 
     /** @ORM\Column(type="string" )
-     * @ASSERT\NotBlank
-    */
+     * @Assert\NotBlank
+      */
     private $agency_code; 
     /** @ORM\Column(type="string" , length=15 )
-     * @ASSERT\NotBlank
+     * @Assert\NotBlank
     */
     private $phone_number; 
     /** @ORM\Column(type="string" , length=100 )
-     * @ASSERT\NotBlank
-     * @ASSERT\Email(message="invalid email")
+     * @Assert\NotBlank
+     * @Assert\Email(message="invalid email")
      * */    
     private $email; 
     /** @ORM\Column(type="string", length=300 )
-     * @ASSERT\NotBlank
+     * @Assert\NotBlank
     */
     private $address; 
     /**
