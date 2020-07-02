@@ -14,20 +14,24 @@ use Doctrine\ORM\Mapping as ORM;
      * @ORM\Column(type="integer")
      */
     private $id; 
-    /** @ORM\Column(type="string" )
+    /** 
+     * @ORM\Column(type="string" )
      * @Assert\NotBlank
       */
     private $agency_code; 
-    /** @ORM\Column(type="string" , length=15 )
+    /**
+     *  @ORM\Column(type="string" , length=15 )
      * @Assert\NotBlank
     */
     private $phone_number; 
-    /** @ORM\Column(type="string" , length=100 )
+    /** 
+     * @ORM\Column(type="string" , length=100 )
      * @Assert\NotBlank
      * @Assert\Email(message="invalid email")
      * */    
     private $email; 
-    /** @ORM\Column(type="string", length=300 )
+    /** 
+     * @ORM\Column(type="string", length=300 )
      * @Assert\NotBlank
     */
     private $address; 

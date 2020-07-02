@@ -10,8 +10,18 @@
         {
             parent::__construct($registry, Vehicle::class); 
         }
-       
-        
+        /** 
+         * @return  Vehicle[]
+         */
+        public function findByAgencyId( int $id_agency){ 
+            $em=$this->getEntityManager(); 
+            $query= $em->createQuery( '
+               SELECT v 
+               FROM App\Entity\Vehicle  v 
+               where v.agency = :id_agency          
+            ')->setParameter('id_agency' , $id_agency); 
+            return $query->getResult(); 
+        }
     }
     
 

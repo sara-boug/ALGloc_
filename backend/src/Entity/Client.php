@@ -26,7 +26,8 @@
          * @Assert\Email(message ="email is not valid")
          */
         private $email;
-        /** @ORM\Column(type="string" , length=200)
+        /** 
+         * @ORM\Column(type="string" , length=200)
          * @Assert\NotBlank
          */
         private $password;

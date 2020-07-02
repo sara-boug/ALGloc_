@@ -12,7 +12,7 @@
     /**
      * Auto-generated Migration: Please modify to your needs!
      */
-    final class Version20200624223031 extends AbstractMigration
+    final class Version2 extends AbstractMigration
     {  
 
         public function getDescription() : string

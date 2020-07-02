@@ -32,7 +32,8 @@
     private $gearbox; 
             /** @ORM\Column(type="string" , length=300)*/
     private $status_; 
-           /**@ORM\ManyToOne(targetEntity="App\Entity\Agency")
+           /**
+            *@ORM\ManyToOne(targetEntity="App\Entity\Agency")
             * @ORM\JoinColumn(name="agency" , referencedColumnName="id")
             */
     private $agency;   
