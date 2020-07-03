@@ -3,6 +3,7 @@ namespace App\controllers\admin;
 
 use App\Entity\Agency;
 use App\Entity\City;
+use App\Repository\AgencyRepository;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManager;
 use Exception;
@@ -14,10 +15,10 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 //  routes regarding the agency Controller
-// /admin/agency     :  description: add one agency                       methods: post
-// /admin/agencies   :  description: iterating through all the agencies   methods: get
-// /admin/agency/{id} :  description: modifying specific agency            methods :   Patch  , Delete , get
-//
+// /admin/agency         :  description: add one agency                      methods: post
+// /admin/agencies       :  description: iterating through all the agencies  methods: get
+// /admin/agency/{id}    :  description: modifying specific agency           methods :Patch  , Delete , get
+// /admin/agency/city/id :  description: get agency by city name             methods:  GET
 
 class AdminAgencyController extends AbstractController
 {
@@ -143,11 +144,29 @@ class AdminAgencyController extends AbstractController
             return new JsonResponse($this->getJsonAgencyData($agency) , Response::HTTP_OK);
            }catch( Exception $e){ 
             return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+       }
 
+     }
+     
+         /** 
+         * @Route("/admin/agency/city/{id}" , name="get_agency_by_cityId" , methods ={"GET"})
+         */
+        public function  get_agency_by_cityId(int $id , AgencyRepository $agencyRepo):Response { 
+            try { 
+              $agencies=$agencyRepo->findByCityId($id); 
+              $jsonAgencies=[];
+               foreach ($agencies as $agency) {
+                  // turning each data into json jadata
+                   $data=$this->getJsonAgencyData($agency); 
+                   array_push($jsonAgencies, $data);
+              }
+              return new JsonResponse($jsonAgencies , Response::HTTP_OK);
+             }catch( Exception $e){ 
+              return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST);
          }
-
-           
-        }
+  
+       }
+  
 
     }
 

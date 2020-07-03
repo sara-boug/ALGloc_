@@ -4,6 +4,7 @@
         use App\Entity\Agency;
 use App\Entity\Vehicle;
 use App\Repository\VehicleRepository;
+use PHPUnit\Framework\Constraint\Count;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
         use Symfony\Bundle\FrameworkBundle\KernelBrowser;
   
@@ -33,6 +34,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
                  $this->post_agency();
                  $this->get_agencies(); 
                  $this->get_agency();
+                 $this->get_agency_by_cityId();
                  $this->patch_agency(); 
                  $this->delete_agency(); 
             }
@@ -63,8 +65,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
             public function get_agency(){ 
                 $this->client->request('GET', '/admin/agency/1' , [] ,[],['content_type' => 'Application/json']); 
-                echo( $this->client->getResponse()->getContent() ); 
-                $this->assertEquals(200, $this->client->getResponse()->getStatusCode()); 
+                 $this->assertEquals(200, $this->client->getResponse()->getStatusCode()); 
                 // assserting that the data was really updated 
                 $result =json_decode(  $this->client->getResponse()->getContent(),true);
                 // asserting that we are getting the real data
@@ -72,14 +73,28 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
             }
 
+            
+            public function get_agency_by_cityId(){ 
+                $this->client->request('GET', '/admin/agency/city/1' , [] ,[],['content_type' => 'Application/json']); 
+                $result =  $this->client->getResponse()->getContent();
+                echo($result); 
+
+                $this->assertEquals(200, $this->client->getResponse()->getStatusCode()); 
+                // assserting that the data was really updated 
+                // asserting that we are getting the real data
+                $this->assertEquals(count($result) , 1 ); 
+
+            }
+
+            
+
 
             
             public function patch_agency(){ 
                 $data =[ 'address' => 'algiers ouled fayet 18',
                           'city' => array( 'id' => 2,'name' => 'Boumerdes' )] ; 
                 $this->client->request('PATCH', '/admin/agency/1' , [] ,[],['content_type' => 'Application/json'],json_encode($data)); 
-                echo( $this->client->getResponse()->getContent() ); 
-                $this->assertEquals(200, $this->client->getResponse()->getStatusCode()); 
+                 $this->assertEquals(200, $this->client->getResponse()->getStatusCode()); 
                 // assserting that the data was really updated 
                 $result =json_decode(  $this->client->getResponse()->getContent(),true);
                 $this->assertEquals($data['address'] , $result['address']); 
@@ -88,8 +103,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
             public function delete_agency(){ 
  
                 $this->client->request('delete', '/admin/agency/1' , [] ,[],['content_type' => 'Application/json']); 
-                echo( $this->client->getResponse()->getContent() ); 
-                $this->assertEquals(200, $this->client->getResponse()->getStatusCode()); 
+                 $this->assertEquals(200, $this->client->getResponse()->getStatusCode()); 
                 // assserting that the data was really updated 
                 $agencyTable = static::$container->get('doctrine')->getManager()->getRepository( Agency::class) ;
                 $vehiculeTable = static::$container->get(VehicleRepository::class) ;
