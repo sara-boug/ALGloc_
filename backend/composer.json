@@ -8,7 +8,9 @@
         "doctrine/annotations": "^1.10",
         "doctrine/doctrine-migrations-bundle": "^2.1",
         "doctrine/migrations": "^2.2",
+        "gedmo/doctrine-extensions": "^2.4",
         "lexik/jwt-authentication-bundle": "^2.8",
+        "oneup/flysystem-bundle": "^3.5",
         "sensio/framework-extra-bundle": "^5.5",
         "symfony/console": "4.4.*",
         "symfony/dotenv": "4.4.*",
@@ -18,8 +20,10 @@
         "symfony/monolog-bundle": "^3.5",
         "symfony/orm-pack": "^1.0",
         "symfony/security-bundle": "4.4.*",
+        "symfony/serializer": "4.4.*",
         "symfony/validator": "4.4.*",
-        "symfony/yaml": "4.4.*"
+        "symfony/yaml": "4.4.*",
+        "willdurand/hateoas": "^2.12"
     },
     "require-dev": {
         "symfony/browser-kit": "4.4.*",

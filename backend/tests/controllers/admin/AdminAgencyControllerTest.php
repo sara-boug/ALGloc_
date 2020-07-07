@@ -2,10 +2,10 @@
         namespace App\tests\controllers\admin;
 
         use App\Entity\Agency;
-use App\Entity\Vehicle;
-use App\Repository\VehicleRepository;
-use PHPUnit\Framework\Constraint\Count;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+        use App\Entity\Vehicle;
+        use App\Repository\VehicleRepository;
+        use PHPUnit\Framework\Constraint\Count;
+        use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
         use Symfony\Bundle\FrameworkBundle\KernelBrowser;
   
          // testing the routes regarding the agency entity
@@ -36,7 +36,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
                  $this->get_agency();
                  $this->get_agency_by_cityId();
                  $this->patch_agency(); 
-                 $this->delete_agency(); 
+              //   $this->delete_agency(); 
             }
             public function post_agency()
             {
@@ -77,7 +77,6 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
             public function get_agency_by_cityId(){ 
                 $this->client->request('GET', '/admin/agency/city/1' , [] ,[],['content_type' => 'Application/json']); 
                 $result =  $this->client->getResponse()->getContent();
-                echo($result); 
 
                 $this->assertEquals(200, $this->client->getResponse()->getStatusCode()); 
                 // assserting that the data was really updated 
@@ -112,7 +111,5 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
                 // asserting that the data  associated with the agency is really deleted
                 $this->assertEquals(count($result) , 0); 
             }
-
-
 
         }

@@ -1,15 +1,20 @@
 <?php
     namespace App\Entity;
-
+    use JMS\Serializer\Annotation as Serializer;
+    use Hateoas\Configuration\Annotation as Hateoas; 
     use Doctrine\DBAL\Types\BinaryType;
     use Doctrine\DBAL\Types\BlobType;
     use Doctrine\ORM\Mapping as ORM; 
-    /** @ORM\Entity(repositoryClass="App\Repository\VehicleRepository") */
+    /** @ORM\Entity(repositoryClass="App\Repository\VehicleRepository")
+     *  @Serializer\XmLRoot("vehicle")
+     *  @Hateoas\Relation("self" , href="exp('/admin/vehicle/'~ object.getid())")
+     */
     class Vehicle { 
         /**
          * @ORM\Id
          * @ORM\GeneratedValue
          * @ORM\Column(type="integer")
+         * @Serializer\XmlAttribute
          */
     private $id; 
             /** @ORM\Column(type="string" )*/
@@ -32,31 +37,16 @@
     private $gearbox; 
             /** @ORM\Column(type="string" , length=300)*/
     private $status_; 
-           /**
+           /*
             *@ORM\ManyToOne(targetEntity="App\Entity\Agency")
             * @ORM\JoinColumn(name="agency" , referencedColumnName="id")
-            */
-    private $agency;   
-            /**
+             
+      private $agency;   
+          
             * @ORM\ManyToOne(targetEntity="App\Entity\Model")
             * @ORM\JoinColumn(name="model" , referencedColumnName="id")
             */
-    private $model; 
-
-    function __construct( string $registration_number, float $rental_price, float $inssurance_price,
-    int $passenger_number , BlobType $image_ , string $suitcase_number , string   $state_,  string $gearbox , string $status_ )
-    {
-        $this->registrationNummer = $registration_number;
-        $this->rental_price =$rental_price; 
-        $this->inssurance_price=$inssurance_price; 
-        $this->passenger_number=$passenger_number; 
-        $this->image_=$image_; 
-        $this->suitcase_number=$suitcase_number; 
-        $this->state_=$state_; 
-        $this->$gearbox=$gearbox; 
-        $this->$status_ =$status_; 
-
-    }
+    //private $model; */
 
         function getid():int{ 
             return $this ->id ; 
@@ -65,78 +55,78 @@
             $this ->id=$id; 
         }
 
-        function getregistration_number():string{ 
+        function getRegistrationNumber():string{ 
             return $this->registration_number; 
         }
-        function setregistration_number( string $registration_number) :void { 
+        function setRegistrationNumber( string $registration_number) :void { 
             $this ->registration_number = $registration_number; 
         }
 
         
-        function getrental_price():float{ 
+        function getRentalPrice():float{ 
             return $this ->rental_price; 
         }
-        function setrental_price(  float $rental_price ) :void { 
+        function setRentalPrice(  float $rental_price ) :void { 
             $this ->rental_price=$rental_price; 
         }
     
-        function getinssurance_price():float{ 
+        function getInssurancePrice():float{ 
             return $this ->inssurance_price; 
         }
-        function setinssurance_price( float $inssurance_price ) :void { 
+        function setInssurancePrice( float $inssurance_price ) :void { 
             $this ->inssurance_price=$inssurance_price; 
         }
 
-        function getdeposit():float{ 
+        function getDeposit():float{ 
             return $this ->deposit; 
         }
-        function setideposit( float $deposit ) :void { 
+        function setDeposit( float $deposit ) :void { 
             $this ->deposit=$deposit; 
         }
 
-        function getpassenger_number():int{ 
+        function getPassengerNumber():int{ 
             return $this ->passenger_number; 
         }
-        function setpassenger_number( int $passenger_number ) :void { 
+        function setPassengerNumber( int $passenger_number ) :void { 
             $this ->passenger_number=$passenger_number; 
         }
 
-        function getimage_():BlobType{ 
+        function getImage() { 
             return $this ->image_; 
         }
-        function setimage_( BinaryType $image_ ) :void { 
+        function setImage(  $image_ ) :void { 
             $this ->image_=$image_; 
         }
 
-        function getsuitcase_number():int { 
+        function getSuitcaseNumber():int { 
             return $this ->suitcase_number; 
         }
-        function setsuitcase_number( int $suitcase_number ) :void { 
+        function setSuitcaseNumber( int $suitcase_number ) :void { 
             $this ->suitcase_number=$suitcase_number; 
         }
 
-        function getstate_():string{ 
+        function getState():string{ 
             return $this ->state_; 
         }
-        function setstate_( string $state_ ) :void { 
+        function setState( string $state_ ) :void { 
             $this ->state_=$state_; 
         }
 
 
-        function getgearbox():string{ 
+        function getGearbox():string{ 
             return $this ->gearbox; 
         }
-        function setgearbox( string $gearbox) :void { 
+        function setGearbox( string $gearbox) :void { 
             $this ->gearbox=$gearbox; 
         }
 
-        function getstatus_():string{ 
+        function getStatus():string{ 
             return $this ->status_; 
         }
-        function setstatus_( string $status_) :void { 
+        function setStatus( string $status_) :void { 
             $this ->status_=$status_; 
         }
-        
+      /*  
         function getagency() : Agency{ 
            return $this->agency; 
         }
@@ -151,7 +141,7 @@
          function setmodel(Model $model) :void { 
                 $this->model = $model;
          }
- 
+ */
     }
 
     
