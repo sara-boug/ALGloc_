@@ -31,45 +31,48 @@
          private $agencies; 
         function __construct(int $id , string  $name_)
         { 
+           
              $this ->id =$id; 
              $this ->name_= $name_ ; 
             
         }
         function getid() :int 
         {  
+           
            return $this ->id ; 
         }
         function setid(int $id) :void { 
              $this ->id =$id ; 
         }
 
-        function getname_() :string
+        function getName() :string
         {  
+ 
            return $this ->name_ ; 
         }
-        function setname_(int $name_) :void { 
+        function setName(string $name_) :void { 
              $this ->name_=strtolower(trim($name_) ); 
         }
          
-        function getwilaya() :Wilaya
+        function getWilaya() :Wilaya
         {  
            return $this ->wilaya ; 
         }
-        function setwilaya(Wilaya $wilaya) :void { 
+        function setWilaya(Wilaya $wilaya) :void { 
              $this ->wilaya=$wilaya ; 
         }
         
-        function getclients() :Collection{ 
+        function getClients() :Collection{ 
            return $this->clients; 
         }
-        function setclients(Collection $clients) :void{ 
+        function setClients(Collection $clients) :void{ 
             $this->clients = $clients; 
        }
 
-       function getagencies() :Collection{ 
+       function getAgencies() :Collection{ 
           return $this->agencies; 
        }
-       function setagencies(Collection $agencies) :void{ 
+       function setAgencies(Collection $agencies) :void{ 
            $this->agencies = $agencies; 
       }
 

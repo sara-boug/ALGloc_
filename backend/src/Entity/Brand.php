@@ -2,9 +2,12 @@
     namespace App\Entity; 
     use Doctrine\Common\Collections\Collection;
     use  Doctrine\ORM\Mapping as ORM ;
+    use Hateoas\Configuration\Annotation as Hateoas; 
+    use JMS\Serializer\Annotation as Serializer ; 
 
    /**
    * @ORM\Entity(repositoryClass="App\Repository\ModelRepository")
+   * 
    */
  
    class Brand { 

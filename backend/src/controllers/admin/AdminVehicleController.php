@@ -3,6 +3,10 @@
 
         use App\Entity\Vehicle;
         use App\service\FileUploader;
+        use App\Entity\Agency; 
+        use App\Entity\Model; 
+        use App\Entity\City;
+        use App\Entity\Wilaya;
         use Exception;
         use Hateoas\HateoasBuilder;
         use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,56 +24,59 @@
         class AdminVehicleController extends AbstractController
         {
             private $serializer;
-            public function __construct(SerializerInterface $serializer)
+            private $hateoas;
+             public function __construct(SerializerInterface $serializer)
             {
                 $this->serializer = $serializer;
+                $this->hateoas = HateoasBuilder::create()->build();
+
             }
             // transforming the json body into a vehicle object
             private function toVehicleObject($body): Vehicle
             {
                 $vehicle = new Vehicle();
-                //   $vehicle ->setregistration_number($body["registration_number"]) ;
-                //       $vehicle->setrental_price($body["rental_price"]) ;
-                $vehicle->setdeposit($body["deposit"]);
-                //     $vehicle->setpassenger_number($body["passenger_number"]);
-                /* $vehicle->setimage_( $body["image_"]);
-                $vehicle->setsuitcase_number($body["suitcase_number"]);
-                $vehicle->setgearbox($body["gearbox"]);
-                $vehicle->setstatus_($body["status"]);
-                //finding the agency and the model through their ids
-                $agency=$this->getDoctrine()->getRepository(Agency::class)->findOneBy(['id' =>$body["agency"]["id"]]);
+                $vehicle ->setRegistrationNumber($body["registration_number"]) ;
+                $vehicle->setRentalPrice($body["rental_price"]) ;
+                $vehicle->setInssurancePrice($body["inssurance_price"]) ;
+                $vehicle->setDeposit($body["deposit"]);
+                $vehicle->setpassengernumber($body["passenger_number"]);
+                $vehicle->setimage( $body["image_"]);
+                $vehicle ->setState($body["state"]); 
+                $vehicle->setSuitcaseNumber($body["suitcase_number"]);
+                $vehicle->setGearbox($body["gearbox"]);
+                $vehicle->setStatus($body["status"]);
+                //finding the agency and the model through their idsthat are provided by hte request 
+                
+                $agency=$this->getDoctrine()->getRepository(Agency::class)->findOneBy(['id' =>$body["agency"]["id"]] );
+                $agencycity= $this->getDoctrine()->getRepository(City::class)->findOneBy(['id' =>$agency->getCity()->getid()]);
+                $agencycityWilaya= $this->getDoctrine()->getRepository(Wilaya::class)->findOneBy(['id'=>$agencycity->getid()]); 
+                $vehicle->setagency($agency) ;
+                $vehicle->getagency()->setCity($agencycity);  
+                $vehicle->getagency()->getCity()->setWilaya($agencycityWilaya); 
                 $model= $this->getDoctrine()->getRepository(Model::class)->findOneBy(['id' =>$body["model"]["id"]]);
-                /*   $vehicle->setagency($agency);
-                $vehicle->setmodel($model); */
-                return $vehicle;
-
+                $vehicle->setmodel($model); 
+                 return $vehicle;
             }
             /**
              * @Route("/admin/vehicle" , name="post_vehicle" , methods={"POST"})
              */
             public function post_vehicle(Request $request, FileUploader $uploader): Response
-            {
-                try {
-                    //dd($request->getContent());
-                    $image= new UploadedFile( 'tests\imageFolderTest\car.jpeg' , 'car'  , 'image/jpeg' , null); 
-                    $vehicle = $this->serializer->deserialize(
-                        $request->getContent(),
-                        Vehicle::class,
-                        'json'
-                    );
-                     $url =$uploader->uploadVehicleImage($image);
+            {        
+                    $em= $this->getDoctrine()->getManager();
+                     // extracting the file from the request , the image is called car 
+                    $image= $request->files->get('car'); 
+                    $vehicle = $this->toVehicleObject(json_decode( $request->getContent() , true)); 
+
+                    // using the file uplloader 
+                    $url =$uploader->uploadVehicleImage($image);
+                    // setting the refference url 
                     $vehicle->setImage($url);
-                    $em = $this->getDoctrine()->getManager();
-                    $em->persist($vehicle);
-                    $em->flush();
-                    // $json=$hateoas->serialize($vehicle, 'json');
-                    return new JsonResponse("json", Response::HTTP_OK);
+                      $em->persist($vehicle);
+                     $em->flush();
+                     $vehicleJson = $this ->hateoas->serialize($vehicle  , 'json'); 
+                      dd($vehicleJson); 
+                     return new JsonResponse(  $vehicleJson, Response::HTTP_OK);
 
-                } catch (Exception $e) {
-                    echo($e->getMessage());
-                    return new JsonResponse($e->getMessage(), Response::HTTP_BAD_REQUEST);
-
-                }
-
-            }
+                }  
+           
         }

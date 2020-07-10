@@ -20,7 +20,6 @@ class AdminVehicleControllerTest extends WebTestCase{
      
      public function postVehicle() { 
           $image= new UploadedFile( 'tests\imageFolderTest\car.jpeg' , 'car.jpeg'  , 'image.jpeg' , null); 
-   
           $data = [
             "registration_number" => "200616D24"  , 
             "rental_price" =>6000, 
@@ -32,9 +31,11 @@ class AdminVehicleControllerTest extends WebTestCase{
             "gearbox" =>"automatique", 
             "state" => "new", 
             "status"=>"allouer",
+            "agency" => array( "id" =>1 ) , 
+              "model" => array("id" =>1  )
                  ]; 
  
-          $this->client->request( 'POST', '/admin/vehicle' , [],[] , ['content-Type' => 'Application/json'] , 
+          $this->client->request( 'POST', '/admin/vehicle' , [],['car' =>$image] , ['content-Type' => 'Application/json'] , 
            json_encode($data) ); 
           echo($this->client->getResponse()->getContent()); 
      }

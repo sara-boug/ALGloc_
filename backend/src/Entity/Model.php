@@ -47,11 +47,11 @@
                 $this ->id =$id ; 
             }
 
-            function getname_() :string
+            function getname() :string
             {  
             return $this ->name_ ; 
             }
-            function setname_(int $name_) :void { 
+            function setname(int $name_) :void { 
                 $this ->name_=$name_ ; 
             }
 

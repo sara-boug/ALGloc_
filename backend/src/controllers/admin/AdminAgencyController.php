@@ -33,13 +33,13 @@ class AdminAgencyController extends AbstractController
     } 
 
     private function getJsonAgencyData($agency){ 
-         return  ['agency_code' => $agency->getagency_code(),
-                  'phone_number' => $agency->getphone_number(),
+         return  ['agency_code' => $agency->getAgencyCode(),
+                  'phone_number' => $agency->getPhoneNumber(),
                   'email' => $agency->getemail(),
                   'address' => $agency->getaddress(),
                   'city' => array(
                       'id' => $agency->getcity()->getid(),
-                      'name' => $agency->getcity()->getname_())];
+                      'name' => $agency->getcity()->getname())];
     }
     /**
      * @Route("/admin/agency"  , name="agency_add" , methods ={"POST"})
@@ -48,9 +48,9 @@ class AdminAgencyController extends AbstractController
     {
         try {
             $body = json_decode($request->getContent(), true);
-            $agency = new Agency();
-            $agency->setagency_code($body['agency_code']);
-            $agency->setphone_number($body['phone_number']);
+            $agency = new Agency( );
+            $agency->setAgencyCode($body['agency_code']);
+            $agency->setPhoneNumber($body['phone_number']);
             $agency->setemail($body['email']);
             $agency->setaddress($body['address']);
             $city = $this->getRepo(City::class)->findOneBy(['id' => $body['city']['id'], 'name_' => $body['city']['name']]);

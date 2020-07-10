@@ -35,7 +35,7 @@
                  $this->get_agencies(); 
                  $this->get_agency();
                  $this->get_agency_by_cityId();
-                 $this->patch_agency(); 
+               //  $this->patch_agency(); 
               //   $this->delete_agency(); 
             }
             public function post_agency()

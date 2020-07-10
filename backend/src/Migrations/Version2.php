@@ -76,16 +76,24 @@
                     ( 48,"Relizane");'); 
             // Reno , pegeo , skoda , folkswagen , hyundai , kea , nisan , from 
             // popular car brands  in algeria 
-            $this -> addSql('INSERT INTO model ( name_) values 
+            $this -> addSql('INSERT INTO brand ( name_) values 
                 ("reno") , ("pegeot") , ("skoda") , ("folkswagen") , ("hyundai"),("kea") , ("nisan")'); 
             // inserting typical car  categories
             $this->addSql(' INSERT INTO category (name_) values 
              ("mini") , ("intermidiate") , ("suv") ,("economy") , ("luxury"),("compact") , ("offroad 4x4") 
              , ("compact cabrio"), ("pick up")
             ');
+            $this->addSql('INSERT INTO model (category , brand , name_ ) values 
+               (1 , 2 , "AC 3000ME") , 
+               (2 , 3 , "AC/Shelby Cobra") , 
+               (3 , 1 , "AC Frua") , 
+               (2 , 2 , "Alfa Romeo 75") , 
+               (1 , 1 , "Alfa Romeo 33")  
+             '); 
     
         
-         
+        
+    
             $this->addSql('INSERT INTO City (name_, wilaya) VALUES
             ( "Algiers" ,16),
             ( "Boumerdes",35),
