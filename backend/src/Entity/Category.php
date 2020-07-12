@@ -3,9 +3,12 @@
 
   use Doctrine\Common\Collections\Collection;
   use  Doctrine\ORM\Mapping as ORM ;
+  use Hateoas\Configuration\Annotation as Hateoas;
+  use JMS\Serializer\Annotation as Serializer;
 
    /**
    * @ORM\Entity(repositoryClass="App\Repository\ModelRepository")
+    *  @Serializer\XmlRoot("category")
    */
  
    class Category { 
@@ -23,6 +26,8 @@
             /**
               * @ORM\OneToMany(targetEntity="App\Entity\Model" , mappedBy="category")
              */
+             /** @Serializer\Exclude */
+
             private $models; 
             function __construct(int $id , string  $name_)
             { 

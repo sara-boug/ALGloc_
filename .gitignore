@@ -18,6 +18,7 @@ backend/public/index.php
 backend/bin
 backend/.env
 backend/src/Kernel.php
+backend/uploads/image
 /LoginForm.php
 
 symfony.lock

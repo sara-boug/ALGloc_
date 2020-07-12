@@ -5,8 +5,6 @@
         use App\service\FileUploader;
         use App\Entity\Agency; 
         use App\Entity\Model; 
-        use App\Entity\City;
-        use App\Entity\Wilaya;
         use Exception;
         use Hateoas\HateoasBuilder;
         use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,7 +13,11 @@
         use Symfony\Component\HttpFoundation\Response;
         use Symfony\Component\Routing\Annotation\Route;
         use Symfony\Component\Serializer\SerializerInterface;
-        use Symfony\Component\HttpFoundation\File\UploadedFile;
+        use Symfony\Component\Routing\Generator\UrlGeneratorInterface; 
+        use Hateoas\UrlGenerator\CallableUrlGenerator;
+        use Symfony\Component\Routing\RouterInterface; 
+        use Hateoas\Representation\CollectionRepresentation; 
+        use Hateoas\Representation\PaginatedRepresentation; 
 
         // routes regarding Admin Vehicle controller
         // /admin/vehicle      : description : posting a specefic vehicle                        methods: POST
@@ -25,11 +27,18 @@
         {
             private $serializer;
             private $hateoas;
-             public function __construct(SerializerInterface $serializer)
+             public function __construct(SerializerInterface $serializer , RouterInterface $router)
             {
                 $this->serializer = $serializer;
-                $this->hateoas = HateoasBuilder::create()->build();
-
+                $this->hateoas = HateoasBuilder::create()
+                ->setUrlGenerator(
+                    null, 
+                    new CallableUrlGenerator(function ($route, array $parameters, $absolute) use (  $router ) {
+                        return  $router->generate($route, $parameters,UrlGeneratorInterface::ABSOLUTE_URL);
+                    })
+                )
+                ->build();
+            
             }
             // transforming the json body into a vehicle object
             private function toVehicleObject($body): Vehicle
@@ -45,38 +54,157 @@
                 $vehicle->setSuitcaseNumber($body["suitcase_number"]);
                 $vehicle->setGearbox($body["gearbox"]);
                 $vehicle->setStatus($body["status"]);
-                //finding the agency and the model through their idsthat are provided by hte request 
-                
+               
                 $agency=$this->getDoctrine()->getRepository(Agency::class)->findOneBy(['id' =>$body["agency"]["id"]] );
-                $agencycity= $this->getDoctrine()->getRepository(City::class)->findOneBy(['id' =>$agency->getCity()->getid()]);
-                $agencycityWilaya= $this->getDoctrine()->getRepository(Wilaya::class)->findOneBy(['id'=>$agencycity->getid()]); 
                 $vehicle->setagency($agency) ;
-                $vehicle->getagency()->setCity($agencycity);  
-                $vehicle->getagency()->getCity()->setWilaya($agencycityWilaya); 
                 $model= $this->getDoctrine()->getRepository(Model::class)->findOneBy(['id' =>$body["model"]["id"]]);
                 $vehicle->setmodel($model); 
-                 return $vehicle;
+                return $vehicle;
             }
             /**
              * @Route("/admin/vehicle" , name="post_vehicle" , methods={"POST"})
              */
             public function post_vehicle(Request $request, FileUploader $uploader): Response
             {        
+                  try {
                     $em= $this->getDoctrine()->getManager();
                      // extracting the file from the request , the image is called car 
                     $image= $request->files->get('car'); 
                     $vehicle = $this->toVehicleObject(json_decode( $request->getContent() , true)); 
-
                     // using the file uplloader 
                     $url =$uploader->uploadVehicleImage($image);
                     // setting the refference url 
                     $vehicle->setImage($url);
-                      $em->persist($vehicle);
-                     $em->flush();
-                     $vehicleJson = $this ->hateoas->serialize($vehicle  , 'json'); 
-                      dd($vehicleJson); 
-                     return new JsonResponse(  $vehicleJson, Response::HTTP_OK);
+                    $em->persist($vehicle);
+                    $em->flush();
+                    $vehicleJson = $this ->hateoas->serialize($vehicle , 'json'  ); 
+                    return new  Response(  $vehicleJson, Response::HTTP_CREATED); 
+                }catch(Exception $e){ 
+                    return new  JsonResponse( ['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST); 
 
-                }  
+                }
+            }  
            
+            // returns a json object containing the collection of vehicles according to their selection 
+            private function pagination(array $vehicles){ 
+                $limit= 10; 
+                //getting the exact count of the total of the pages  
+                $total =  $vehicles %10 == 0 ? count( $vehicles)/$limit : (count( $vehicles)/$limit)+1  ; 
+                $vehiclesPag= new PaginatedRepresentation(  // enabling paginations 
+                 new CollectionRepresentation($vehicles) , 
+                   'get_vehicles', 
+                    array() , 
+                     1, 
+                     $limit, 
+                     $total, 
+                    'page', 
+                    'total', 
+                     false , 
+                     count($vehicles) );
+                return $vehiclesPag; 
+            }
+            /** @Route("/admin/vehicles" , name="get_vehicles_default" , methods={"GET"}) */
+            public function  get_vehicles_default():Response { 
+            try {
+                  $vehicles= $this->getDoctrine()->getRepository(Vehicle::class)->findAll() ;
+                  $vehiclesPag= $this->pagination( $vehicles); 
+                  $vehiclesJson= $this->hateoas->serialize($vehiclesPag , 'json'); 
+                  return new Response($vehiclesJson , Response::HTTP_OK) ;
+                }catch(Exception $e) { 
+                    return new  JsonResponse( ['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST); 
+
+                }
+            }
+            /** @Route("/admin/vehicles/agency/{id}" , name="get_vehicles_default" , methods={"GET"}) */
+            public function  getVehiclesByAgency(int $agencyId):Response { 
+                try {
+                      $vehicles= $this->getDoctrine()->getRepository(Vehicle::class)->findBy([
+                          'agency' => $agencyId
+                      ]) ;
+                      $vehiclesPag= $this->pagination( $vehicles); 
+                      $vehiclesJson= $this->hateoas->serialize($vehiclesPag , 'json'); 
+                      return new Response($vehiclesJson , Response::HTTP_OK) ;
+                    }catch(Exception $e) { 
+                        return new  JsonResponse( ['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST); 
+    
+                    }
+                }
+    
+         
+
+            /** @Route("/admin/vehicle/{id}" , name="get_vehicle_by_id" , methods ={"GET"})  */
+            public function getVehicleById(int $id) : Response  { 
+               try{
+                    $vehicle= $this->getDoctrine()->getRepository(Vehicle::class)->findOneBy([
+                        'id' =>$id
+                    ]) ;
+                    $vehicleJson= $this->hateoas->serialize($vehicle , 'json'); 
+                    return new Response($vehicleJson , Response::HTTP_OK) ;
+                   }catch(Exception $e ) { 
+                    return new  JsonResponse( ['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST); 
+
+                   }
+
+            }
+             /** @Route("/admin/vehicle/{id}" , name="patch_vehicle_by_id" , methods ={"PATCH"})  */
+            public function patchVehicleById(int $id , Request $request , FileUploader $uploader) : Response  { 
+                try{
+                    $em= $this->getDoctrine()->getManager(); 
+                     $vehicle= $em->getRepository(Vehicle::class)->findOneBy([ 'id' =>$id]) ;
+                     $body = json_decode($request->getContent() , true); 
+                     // updaing each value accoriding to its avaialability in the body 
+                       if( isset($body["registration_number"])) { $vehicle ->setRegistrationNumber($body["registration_number"]) ; }
+                       if(isset($body["rental_price"])){$vehicle->setRentalPrice($body["rental_price"]);}
+                       if(isset($body["inssurance_price"])){$vehicle->setInssurancePrice($body["inssurance_price"]);}
+                       if(isset($body["deposit"])){$vehicle->setDeposit($body["deposit"]);}
+                       if(isset($body["passenger_number"])){$vehicle->setpassengernumber($body["passenger_number"]);}
+                       if( $request->files->get('car')){
+                           $url= $uploader->uploadVehicleImage($request->files->get('car'));
+                           $vehicle->setimage( $url);
+                        }
+                       if(isset($body["state"])){$vehicle ->setState($body["state"]);}
+                       if(isset($body["suitcase_number"])){$vehicle->setSuitcaseNumber($body["suitcase_number"]);}
+                       if(isset($body["gearbox"])){$vehicle->setGearbox($body["gearbox"]);}
+                       if(isset($body["status"])){ $vehicle->setStatus($body["status"]);}
+                       // saving the changes 
+                       $em->flush(); 
+                       $vehicleJson= $this->hateoas->serialize($vehicle , 'json'); 
+                     return new Response($vehicleJson , Response::HTTP_OK) ;
+                    }catch(Exception $e ) { 
+                     return new  JsonResponse( ['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST); 
+ 
+                    }
+ 
+             }
+
+             /** @Route("/admin/vehicle/{id}/image" , name="get_vehicle_image" , methods ={"GET"})  */            
+             public function getVehicleImage(int $id) :Response{ 
+                try{
+                $vehicle= $this->getDoctrine()->getRepository(Vehicle::class)->findOneBy(['id' =>$id ]);
+                $vehicleImage= $vehicle->getImage(); 
+                $url = 'uploads/image/'.$vehicleImage; 
+                
+                return new JsonResponse(["image" => $url] , Response::HTTP_OK) ;
+                }catch(Exception $e){ 
+                    return new  JsonResponse( ['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST); 
+
+                }
+                
+         
+             }
+ 
+             /** @Route("/admin/vehicle/{id}" , name="delete_vehicle_by_id" , methods ={"DELETE"})  */
+             public function deleteVehicle(int $id):Response { 
+                try{ 
+                  $em= $this->getDoctrine()->getManager();
+                  $vehicle= $this->getDoctrine()->getRepository(Vehicle::class)->findOneBy(['id' =>$id ]);
+                  $em->remove($vehicle) ; 
+                  $em->flush();
+                  return new JsonResponse(["message" => "deleted successfully"] , Response::HTTP_OK) ;
+                }catch(Exception $e){ 
+                    return new  JsonResponse( ['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST); 
+                }
+             }
+ 
+
         }

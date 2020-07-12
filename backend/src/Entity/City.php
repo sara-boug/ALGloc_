@@ -1,9 +1,14 @@
 <?php 
      namespace App\Entity;
      use Doctrine\Common\Collections\Collection;
-     use  Doctrine\ORM\Mapping as ORM ; 
-  /**
+     use  Doctrine\ORM\Mapping as ORM ;
+     use Hateoas\Configuration\Annotation as Hateoas;
+     use JMS\Serializer\Annotation as Serializer;
+
+   /**
   * @ORM\Entity(repositoryClass="App\Repository\CityRepository")
+   *  @Serializer\XmlRoot("vehicle")
+
   */
  class City { 
         /** 
@@ -24,10 +29,14 @@
          /**
           * @ORM\OneToMany(targetEntity="App\Entity\Client" , mappedBy="city")
           */
+          /** @Serializer\Exclude */
+
          private $clients;
           /**
           * @ORM\OneToMany(targetEntity="App\Entity\Agency" , mappedBy="city")
           */
+          /** @Serializer\Exclude */
+
          private $agencies; 
         function __construct(int $id , string  $name_)
         { 

@@ -2,9 +2,13 @@
     namespace App\Entity; 
     use Doctrine\Common\Collections\Collection;
     use  Doctrine\ORM\Mapping as ORM ;
+    use Hateoas\Configuration\Annotation as Hateoas;
+    use JMS\Serializer\Annotation as Serializer;
+
 
    /**
    * @ORM\Entity(repositoryClass="App\Repository\ModelRepository")
+   * @Serializer\XmlRoot("model")
    */
  
    class Model { 
@@ -22,6 +26,8 @@
             /**
               * @ORM\OneToMany(targetEntity="App\Entity\Vehicle" , mappedBy="model")
              */
+              /** @Serializer\Exclude */
+
             private $vehicles; 
              /**
               *@ORM\ManyToOne(targetEntity="App\Entity\Category")

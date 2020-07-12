@@ -9,8 +9,10 @@
 
       /**
       * @ORM\Entity(repositoryClass="App\Repository\AgencyRepository")
-      *  @Serializer\XmlRoot("agency")
-      * @Hateoas\Relation("self" , href="expr('/admin/agency/' ~ object.getid())")
+      * @Serializer\XmlRoot("agency")
+      * @Hateoas\Relation("self" ,
+      * href=@Hateoas\Route("get_agency" ,parameters={"id"= "expr( object.getid())"}) 
+      * )
       */
     class Agency { 
         /**
@@ -49,9 +51,10 @@
           /**
             * @ORM\OneToMany(targetEntity="App\Entity\Vehicle" , mappedBy="agency")
           */
+          /** @Serializer\Exclude */
+
         private $vehicles; 
         //getters and setters
-
       
         
         function getid() :int{ 

@@ -7,9 +7,11 @@
         /**
          * @ORM\Entity(repositoryClass="App\Repository\VehicleRepository")
          *  @Serializer\XmlRoot("vehicle")
-         *  @Hateoas\Relation("self" , href="expr('/admin/vehicle/'~ object.getid())"
+         * @Hateoas\Relation(
+         *     "self",
+         *     href = @Hateoas\Route("post_vehicle", parameters = {"id" = "expr(object.getId())"} )
          * )
-         */
+        */         
         class Vehicle
         {
             /**
@@ -30,7 +32,7 @@
             private $deposit;
             /** @ORM\Column(type="integer" )*/
             private $passenger_number;
-            /** @ORM\Column(type="blob" )*/
+            /** @ORM\Column(type="string" )*/
             private $image_;
             /** @ORM\Column(type="integer" )*/
             private $suitcase_number;

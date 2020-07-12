@@ -2,12 +2,12 @@
     namespace App\Entity; 
     use Doctrine\Common\Collections\Collection;
     use  Doctrine\ORM\Mapping as ORM ;
-    use Hateoas\Configuration\Annotation as Hateoas; 
-    use JMS\Serializer\Annotation as Serializer ; 
+    use Hateoas\Configuration\Annotation as Hateoas;
+    use JMS\Serializer\Annotation as Serializer;
 
    /**
    * @ORM\Entity(repositoryClass="App\Repository\ModelRepository")
-   * 
+    *  @Serializer\XmlRoot("brand")
    */
  
    class Brand { 
@@ -25,6 +25,8 @@
             /**
               * @ORM\OneToMany(targetEntity="App\Entity\Model" , mappedBy="brand")
              */
+             /** @Serializer\Exclude */
+
             private $models; 
             function __construct(int $id , string  $name_)
             { 

@@ -2,9 +2,13 @@
  namespace App\Entity;
 
 use Doctrine\Common\Collections\Collection;
-use  Doctrine\ORM\Mapping as ORM ; 
+use  Doctrine\ORM\Mapping as ORM ;
+use Hateoas\Configuration\Annotation as Hateoas;
+use JMS\Serializer\Annotation as Serializer;
+
  /**
   * @ORM\Entity(repositoryClass="App\Repository\WilayaRepository")
+  *  @Serializer\XmlRoot("vehicle")
   */
  class Wilaya { 
         /** 
@@ -20,6 +24,8 @@ use  Doctrine\ORM\Mapping as ORM ;
         /**
          * @ORM\OneToMany(targetEntity="App\Entity\City" , mappedBy="wilaya")
          */
+        /** @Serializer\Exclude */
+
         private $cities; 
         function __construct(int $id , string  $name_)
         { 

@@ -17,7 +17,7 @@ class FileUploader  {
 
         public function uploadVehicleImage(File $file){ 
            
-          if($file instanceof UploadedFile) { 
+          if($file instanceof UploadedFile) {
             $filename= $file->getClientOriginalName(); 
             }else { $filename = $file->getFilename();}
              $url=Urlizer::urlize( pathinfo($filename, PATHINFO_FILENAME))

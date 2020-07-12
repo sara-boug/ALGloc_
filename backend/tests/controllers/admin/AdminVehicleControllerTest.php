@@ -1,5 +1,6 @@
 <?php
 
+use App\Entity\Vehicle;
 use Gedmo\Mapping\Annotation\Uploadable;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile; 
@@ -7,7 +8,7 @@ use Gedmo\Sluggable\Util\Urlizer;
 class AdminVehicleControllerTest extends WebTestCase{ 
      private $client ; 
      private $admin ; 
-     function setUp(){ 
+     function setUp():void  { 
          $this->client= static::createClient(); 
          $this->admin = self::bootKernel()->getContainer()->get('App\service\Setting'); 
 
@@ -16,6 +17,11 @@ class AdminVehicleControllerTest extends WebTestCase{
      public function testVehicleRoute(){ 
          $this->admin->logIn($this->client, $this); 
          $this->postVehicle(); 
+         $this->getVehicles(); 
+         $this->getVehicleById(); 
+         $this->patchVehicleById(); 
+         $this->getVehicleImage(); 
+        // $this->deleteVehicleById();
      }
      
      public function postVehicle() { 
@@ -32,13 +38,61 @@ class AdminVehicleControllerTest extends WebTestCase{
             "state" => "new", 
             "status"=>"allouer",
             "agency" => array( "id" =>1 ) , 
-              "model" => array("id" =>1  )
+            "model" => array("id" =>1  )
                  ]; 
  
           $this->client->request( 'POST', '/admin/vehicle' , [],['car' =>$image] , ['content-Type' => 'Application/json'] , 
-           json_encode($data) ); 
-          echo($this->client->getResponse()->getContent()); 
-     }
+          json_encode($data) ); 
+          $this->assertEquals($this->client->getResponse()-> getStatusCode() , 201)  ; 
+      }
+
+
+      public function getVehicles() { 
+        $this->client->request( 'GET', '/admin/vehicles' , [],[] , ['content-Type' => 'Application/json']  ); 
+        $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  )  ; 
+    } 
+
+    public function getVehicleById() { 
+        $this->client->request( 'GET', '/admin/vehicle/1' , [],[] , ['content-Type' => 'Application/json']  ); 
+        $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  )  ; 
+
+    }
+
+
+    public function patchVehicleById() { 
+        $image= new UploadedFile( 'tests\imageFolderTest\car.jpeg' , 'car.jpeg'  , 'image.jpeg' , null); 
+        $data = [
+          "registration_number" => "200616C33"  , 
+        ]; 
+      
+        $this->client->request( 'PATCH', '/admin/vehicle/1' , [],['car' =>$image] , ['content-Type' => 'Application/json'] , 
+        json_encode($data) ); 
+
+        $vehicleTable = static::$container->get('doctrine')->getManager()->getRepository( Vehicle::class) ;
+        $vehicle=  $vehicleTable->findOneBy(['id' =>1]); 
+        $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200)  ;
+        // asserting that the value is really updated  
+        $this->assertEquals($vehicle->getRegistrationNumber() , $data["registration_number"]); 
+
+    }
+
+
+    public function getVehicleImage() { 
+      
+        $this->client->request( 'GET', '/admin/vehicle/1/image' ); 
+        $this->assertEquals($this->client->getResponse()-> getStatusCode(), 200)  ;
+  
+    }
+
+
+    public function deleteVehicleById() { 
+        $this->client->request( 'DELETE', '/admin/vehicle/1' , [],[] , ['content-Type' => 'Application/json']  ); 
+        echo($this->client->getResponse()->getContent()); 
+
+        $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  )  ; 
+
+    }
+
 
     
 
