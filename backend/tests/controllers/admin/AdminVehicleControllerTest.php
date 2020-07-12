@@ -46,10 +46,18 @@ class AdminVehicleControllerTest extends WebTestCase{
           $this->assertEquals($this->client->getResponse()-> getStatusCode() , 201)  ; 
       }
 
-
+      // testing the vehicles selection
       public function getVehicles() { 
         $this->client->request( 'GET', '/admin/vehicles' , [],[] , ['content-Type' => 'Application/json']  ); 
-        $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  )  ; 
+         $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
+        $this->client->request( 'GET', '/admin/vehicles/agency/1' , [],[] , ['content-Type' => 'Application/json']  ); 
+        $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
+        $this->client->request( 'GET', '/admin/vehicles/model/1' , [],[] , ['content-Type' => 'Application/json']  ); 
+        $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
+ 
+
+
+
     } 
 
     public function getVehicleById() { 

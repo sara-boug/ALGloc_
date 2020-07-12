@@ -9,9 +9,10 @@
          *  @Serializer\XmlRoot("vehicle")
          * @Hateoas\Relation(
          *     "self",
-         *     href = @Hateoas\Route("post_vehicle", parameters = {"id" = "expr(object.getId())"} )
+         *     href = @Hateoas\Route("get_vehicle_by_id", parameters = 
+         *    {"id" = "expr(object.getid())"    } )
          * )
-        */         
+         */         
         class Vehicle
         {
             /**
