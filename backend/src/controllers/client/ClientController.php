@@ -49,7 +49,7 @@ class ClientController extends AbstractController
                 $client ->setlicense_number($body["license_number"]);
                 // finding the city object 
                  $city = $entityManager->getRepository(City::class) ->findOneBy([
-                     'id' => $body["city"]["id"] , 'name_' =>$body["city"]["name_"]]);  
+                     'id' => $body["city"]["id"] ]);  
                  $client->setcity($city); 
                 $errors=$validator ->validate($client);  // validating the user input
                 if(count($errors)>0) {                 

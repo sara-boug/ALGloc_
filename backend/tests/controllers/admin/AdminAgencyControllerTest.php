@@ -14,7 +14,7 @@
             private $client = null  ;
             private $admin; 
             private $data ; 
-            public function setUp()
+            public function setUp():void 
             {   
                  
                $this->client = static::createClient();
@@ -24,7 +24,7 @@
                         'phone_number' => '0654789147',
                         'email' => 'agency@gmail.com',
                         'address' => 'algiers ouled fayet 14',
-                        'city' => array( 'id' => 1,'name' => 'algiers' )];
+                        'city' => array( 'id' => 1 )];
 
 
             }

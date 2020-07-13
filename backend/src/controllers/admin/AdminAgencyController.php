@@ -53,7 +53,7 @@ class AdminAgencyController extends AbstractController
             $agency->setPhoneNumber($body['phone_number']);
             $agency->setemail($body['email']);
             $agency->setaddress($body['address']);
-            $city = $this->getRepo(City::class)->findOneBy(['id' => $body['city']['id'], 'name_' => $body['city']['name']]);
+            $city = $this->getRepo(City::class)->findOneBy(['id' => $body['city']['id']]);
             $agency->setcity($city);
             // validating the agency object
             $error = $validator->validate($agency);

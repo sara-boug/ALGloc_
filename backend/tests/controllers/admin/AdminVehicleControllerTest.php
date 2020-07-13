@@ -1,11 +1,9 @@
 <?php
 
 use App\Entity\Vehicle;
-use Gedmo\Mapping\Annotation\Uploadable;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile; 
-use Gedmo\Sluggable\Util\Urlizer;
-class AdminVehicleControllerTest extends WebTestCase{ 
+ class AdminVehicleControllerTest extends WebTestCase{ 
      private $client ; 
      private $admin ; 
      function setUp():void  { 
@@ -95,7 +93,6 @@ class AdminVehicleControllerTest extends WebTestCase{
 
     public function deleteVehicleById() { 
         $this->client->request( 'DELETE', '/admin/vehicle/1' , [],[] , ['content-Type' => 'Application/json']  ); 
-        echo($this->client->getResponse()->getContent()); 
 
         $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  )  ; 
 

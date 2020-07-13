@@ -11,7 +11,7 @@
       * @ORM\Entity(repositoryClass="App\Repository\AgencyRepository")
       * @Serializer\XmlRoot("agency")
       * @Hateoas\Relation("self" ,
-      * href=@Hateoas\Route("get_agency" ,parameters={"id"= "expr( object.getid())"}) 
+      * href=@Hateoas\Route("get_agency" , parameters={"id"= "expr( object.getid())"}) 
       * )
       */
     class Agency { 

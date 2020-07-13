@@ -5,7 +5,8 @@
         use App\Entity\Model;
         use App\Entity\Vehicle;
         use App\service\FileUploader;
-        use Exception;
+use App\service\RouteSettings;
+use Exception;
         use Hateoas\HateoasBuilder;
         use Hateoas\Representation\PaginatedRepresentation;
         use Hateoas\UrlGenerator\CallableUrlGenerator;
@@ -22,8 +23,8 @@
         // /admin/vehicle      : description : posting a specefic vehicle                        methods: POST
         // /admin/vehicles     : description : getting the whole available vehicles               methods:GET
          
-        // (to be imporver ) /admin/vehicles/agency/{id}     : description : getting the whole available vehicles  according to the agency      methods:GET
-        // (to be imporver ) /admin/vehicles/modely/{id}     : description : getting the whole available vehicles  according to the  model      methods:GET
+        // (to be imporved ) /admin/vehicles/agency/{id}     : description : getting the whole available vehicles  according to the agency      methods:GET
+        // (to be imporved) /admin/vehicles/modely/{id}     : description : getting the whole available vehicles  according to the  model      methods:GET
 
         // /admin/vehicle/{id} : description : modifying, deleting or getting a spricig vehicle   methods: GET , PATCH, DELETE
         class AdminVehicleController extends AbstractController
@@ -88,31 +89,12 @@
                 }
             }
 
-            // returns a json object containing the collection of vehicles according to their selection
-            private function pagination(array $vehicles, string $routeName)
-            {
-                $limit = 10;
-                //getting the exact count of the total of the  pages
-                $total = $vehicles % 10 == 0 ? count($vehicles) / $limit : (count($vehicles) / $limit) + 1;
-                $vehiclesPag = new PaginatedRepresentation( // enabling paginations
-                    $vehicles,
-                    $routeName,
-                    array(),
-                    1,
-                    $limit,
-                    $total,
-                    'page',
-                    'total',
-                    true,
-                    count($vehicles), $absolute = true);
-                return $vehiclesPag;
-            }
             /** @Route("/admin/vehicles" , name="get_vehicles" , methods={"GET"}) */
-            public function get_vehicles_default(): Response
+            public function get_vehicles_default(RouteSettings $rs): Response
             {
                 try {
                     $vehicles = $this->getDoctrine()->getRepository(Vehicle::class)->findAll();
-                    $vehiclesPag = $this->pagination($vehicles, "get_vehicles");
+                    $vehiclesPag = $rs-> pagination($vehicles, "get_vehicles");
 
                     $vehiclesJson = $this->hateoas->serialize($vehiclesPag, 'json');
                     return new Response($vehiclesJson, Response::HTTP_OK);
@@ -122,29 +104,29 @@
                 }
             }
             /** @Route("/admin/vehicles/agency/{id}" , name="get_vehicles_agency" , methods={"GET"}) */
-            public function getVehiclesByAgency(int $id): Response
+            public function getVehiclesByAgency(int $id , RouteSettings $rs): Response
             {
                 try {
                     $vehicles = $this->getDoctrine()->getRepository(Vehicle::class)->findBy(['agency' => $id]);
-                    $vehiclesPag = $this->pagination($vehicles, "get_vehicles");
+                    $vehiclesPag = $rs->pagination($vehicles, "get_vehicles");
                     $vehiclesJson = $this->hateoas->serialize($vehiclesPag, 'json');
-                    echo( $vehiclesJson); 
                     return new Response($vehiclesJson, Response::HTTP_OK);
                 } catch (Exception $e) {
-                    return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+                     return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
 
                 }
             }
 
             /**  @Route("/admin/vehicles/model/{id}" , name="get_vehicles_model" , methods={"GET"}) */
-            public function getVehiclesByModel(int $id): Response
+            public function getVehiclesByModel(int $id , RouteSettings $rs): Response
             {
                 try {
                     $vehicles = $this->getDoctrine()->getRepository(Vehicle::class)->findBy(['model' => $id]);
-                    $vehiclesPag = $this->pagination($vehicles, "get_vehicles");
+                    $vehiclesPag = $rs->pagination($vehicles, "get_vehicles");
                     $vehiclesJson = $this->hateoas->serialize($vehiclesPag, 'json');
                     return new Response($vehiclesJson, Response::HTTP_OK);
                 } catch (Exception $e) {
+
                     return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
 
                 }
