@@ -6,8 +6,11 @@
     use JMS\Serializer\Annotation as Serializer;
 
    /**
-    * @ORM\Entity(repositoryClass="App\Repository\BrandRepository")
-    *  @Serializer\XmlRoot("brand")
+    *   @ORM\Entity(repositoryClass="App\Repository\BrandRepository")
+    *   @Serializer\XmlRoot("Brand")
+    *   @Hateoas\Relation("self" , href=
+    *   @Hateoas\Route( "get_brand" , parameters={"id" = "expr(object.getid())"})
+    * )
    */
  
    class Brand { 
@@ -15,7 +18,8 @@
              * @ORM\Id; 
              * @ORM\GeneratedValue
              * @ORM\Column(type="integer")
-            */
+             * @Serializer\XmlAttribute 
+             */
 
             private  $id; 
             /**
@@ -28,10 +32,8 @@
              /** @Serializer\Exclude */
 
             private $models; 
-            function __construct(int $id , string  $name_)
+            function __construct()
             { 
-                $this ->id =$id; 
-                $this ->name_= $name_ ; 
                 
             }
             function getid() :int 
@@ -42,11 +44,11 @@
                 $this ->id =$id ; 
             }
 
-            function getname_() :string
+            function getname() :string
             {  
             return $this ->name_ ; 
             }
-            function setname_(int $name_) :void { 
+            function setname(string $name_) :void { 
                 $this ->name_=$name_ ; 
             }
 
