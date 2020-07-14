@@ -7,8 +7,7 @@
   use JMS\Serializer\Annotation as Serializer;
 
    /**
-   * @ORM\Entity(repositoryClass="App\Repository\ModelRepository")
-    *  @Serializer\XmlRoot("category")
+   * @ORM\Entity(repositoryClass="App\Repository\CategoryRepository")
    */
  
    class Category { 
@@ -22,7 +21,7 @@
             /**
              * @ORM\Column(type="string" , length=200)
             */
-            private   $name_; // model name
+            private   $name_; // category name
             /**
               * @ORM\OneToMany(targetEntity="App\Entity\Model" , mappedBy="category")
              */

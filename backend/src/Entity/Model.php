@@ -5,10 +5,12 @@
     use Hateoas\Configuration\Annotation as Hateoas;
     use JMS\Serializer\Annotation as Serializer;
 
-
    /**
    * @ORM\Entity(repositoryClass="App\Repository\ModelRepository")
    * @Serializer\XmlRoot("model")
+   * @Hateoas\Relation("self" , 
+   * href = @Hateoas\Route("get_model" , parameters={"id" ="expr(object.getid())"})
+   * )
    */
  
    class Model { 
@@ -39,10 +41,9 @@
               *@ORM\JoinColumn(name="brand" , referencedColumnName="id")
              */
             private $brand; 
-            function __construct(int $id , string  $name_)
+            function __construct()
             { 
-                $this ->id =$id; 
-                $this ->name= $name_ ; 
+
                 
             }
             function getid() :int 
@@ -57,7 +58,7 @@
             {  
             return $this ->name_ ; 
             }
-            function setname(int $name_) :void { 
+            function setname(string $name_) :void { 
                 $this ->name_=$name_ ; 
             }
 

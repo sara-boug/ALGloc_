@@ -26,22 +26,21 @@
        }
 
         public function postWilaya(){ 
-            $this->data= [
-                 'name_'=> "Adrrar"   
-               
-            ];
+            $this->data= ['name_'=> "Adrrar"];
             $this->client->request(  'POST' , '/admin/wilaya' , [] , []  , ['Content-type'=> 'Application/json'] ,
-             json_encode($this->data)); 
+            json_encode($this->data)); 
             $this->client->getResponse()->getContent();
             $this->id=(json_decode($this->client->getResponse()->getContent() , true))['id']; 
-             $this->assertEquals($this->client->getResponse()-> getStatusCode() , 201  ) ; 
+            $this->assertEquals($this->client->getResponse()-> getStatusCode() , 201  ); 
 
         }
 
        public function getwilaya(){ 
-           $this->client->request(  'GET' , '/admin/wilaya/1' , [] , []  , ['Content-type'=> 'Application/json']); 
-
+           $this->client->request(  'GET' , '/admin/wilaya/'.$this->id , [] , []  , ['Content-type'=> 'Application/json']); 
            $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
+           $wilayaName= (json_decode($this->client->getResponse()->getContent() , true))['name_']; 
+          // asserting that the data in the body is the same as the one sent to the db
+           $this->assertEquals($wilayaName ,strtolower( $this->data['name_'])); 
 
        }
 

@@ -6,7 +6,7 @@
     use JMS\Serializer\Annotation as Serializer;
 
    /**
-   * @ORM\Entity(repositoryClass="App\Repository\ModelRepository")
+    * @ORM\Entity(repositoryClass="App\Repository\BrandRepository")
     *  @Serializer\XmlRoot("brand")
    */
  
