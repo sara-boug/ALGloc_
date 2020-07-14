@@ -1,65 +1,65 @@
-<?php 
- namespace App\Entity;
+<?php
+   namespace App\Entity;
 
-use Doctrine\Common\Collections\Collection;
-use  Doctrine\ORM\Mapping as ORM ;
-use Hateoas\Configuration\Annotation as Hateoas;
-use JMS\Serializer\Annotation as Serializer;
+      use Doctrine\Common\Collections\Collection;
+      use Doctrine\ORM\Mapping as ORM;
+      use Hateoas\Configuration\Annotation as Hateoas;
+      use JMS\Serializer\Annotation as Serializer;
 
- /**
-  * @ORM\Entity(repositoryClass="App\Repository\WilayaRepository")
-  *  @Serializer\XmlRoot("vehicle")
-  */
- class Wilaya { 
-        /** 
-         * @ORM\Id; 
-         * @ORM\GeneratedValue
-         * @ORM\Column(type="integer")
-        */
-        private $id ; 
-        /**
-         * @ORM\Column(type="string" , length=200)
-         */
-        private $name_; 
-        /**
-         * @ORM\OneToMany(targetEntity="App\Entity\City" , mappedBy="wilaya")
-         */
-        /** @Serializer\Exclude */
+      /**
+       * @ORM\Entity(repositoryClass="App\Repository\WilayaRepository")
+      *  @Serializer\XmlRoot("Wilaya")
+      * @Hateoas\Relation( "self"  ,
+      * href= @Hateoas\Route( "get_wilaya", parameters={ "id" = "expr(object.getid())" } )
+      * )
 
-        private $cities; 
-        function __construct(int $id , string  $name_)
-        { 
-             $this ->id =$id; 
-             $this ->name_= $name_ ; 
-            
-        }
-        function getid() :int 
-        {  
-           return $this ->id ; 
-        }
-        function setid(int $id) :void { 
-             $this ->id =$id ; 
-        }
+      */
+      class Wilaya
+      {
+         /**
+          * @ORM\Id;
+          * @ORM\GeneratedValue
+          * @ORM\Column(type="integer")
+          */
+         private $id;
+         /**
+          * @ORM\Column(type="string" , length=200)
+          */
+         private $name_;
+         /**
+          * @ORM\OneToMany(targetEntity="App\Entity\City" , mappedBy="wilaya")
+          */
 
-        function getname() :string
-        {  
-           return $this ->name_ ; 
-        }
-        function setname(int $name_) :void { 
-             $this ->name_=strtolower( trim($name_)) ; 
-        }
+         private $cities;
+         public function __construct()
+         {
 
-        function getcities() :Collection
-        {  
-           return $this ->cities ; 
-        }
-        function setcities(Collection $cities) :void { 
-             $this ->cities =$cities ; 
-        }
+         }
+         public function getid(): int
+         {
+            return $this->id;
+         }
+         public function setid(int $id): void
+         {
+            $this->id = $id;
+         }
 
-   
+         public function getname(): string
+         {
+            return $this->name_;
+         }
+         public function setname(string $name_): void
+         {
+            $this->name_ = strtolower(trim($name_));
+         }
 
- }
+         public function getcities(): Collection
+         {
+            return $this->cities;
+         }
+         public function setcities(Collection $cities): void
+         {
+            $this->cities = $cities;
+         }
 
-
-?> 
+      }

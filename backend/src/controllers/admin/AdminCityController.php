@@ -18,7 +18,7 @@ use App\service\RouteSettings;
 // routes regarding Admin city controller
 // /admin/city      : description : posting a specefic city                       methods: POST
 // /admin/cities    : description : getting the whole available cities              methods:GET
-// /admin/city/{id} : description : modifying, deleting or getting a specific vehicle by id    methods: GET , PATCH, DELETE
+// /admin/city/{id} : description : modifying, deleting or getting a specific city by id    methods: GET , PATCH, DELETE
 
 class AdminCityController extends AbstractController { 
 
