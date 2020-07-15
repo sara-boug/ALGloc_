@@ -15,7 +15,7 @@
             {
                 $limit = 10;
                 //getting the exact count of the total of the  pages
-                $total = $object % 10 == 0 ? count($object) / $limit : (count($object) / $limit) + 1;
+                $total = $object % $limit == 0 ? count($object) / $limit : (count($object) / $limit) + 1;
                 $objectPag = new PaginatedRepresentation( // enabling paginations
                     $object,
                     $routeName,
@@ -24,8 +24,8 @@
                     $limit,
                     $total,
                     'page',
-                    'total',
-                    true,
+                    'limit',
+                     false,
                     count($object), $absolute = true);
                 return $objectPag;
             }

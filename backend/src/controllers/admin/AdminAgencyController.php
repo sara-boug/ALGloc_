@@ -62,10 +62,10 @@ class AdminAgencyController extends AbstractController
             }
             $this->entityManager()->persist($agency);
             $this->entityManager()->flush();
-            return new JsonResponse(["success" => $agency], Response::HTTP_CREATED);
+            return new JsonResponse(["success" => $agency], Response::HTTP_CREATED , ["Content-type" => "application\json"]);
 
         } catch (Exception $e) {
-            return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
         }
 
@@ -84,10 +84,10 @@ class AdminAgencyController extends AbstractController
                  $data=$this->getJsonAgencyData($agency); 
                  array_push($jsonAgencies, $data);
             }
-            return new JsonResponse(["agencies" => $jsonAgencies], Response::HTTP_OK);
+            return new JsonResponse(["agencies" => $jsonAgencies], Response::HTTP_OK, ["Content-type" => "application\json"]);
 
         } catch (Exception $e) {
-            return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
         }
     } 
@@ -112,9 +112,9 @@ class AdminAgencyController extends AbstractController
                     return new JsonResponse(json_encode(['error' => (string) $error]), 400);
                 }
              $this->entityManager()->flush();             
-              return new JsonResponse( $this->getJsonAgencyData($agency), Response::HTTP_OK);
+              return new JsonResponse( $this->getJsonAgencyData($agency), Response::HTTP_OK, ["Content-type" => "application\json"]);
           }catch(Exception $e) { 
-            return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
           }
 
@@ -127,9 +127,9 @@ class AdminAgencyController extends AbstractController
         public function get_agency(int $id):Response {
             try { 
               $agency= $this->getRepo(Agency::class)->find($id);
-              return new JsonResponse($this->getJsonAgencyData($agency) , Response::HTTP_OK);
+              return new JsonResponse($this->getJsonAgencyData($agency) , Response::HTTP_OK, ["Content-type" => "application\json"]);
              }catch( Exception $e){ 
-              return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+              return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
              }
         }
@@ -141,9 +141,9 @@ class AdminAgencyController extends AbstractController
             $agency= $this->getRepo(Agency::class)->find($id);
               $this->entityManager()->remove($agency); 
              $this->entityManager()->flush();
-            return new JsonResponse($this->getJsonAgencyData($agency) , Response::HTTP_OK);
+            return new JsonResponse($this->getJsonAgencyData($agency) , Response::HTTP_OK, ["Content-type" => "application\json"]);
            }catch( Exception $e){ 
-            return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
        }
 
      }
@@ -160,9 +160,9 @@ class AdminAgencyController extends AbstractController
                    $data=$this->getJsonAgencyData($agency); 
                    array_push($jsonAgencies, $data);
               }
-              return new JsonResponse($jsonAgencies , Response::HTTP_OK);
+              return new JsonResponse($jsonAgencies , Response::HTTP_OK, ["Content-type" => "application\json"]);
              }catch( Exception $e){ 
-              return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+              return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
          }
   
        }

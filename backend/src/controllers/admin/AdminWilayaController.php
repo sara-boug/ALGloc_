@@ -51,10 +51,10 @@ class AdminWilayaController extends AbstractController {
             $this->em->persist($wilaya); 
             $this->em->flush(); 
             $wilayaJson= $this->hateoas->serialize($wilaya , 'json'); 
-            return new  Response(  $wilayaJson , Response::HTTP_CREATED);
+            return new  Response(  $wilayaJson , Response::HTTP_CREATED, ["Content-type" => "application\json"]);
 
         }catch(Exception $e) { 
-            return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
         }
 
@@ -67,10 +67,10 @@ class AdminWilayaController extends AbstractController {
                 $this->em= $this->getDoctrine()->getManager(); 
                  $wilaya = $this->em->getRepository(Wilaya::class) ->findOneBy(['id' =>$id]) ; 
                  $wilayaJson= $this->hateoas->serialize($wilaya , 'json'); 
-                 return new  Response(  $wilayaJson , Response::HTTP_OK);
+                 return new  Response(  $wilayaJson , Response::HTTP_OK, ["Content-type" => "application\json"]);
 
               }catch(Exception $e ) { 
-                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
 
               }
@@ -88,10 +88,10 @@ class AdminWilayaController extends AbstractController {
                  if(isset($body['name_'])) { $wilaya->setName($body['name_']); }
                  $this->em->flush(); 
                  $wilayaJson= $this->hateoas->serialize($wilaya , 'json'); 
-                 return new  Response(  $wilayaJson , Response::HTTP_OK);
+                 return new  Response(  $wilayaJson , Response::HTTP_OK, ["Content-type" => "application\json"]);
 
               }catch(Exception $e ) { 
-                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
 
               }
@@ -108,10 +108,10 @@ class AdminWilayaController extends AbstractController {
                  $wilaya = $this->em->getRepository(Wilaya::class) ->findOneBy(['id' =>$id]) ; 
                  $this->em->remove($wilaya);
                  $this->em->flush();
-                 return new JsonResponse(['message' => "deleted successfully"], Response::HTTP_OK);
+                 return new JsonResponse(['message' => "deleted successfully"], Response::HTTP_OK, ["Content-type" => "application\json"]);
                  
               }catch(Exception $e ) { 
-                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
                
               }
@@ -127,10 +127,10 @@ class AdminWilayaController extends AbstractController {
                  $wilayas = $this->em->getRepository(wilaya::class) ->findAll();  
                  $wilayasJson= $this->hateoas
                  ->serialize( $rs->pagination($wilayas , 'get_wilayas') , 'json');
-                 return new  Response(  $wilayasJson , Response::HTTP_OK);
+                 return new  Response(  $wilayasJson , Response::HTTP_OK, ["Content-type" => "application\json"]);
                   
               }catch(Exception $e ) { 
-                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
               }
 

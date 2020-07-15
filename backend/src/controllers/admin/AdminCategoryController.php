@@ -1,7 +1,7 @@
 <?php
   namespace App\controllers\admin;
 
-    use App\Entity\category;
+    use App\Entity\Category;
     use App\service\RouteSettings;
     use Exception;
     use Hateoas\HateoasBuilder;
@@ -54,10 +54,10 @@
                 $this->em->persist($category);
                 $this->em->flush();
                 $categoryJson = $this->hateoas->serialize($category, 'json');
-                return new Response($categoryJson, Response::HTTP_CREATED);
+                return new Response($categoryJson, Response::HTTP_CREATED, ["Content-type" => "application\json"]);
 
             } catch (Exception $e) {
-                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+                 return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
             }
 
@@ -70,10 +70,10 @@
                 $this->em = $this->getDoctrine()->getManager();
                 $category = $this->em->getRepository(Category::class)->findOneBy(['id' => $id]);
                 $categoryJson = $this->hateoas->serialize($category, 'json');
-                return new Response($categoryJson, Response::HTTP_OK);
+                return new Response($categoryJson, Response::HTTP_OK, ["Content-type" => "application\json"]);
 
             } catch (Exception $e) {
-                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
             }
 
@@ -90,10 +90,10 @@
                 if (isset($body['name_'])) {$category->setName($body['name_']);}
                 $this->em->flush();
                 $categoryJson = $this->hateoas->serialize($category, 'json');
-                return new Response($categoryJson, Response::HTTP_OK);
+                return new Response($categoryJson, Response::HTTP_OK, ["Content-type" => "application\json"]);
 
             } catch (Exception $e) {
-                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
             }
 
@@ -107,10 +107,10 @@
                 $category = $this->em->getRepository(Category::class)->findOneBy(['id' => $id]);
                 $this->em->remove($category);
                 $this->em->flush();
-                return new JsonResponse(['message' => "deleted successfully"], Response::HTTP_OK);
+                return new JsonResponse(['message' => "deleted successfully"], Response::HTTP_OK, ["Content-type" => "application\json"]);
 
             } catch (Exception $e) {
-                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
             }
 
@@ -124,10 +124,10 @@
                 $categories = $this->em->getRepository(Category::class)->findAll();
                 $categoriesJson = $this->hateoas
                     ->serialize($rs->pagination($categories, 'get_categories'), 'json');
-                return new Response($categoriesJson, Response::HTTP_OK);
+                return new Response($categoriesJson, Response::HTTP_OK , ["Content-type" => "application\json"]);
 
             } catch (Exception $e) {
-                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST , ["Content-type" => "application\json"]);
 
             }
 

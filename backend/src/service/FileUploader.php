@@ -29,6 +29,12 @@ class FileUploader  {
                return $url; 
 
           }
+          
+
+         public function readStream($url ){ 
+      
+            return $this->fileSystem->readStream($url); 
+         }
 
          }
     

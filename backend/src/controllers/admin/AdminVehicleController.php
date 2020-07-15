@@ -5,20 +5,19 @@
         use App\Entity\Model;
         use App\Entity\Vehicle;
         use App\service\FileUploader;
-use App\service\RouteSettings;
-use Exception;
+        use App\service\RouteSettings;
+        use Exception;
         use Hateoas\HateoasBuilder;
-        use Hateoas\Representation\PaginatedRepresentation;
         use Hateoas\UrlGenerator\CallableUrlGenerator;
         use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
         use Symfony\Component\HttpFoundation\JsonResponse;
         use Symfony\Component\HttpFoundation\Request;
         use Symfony\Component\HttpFoundation\Response;
-        use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\Routing\Annotation\Route;
         use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
         use Symfony\Component\Routing\RouterInterface;
         use Symfony\Component\Serializer\SerializerInterface;
-
         // routes regarding Admin Vehicle controller
         // /admin/vehicle      : description : posting a specefic vehicle                        methods: POST
         // /admin/vehicles     : description : getting the whole available vehicles               methods:GET
@@ -31,9 +30,10 @@ use Exception;
         {
             private $serializer;
             private $hateoas;
-            public function __construct(SerializerInterface $serializer, RouterInterface $router)
+             public function __construct(SerializerInterface $serializer, RouterInterface $router  )
             {
                 $this->serializer = $serializer;
+
                 $this->hateoas = HateoasBuilder::create()
                     ->setUrlGenerator(
                         null,
@@ -42,7 +42,7 @@ use Exception;
                         })
                     )
                     ->build();
-
+ 
             }
             // transforming the json body into a vehicle object
             private function toVehicleObject($body): Vehicle
@@ -82,9 +82,9 @@ use Exception;
                     $em->persist($vehicle);
                     $em->flush();
                     $vehicleJson = $this->hateoas->serialize($vehicle, 'json');
-                    return new Response($vehicleJson, Response::HTTP_CREATED);
+                    return new Response($vehicleJson, Response::HTTP_CREATED , ["Content-type" => "application\json"]);
                 } catch (Exception $e) {
-                    return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+                    return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST , ["Content-type" => "application\json"]);
 
                 }
             }
@@ -97,9 +97,9 @@ use Exception;
                     $vehiclesPag = $rs-> pagination($vehicles, "get_vehicles");
 
                     $vehiclesJson = $this->hateoas->serialize($vehiclesPag, 'json');
-                    return new Response($vehiclesJson, Response::HTTP_OK);
+                    return new Response($vehiclesJson, Response::HTTP_OK, ["Content-type" => "application\json"]);
                 } catch (Exception $e) {
-                    return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+                    return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
                 }
             }
@@ -110,9 +110,9 @@ use Exception;
                     $vehicles = $this->getDoctrine()->getRepository(Vehicle::class)->findBy(['agency' => $id]);
                     $vehiclesPag = $rs->pagination($vehicles, "get_vehicles");
                     $vehiclesJson = $this->hateoas->serialize($vehiclesPag, 'json');
-                    return new Response($vehiclesJson, Response::HTTP_OK);
+                    return new Response($vehiclesJson, Response::HTTP_OK, ["Content-type" => "application\json"]);
                 } catch (Exception $e) {
-                     return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+                     return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
                 }
             }
@@ -124,10 +124,10 @@ use Exception;
                     $vehicles = $this->getDoctrine()->getRepository(Vehicle::class)->findBy(['model' => $id]);
                     $vehiclesPag = $rs->pagination($vehicles, "get_vehicles");
                     $vehiclesJson = $this->hateoas->serialize($vehiclesPag, 'json');
-                    return new Response($vehiclesJson, Response::HTTP_OK);
+                    return new Response($vehiclesJson, Response::HTTP_OK, ["Content-type" => "application\json"]);
                 } catch (Exception $e) {
 
-                    return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+                    return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
                 }
             }
@@ -140,9 +140,9 @@ use Exception;
                         'id' => $id,
                     ]);
                     $vehicleJson = $this->hateoas->serialize($vehicle, 'json');
-                    return new Response($vehicleJson, Response::HTTP_OK);
+                    return new Response($vehicleJson, Response::HTTP_OK, ["Content-type" => "application\json"]);
                 } catch (Exception $e) {
-                    return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+                    return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
                 }
 
@@ -171,25 +171,25 @@ use Exception;
                     // saving the changes
                     $em->flush();
                     $vehicleJson = $this->hateoas->serialize($vehicle, 'json');
-                    return new Response($vehicleJson, Response::HTTP_OK);
+                    return new Response($vehicleJson, Response::HTTP_OK, ["Content-type" => "application\json"]);
                 } catch (Exception $e) {
-                    return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+                    return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
                 }
 
             }
 
             /** @Route("/admin/vehicle/{id}/image" , name="get_vehicle_image" , methods ={"GET"})  */
-            public function getVehicleImage(int $id): Response
+            public function getVehicleImage(int $id , FileUploader $uploader) 
             {
                 try {
                     $vehicle = $this->getDoctrine()->getRepository(Vehicle::class)->findOneBy(['id' => $id]);
                     $vehicleImage = $vehicle->getImage();
-                    $url = 'uploads/image/' . $vehicleImage;
-
-                    return new JsonResponse(["image" => $url], Response::HTTP_OK);
+                    $url =  __DIR__. '/uploads/image/car.jpeg' ;
+                    $file=  $uploader->readStream('/image/car.jpeg'); 
+                     return new  StreamedResponse( base64_encode( $file)  , 200,   ["content-type" => "image/jpeg" ] )   ;
                 } catch (Exception $e) {
-                    return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+                    return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
                 }
 
@@ -203,9 +203,9 @@ use Exception;
                     $vehicle = $this->getDoctrine()->getRepository(Vehicle::class)->findOneBy(['id' => $id]);
                     $em->remove($vehicle);
                     $em->flush();
-                    return new JsonResponse(["message" => "deleted successfully"], Response::HTTP_OK);
+                    return new JsonResponse(["message" => "deleted successfully"], Response::HTTP_OK, ["Content-type" => "application\json"]);
                 } catch (Exception $e) {
-                    return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+                    return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
                 }
             }
 

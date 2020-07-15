@@ -1,7 +1,7 @@
 <?php 
     namespace App\controllers\admin;
 
-use App\Entity\brand;
+use App\Entity\Brand;
 use Doctrine\ORM\EntityManager;
 use Hateoas\HateoasBuilder;
 use Hateoas\UrlGenerator\CallableUrlGenerator;
@@ -18,7 +18,6 @@ use App\service\RouteSettings;
 // /admin/brand      : description : posting a specefic  brand                       methods: POST
 // /admin/brands     : description : getting the whole available brands              methods:GET
 // /admin/brand/{id} : description : modifying, deleting or getting a specific brand by id    methods: GET , PATCH, DELETE
-
 class AdminBrandController extends AbstractController { 
 
     private $hateoas; 
@@ -51,10 +50,10 @@ class AdminBrandController extends AbstractController {
             $this->em->persist($brand); 
             $this->em->flush(); 
              $brandJson= $this->hateoas->serialize($brand , 'json'); 
-            return new  Response(  $brandJson , Response::HTTP_CREATED);
+            return new  Response(  $brandJson , Response::HTTP_CREATED, ["Content-type" => "application\json"]);
 
         }catch(Exception $e) { 
-             return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+             return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
         }
 
@@ -67,10 +66,10 @@ class AdminBrandController extends AbstractController {
                 $this->em= $this->getDoctrine()->getManager(); 
                  $brand = $this->em->getRepository(Brand::class) ->findOneBy(['id' =>$id]) ; 
                  $brandJson= $this->hateoas->serialize($brand , 'json'); 
-                 return new  Response(  $brandJson , Response::HTTP_OK);
+                 return new  Response(  $brandJson , Response::HTTP_OK, ["Content-type" => "application\json"]);
 
               }catch(Exception $e ) { 
-                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
 
               }
@@ -88,10 +87,10 @@ class AdminBrandController extends AbstractController {
                  if(isset($body['name_'])) { $brand->setName($body['name_']); }
                  $this->em->flush(); 
                  $brandJson= $this->hateoas->serialize($brand , 'json'); 
-                 return new  Response(  $brandJson , Response::HTTP_OK);
+                 return new  Response(  $brandJson , Response::HTTP_OK, ["Content-type" => "application\json"]);
 
               }catch(Exception $e ) { 
-                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
 
               }
@@ -108,10 +107,10 @@ class AdminBrandController extends AbstractController {
                  $brand = $this->em->getRepository(Brand::class) ->findOneBy(['id' =>$id]) ; 
                  $this->em->remove($brand);
                  $this->em->flush();
-                 return new JsonResponse(['message' => "deleted successfully"], Response::HTTP_OK);
+                 return new JsonResponse(['message' => "deleted successfully"], Response::HTTP_OK, ["Content-type" => "application\json"]);
                  
               }catch(Exception $e ) { 
-                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
                
               }
@@ -127,10 +126,10 @@ class AdminBrandController extends AbstractController {
                  $brands = $this->em->getRepository(brand::class) ->findAll();  
                  $brandsJson= $this->hateoas
                  ->serialize( $rs->pagination($brands , 'get_brands') , 'json');
-                 return new  Response(  $brandsJson , Response::HTTP_OK);
+                 return new  Response(  $brandsJson , Response::HTTP_OK, ["Content-type" => "application\json"]);
                   
               }catch(Exception $e ) { 
-                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
               }
 

@@ -2,8 +2,9 @@
 
    namespace tests\controllers\admin;
    use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Validator\Constraints\Length;
 
-    class AdminModelControllerTest extends WebTestCase { 
+class AdminModelControllerTest extends WebTestCase { 
        private $admin ; 
        private $client ; 
        private $data; 
@@ -22,6 +23,8 @@
            $this->getModel(); 
            $this->patchModel(); 
            $this->getModels(); 
+           $this->getModelsByBrand(); 
+           $this->getModelsByCategory() ;
            $this->deleteModel(); 
        }
 
@@ -61,8 +64,27 @@
         $this->client->request(  'GET' , '/admin/models' , [] , []  , ['Content-type'=> 'Application/json']); 
  
         $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
+        echo($this->client->getResponse() ->getContent()); 
 
     }
+
+
+    public function getModelsByBrand(){ 
+         $brandId= 1; 
+         $this->client->request(  'GET' , '/admin/models/brand/'.$brandId , [] , []  , ['Content-type'=> 'Application/json']); 
+         $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
+         $models = json_decode($this->client->getResponse()-> getContent() ,true); 
+         $this->assertEquals( $models[0]["brand"]["id"] , $brandId ) ; 
+    }
+
+      public function getModelsByCategory(){ 
+        $categoryId= 4; 
+        $this->client->request(  'GET' , '/admin/models/category/'.$categoryId , [] , []  , ['Content-type'=> 'Application/json']); 
+        $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
+      }
+
+
+
 
     public function deleteModel(){ 
         $this->client->request(  'DELETE' , '/admin/model/'.$this->id , [] , []  , ['Content-type'=> 'Application/json']); 

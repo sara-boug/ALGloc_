@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
          $this->getVehicles(); 
          $this->getVehicleById(); 
          $this->patchVehicleById(); 
-         $this->getVehicleImage(); 
+        // $this->getVehicleImage(); 
         // $this->deleteVehicleById();
      }
      

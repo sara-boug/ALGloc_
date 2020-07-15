@@ -28,7 +28,7 @@
                     'error' => 'Invalid login request: check that the Content-Type header is "application/json".',
                 ], 400);
             } else {
-                return $this->response(json_encode(['message' => "login success"]), Response::HTTP_OK);
+                return $this->response(json_encode(['message' => "login success"]), Response::HTTP_OK, ["Content-type" => "application\json"]);
 
             }
         }
@@ -43,7 +43,7 @@
             } catch (Exception $e) {
                 echo ($e);
                 $exception = array("error" => $e->getMessage());
-                return $this->response(json_encode($exception), Response::HTTP_BAD_REQUEST);
+                return $this->response(json_encode($exception), Response::HTTP_BAD_REQUEST , ["Content-type" => "application\json"]);
 
             }
         }

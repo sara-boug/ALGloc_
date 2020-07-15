@@ -54,10 +54,10 @@ class AdminCityController extends AbstractController {
             $this->em->persist($city); 
             $this->em->flush(); 
             $cityJson= $this->hateoas->serialize($city , 'json'); 
-            return new  Response(  $cityJson , Response::HTTP_CREATED);
+            return new  Response(  $cityJson , Response::HTTP_CREATED , ["Content-type" => "application\json"]);
 
         }catch(Exception $e) { 
-            return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
         }
 
@@ -70,10 +70,10 @@ class AdminCityController extends AbstractController {
                 $this->em= $this->getDoctrine()->getManager(); 
                  $city = $this->em->getRepository(City::class) ->findOneBy(['id' =>$id]) ; 
                  $cityJson= $this->hateoas->serialize($city , 'json'); 
-                 return new  Response(  $cityJson , Response::HTTP_OK);
+                 return new  Response(  $cityJson , Response::HTTP_OK, ["Content-type" => "application\json"]);
 
               }catch(Exception $e ) { 
-                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
 
               }
@@ -93,10 +93,10 @@ class AdminCityController extends AbstractController {
                 } 
                 $this->em->flush(); 
                  $cityJson= $this->hateoas->serialize($city , 'json'); 
-                 return new  Response(  $cityJson , Response::HTTP_OK);
+                 return new  Response(  $cityJson , Response::HTTP_OK , ["Content-type" => "application\json"]);
 
               }catch(Exception $e ) { 
-                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST , ["Content-type" => "application\json"]);
 
 
               }
@@ -113,10 +113,10 @@ class AdminCityController extends AbstractController {
                  $city = $this->em->getRepository(City::class) ->findOneBy(['id' =>$id]) ; 
                  $this->em->remove($city);
                  $this->em->flush();
-                 return new JsonResponse(['message' => "deleted successfully"], Response::HTTP_OK);
+                 return new JsonResponse(['message' => "deleted successfully"], Response::HTTP_OK, ["Content-type" => "application\json"]);
                  
               }catch(Exception $e ) { 
-                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST , ["Content-type" => "application\json"]);
 
                
               }
@@ -132,10 +132,10 @@ class AdminCityController extends AbstractController {
                  $cities = $this->em->getRepository(City::class) ->findAll();  
                  $citiesJson= $this->hateoas
                  ->serialize( $rs->pagination($cities , 'get_cities') , 'json');
-                 return new  Response(  $citiesJson , Response::HTTP_OK);
+                 return new  Response(  $citiesJson , Response::HTTP_OK , ["Content-type" => "application\json"]);
                   
               }catch(Exception $e ) { 
-                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST , ["Content-type" => "application\json"]);
 
               }
 
