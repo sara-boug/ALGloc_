@@ -8,6 +8,10 @@
 
    /**
    * @ORM\Entity(repositoryClass="App\Repository\CategoryRepository")
+   * @Serializer\XmlRoot("category")
+   * @Hateoas\Relation("self" , href=
+   * @Hateoas\Route("get_category" , parameters ={ "id" = "expr(object.getid())" } )
+   * )
    */
  
    class Category { 
@@ -15,24 +19,22 @@
              * @ORM\Id; 
              * @ORM\GeneratedValue
              * @ORM\Column(type="integer")
-            */
-
+             * @Serializer\XmlAttribute
+              */
             private  $id; 
             /**
              * @ORM\Column(type="string" , length=200)
             */
             private   $name_; // category name
-            /**
+              /**
               * @ORM\OneToMany(targetEntity="App\Entity\Model" , mappedBy="category")
              */
              /** @Serializer\Exclude */
 
             private $models; 
-            function __construct(int $id , string  $name_)
+            function __construct()
             { 
-                $this ->id =$id; 
-                $this ->name_= $name_ ; 
-                
+
             }
             function getid() :int 
             {  
@@ -42,11 +44,11 @@
                 $this ->id =$id ; 
             }
 
-            function getname_() :string
+            function getName() :string
             {  
             return $this ->name_ ; 
             }
-            function setname_(int $name_) :void { 
+            function setName(string $name_) :void { 
                 $this ->name_=$name_ ; 
             }
 

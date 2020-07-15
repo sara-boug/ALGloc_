@@ -54,7 +54,6 @@ class AdminBrandController extends AbstractController {
             return new  Response(  $brandJson , Response::HTTP_CREATED);
 
         }catch(Exception $e) { 
-          dd($e); 
              return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
 
         }
