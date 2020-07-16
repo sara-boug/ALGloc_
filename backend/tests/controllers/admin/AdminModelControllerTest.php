@@ -9,11 +9,12 @@ class AdminModelControllerTest extends WebTestCase {
        private $client ; 
        private $data; 
        private $id; 
+       private $uploader; 
 
        public function setUp() :void 
        {   
            $this->client = static::createClient(); 
-           $this->admin= self::bootKernel()->getContainer()->get('App\service\Setting'); 
+           $this->admin= self::bootKernel()->getContainer()->get('App\service\Setting');
 
        }
 
@@ -64,7 +65,6 @@ class AdminModelControllerTest extends WebTestCase {
         $this->client->request(  'GET' , '/admin/models' , [] , []  , ['Content-type'=> 'Application/json']); 
  
         $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
-        echo($this->client->getResponse() ->getContent()); 
 
     }
 

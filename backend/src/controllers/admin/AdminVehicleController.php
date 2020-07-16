@@ -75,10 +75,9 @@ use Symfony\Component\Routing\Annotation\Route;
                     // extracting the file from the request , the image is called car
                     $image = $request->files->get('car');
                     $vehicle = $this->toVehicleObject(json_decode($request->getContent(), true));
-                    // using the file uplloader
-                    $url = $uploader->uploadVehicleImage($image);
-                    // setting the refference url
-                    $vehicle->setImage($url);
+                 
+                    // setting the url of the image uploader
+                    $vehicle->setImage($uploader->uploadVehicleImage($image));
                     $em->persist($vehicle);
                     $em->flush();
                     $vehicleJson = $this->hateoas->serialize($vehicle, 'json');
@@ -161,6 +160,7 @@ use Symfony\Component\Routing\Annotation\Route;
                     if (isset($body["deposit"])) {$vehicle->setDeposit($body["deposit"]);}
                     if (isset($body["passenger_number"])) {$vehicle->setpassengernumber($body["passenger_number"]);}
                     if ($request->files->get('car')) {
+                        $uploader->deleteImage($vehicle->getImage()); 
                         $url = $uploader->uploadVehicleImage($request->files->get('car'));
                         $vehicle->setimage($url);
                     }
@@ -185,9 +185,16 @@ use Symfony\Component\Routing\Annotation\Route;
                 try {
                     $vehicle = $this->getDoctrine()->getRepository(Vehicle::class)->findOneBy(['id' => $id]);
                     $vehicleImage = $vehicle->getImage();
-                    $url =  __DIR__. '/uploads/image/car.jpeg' ;
-                    $file=  $uploader->readStream('/image/car.jpeg'); 
-                     return new  StreamedResponse( base64_encode( $file)  , 200,   ["content-type" => "image/jpeg" ] )   ;
+                    $url =  '/image/'.$vehicleImage ;
+                     $reponse=  new  StreamedResponse(   function()  use ( $uploader , $url) { 
+                            $outputStream= fopen('php://output' , 'wb'); 
+                            $stream = $uploader->readStream($url); 
+                            stream_copy_to_stream( $stream , $outputStream );
+                          }
+                        );
+                        ob_clean();
+                    $reponse->headers->set('content-type' ,"image/png"); 
+                    return $reponse;
                 } catch (Exception $e) {
                     return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 

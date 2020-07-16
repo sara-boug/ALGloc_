@@ -30,8 +30,10 @@ services:
 
      
     App\service\Setting:
-        public: true
-    
+        public: true  
+
+    App\service\FileUploader:
+        public: true  
         
 
     

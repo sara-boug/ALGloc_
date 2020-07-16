@@ -6,10 +6,13 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  class AdminVehicleControllerTest extends WebTestCase{ 
      private $client ; 
      private $admin ; 
+     private $uploader; 
      function setUp():void  { 
-         $this->client= static::createClient(); 
-         $this->admin = self::bootKernel()->getContainer()->get('App\service\Setting'); 
+         $this->client= static::createClient();
+         $this->admin = self::bootKernel()->getContainer()->get('App\service\Setting');
+         $this->uploader= self::bootKernel()->getContainer()->get('App\service\FileUploader');
 
+ 
      }
 
      public function testVehicleRoute(){ 
@@ -18,7 +21,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
          $this->getVehicles(); 
          $this->getVehicleById(); 
          $this->patchVehicleById(); 
-        // $this->getVehicleImage(); 
+         $this->getVehicleImage(); 
         // $this->deleteVehicleById();
      }
      
@@ -84,9 +87,12 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 
     public function getVehicleImage() { 
-      
         $this->client->request( 'GET', '/admin/vehicle/1/image' ); 
         $this->assertEquals($this->client->getResponse()-> getStatusCode(), 200)  ;
+        $this->assertEquals( $this->client->getResponse()->headers->get("content-type") , "image/png"); 
+        $this->uploader->deleteFolder(); 
+
+        
   
     }
 

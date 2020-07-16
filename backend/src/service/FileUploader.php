@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class FileUploader  { 
         private $fileSystem ; 
+        private $directory = 'image/'; 
 
 
         public function __construct(FilesystemInterface $publicUploadsFilesystem)
@@ -23,7 +24,7 @@ class FileUploader  {
              $url=Urlizer::urlize( pathinfo($filename, PATHINFO_FILENAME))
                .'-'.uniqid().'.'.$file->guessExtension();
                 $this->fileSystem->write(
-                 'image/'.$url, file_get_contents($file->getPathname())
+                  $this->directory.$url, file_get_contents($file->getPathname())
                ); 
             
                return $url; 
@@ -35,7 +36,13 @@ class FileUploader  {
       
             return $this->fileSystem->readStream($url); 
          }
-
+         
+         public function deleteFolder(){ 
+            $this->fileSystem->deleteDir($this->directory);
+         }
+         public function deleteImage($image){ 
+              $this->fileSystem->delete($this->directory.$image); 
+         }
          }
     
    
