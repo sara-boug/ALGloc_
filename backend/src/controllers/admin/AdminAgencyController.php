@@ -4,14 +4,20 @@ namespace App\controllers\admin;
 use App\Entity\Agency;
 use App\Entity\City;
 use App\Repository\AgencyRepository;
+use App\service\FileUploader;
+use App\service\RouteSettings;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManager;
+use Hateoas\HateoasBuilder; 
 use Exception;
+use Hateoas\Hateoas;
+use Hateoas\UrlGenerator\CallableUrlGenerator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 //  routes regarding the agency Controller
@@ -22,7 +28,18 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class AdminAgencyController extends AbstractController
 {
-
+     
+    private $hateoas; 
+    public function __construct( RouterInterface $router)
+    {
+        $this->hateoas = HateoasBuilder::create() 
+        ->setUrlGenerator(
+            null , 
+            new CallableUrlGenerator(function($route , $parameters , $absolute) use ($router) { 
+                return $router->generate($route , $parameters , RouterInterface::ABSOLUTE_URL); 
+            })
+        )->build(); 
+    }
     private function getRepo($class): ObjectRepository
     {
         return $this->getDoctrine()->getManager()->getRepository($class);
@@ -32,15 +49,6 @@ class AdminAgencyController extends AbstractController
         return $this->getDoctrine()->getManager();
     } 
 
-    private function getJsonAgencyData($agency){ 
-         return  ['agency_code' => $agency->getAgencyCode(),
-                  'phone_number' => $agency->getPhoneNumber(),
-                  'email' => $agency->getemail(),
-                  'address' => $agency->getaddress(),
-                  'city' => array(
-                      'id' => $agency->getcity()->getid(),
-                      'name' => $agency->getcity()->getname())];
-    }
     /**
      * @Route("/admin/agency"  , name="agency_add" , methods ={"POST"})
      */
@@ -62,7 +70,8 @@ class AdminAgencyController extends AbstractController
             }
             $this->entityManager()->persist($agency);
             $this->entityManager()->flush();
-            return new JsonResponse(["success" => $agency], Response::HTTP_CREATED , ["Content-type" => "application\json"]);
+            $jsonAgency = $this->hateoas->serialize($agency , 'json'); 
+            return new Response( $jsonAgency, Response::HTTP_CREATED , ["Content-type" => "application\json"]);
 
         } catch (Exception $e) {
             return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
@@ -74,17 +83,12 @@ class AdminAgencyController extends AbstractController
     /**
      * @Route("/admin/agencies" , name="get_agencies" , methods={"GET"})
      */
-    public function get_agencies(): Response
+    public function get_agencies(RouteSettings $setting): Response
     {
         try {
             $agencies = $this->getRepo(Agency::class)->findAll();
-            $jsonAgencies = [];
-            foreach ($agencies as $agency) {
-                // turning each data into json jadata
-                 $data=$this->getJsonAgencyData($agency); 
-                 array_push($jsonAgencies, $data);
-            }
-            return new JsonResponse(["agencies" => $jsonAgencies], Response::HTTP_OK, ["Content-type" => "application\json"]);
+             $jsonAgencies =$this->hateoas->serialize( $setting->pagination($agencies ,"get_agencies" ), 'json'  ) ;        
+            return new Response($jsonAgencies, Response::HTTP_OK, ["Content-type" => "application\json"]);
 
         } catch (Exception $e) {
             return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
@@ -105,15 +109,16 @@ class AdminAgencyController extends AbstractController
              if(isset($body['email']  ))        $agency->setemail($body['email']);
              if(isset($body['address'] ) )      $agency->setaddress($body['address']);
              if(isset($body['city'])) {
-              $city = $this->getRepo(City::class)->findOneBy(['id' => $body['city']['id'], 'name_' => $body['city']['name']]);
+              $city = $this->getRepo(City::class)->findOneBy(['id' => $body['city']['id']]);
               $agency->setcity($city);   } 
              $error = $validator->validate($agency);
              if (count($error) > 0) {
                     return new JsonResponse(json_encode(['error' => (string) $error]), 400);
                 }
              $this->entityManager()->flush();             
-              return new JsonResponse( $this->getJsonAgencyData($agency), Response::HTTP_OK, ["Content-type" => "application\json"]);
-          }catch(Exception $e) { 
+             $jsonAgency = $this->hateoas->serialize($agency , 'json'); 
+             return new Response( $jsonAgency, Response::HTTP_OK , ["Content-type" => "application\json"]);
+           }catch(Exception $e) { 
             return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
           }
@@ -127,8 +132,9 @@ class AdminAgencyController extends AbstractController
         public function get_agency(int $id):Response {
             try { 
               $agency= $this->getRepo(Agency::class)->find($id);
-              return new JsonResponse($this->getJsonAgencyData($agency) , Response::HTTP_OK, ["Content-type" => "application\json"]);
-             }catch( Exception $e){ 
+              $jsonAgency = $this->hateoas->serialize($agency , 'json'); 
+              return new Response( $jsonAgency,Response::HTTP_OK, ["Content-type" => "application\json"]);
+               }catch( Exception $e){ 
               return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
              }
@@ -141,8 +147,8 @@ class AdminAgencyController extends AbstractController
             $agency= $this->getRepo(Agency::class)->find($id);
               $this->entityManager()->remove($agency); 
              $this->entityManager()->flush();
-            return new JsonResponse($this->getJsonAgencyData($agency) , Response::HTTP_OK, ["Content-type" => "application\json"]);
-           }catch( Exception $e){ 
+             return new JsonResponse( ["message" =>'deleted'], Response::HTTP_OK , ["Content-type" => "application\json"]);
+            }catch( Exception $e){ 
             return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
        }
 
@@ -151,16 +157,12 @@ class AdminAgencyController extends AbstractController
          /** 
          * @Route("/admin/agency/city/{id}" , name="get_agency_by_cityId" , methods ={"GET"})
          */
-        public function  get_agency_by_cityId(int $id , AgencyRepository $agencyRepo):Response { 
+        public function  get_agency_by_cityId(int $id , AgencyRepository $agencyRepo ,RouteSettings $setting):Response { 
             try { 
               $agencies=$agencyRepo->findByCityId($id); 
-              $jsonAgencies=[];
-               foreach ($agencies as $agency) {
-                  // turning each data into json jadata
-                   $data=$this->getJsonAgencyData($agency); 
-                   array_push($jsonAgencies, $data);
-              }
-              return new JsonResponse($jsonAgencies , Response::HTTP_OK, ["Content-type" => "application\json"]);
+              $jsonAgencies =$this->hateoas->serialize( $setting->pagination($agencies ,"get_agencies" ), 'json'  ) ;        
+              return new Response($jsonAgencies, Response::HTTP_OK, ["Content-type" => "application\json"]);
+  
              }catch( Exception $e){ 
               return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
          }

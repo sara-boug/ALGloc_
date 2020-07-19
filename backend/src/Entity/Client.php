@@ -79,11 +79,11 @@
             $this->id = $id;
         }
 
-        public function getfullname_()
+        public function getfullname()
         {
             return $this->fullname_;
         }
-        public function setfullname_(string $fullname_)
+        public function setfullname(string $fullname_)
         {
             $this->fullname_ =strtolower( trim( $fullname_));
         }
@@ -116,20 +116,20 @@
             $this->password =trim( $password);
         }
 
-        public function getphone_number():string
+        public function getphoneNumber():string
         {
             return $this->phone_number;
         }
-        public function setphone_number(string $phone_number):void 
+        public function setphoneNumber(string $phone_number):void 
         {
             $this->phone_number = trim($phone_number);
         }
 
-        public function getlicense_number(): string
+        public function getlicenseNumber(): string
         {
             return $this->license_number;
         }
-        public function setlicense_number(string $license_number): void
+        public function setlicenseNumber(string $license_number): void
         {
             $this->license_number =trim( $license_number);
         }

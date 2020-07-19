@@ -2,7 +2,6 @@
     namespace App\controllers\admin;
 
 use App\Entity\Brand;
-use Doctrine\ORM\EntityManager;
 use Hateoas\HateoasBuilder;
 use Hateoas\UrlGenerator\CallableUrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

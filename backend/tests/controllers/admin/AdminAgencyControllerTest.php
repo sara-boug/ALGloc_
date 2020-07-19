@@ -14,6 +14,7 @@
             private $client = null  ;
             private $admin; 
             private $data ; 
+            private $id; 
             public function setUp():void 
             {   
                  
@@ -35,8 +36,8 @@
                  $this->get_agencies(); 
                  $this->get_agency();
                  $this->get_agency_by_cityId();
-               //  $this->patch_agency(); 
-              //   $this->delete_agency(); 
+                 $this->patch_agency(); 
+                 $this->delete_agency(); 
             }
             public function post_agency()
             {
@@ -45,6 +46,7 @@
                 $this->client->request('POST', '/admin/agency', [], [], ['content_type' => 'Application/json'], json_encode($this->data));
                 $this->assertEquals(201, $this->client->getResponse()->getStatusCode());
                 // finding  the insert  agency from the db
+                 $this->id=(json_decode($this->client->getResponse()->getContent() , true))['id']; 
                 $agencyTable = static::$container->get('doctrine')->getManager()->getRepository( Agency::class) ;
                  
                 $result = $agencyTable->findOneBy(['email' => $this->data['email'] , 
@@ -52,6 +54,7 @@
                 $this->assertNotEquals(null, $result);
                 //making that the data inserted into the databse is the same as one in the input
                 $this->assertEquals($this->data['email'] , $result ->getemail() );
+
 
             }
 
@@ -64,7 +67,7 @@
             } 
 
             public function get_agency(){ 
-                $this->client->request('GET', '/admin/agency/1' , [] ,[],['content_type' => 'Application/json']); 
+                $this->client->request('GET', '/admin/agency/'.$this->id , [] ,[],['content_type' => 'Application/json']); 
                  $this->assertEquals(200, $this->client->getResponse()->getStatusCode()); 
                 // assserting that the data was really updated 
                 $result =json_decode(  $this->client->getResponse()->getContent(),true);
@@ -75,7 +78,7 @@
 
             
             public function get_agency_by_cityId(){ 
-                $this->client->request('GET', '/admin/agency/city/1' , [] ,[],['content_type' => 'Application/json']); 
+                $this->client->request('GET', '/admin/agency/city/1', [] ,[],['content_type' => 'Application/json']); 
                 $result =  $this->client->getResponse()->getContent();
 
                 $this->assertEquals(200, $this->client->getResponse()->getStatusCode()); 
@@ -92,7 +95,7 @@
             public function patch_agency(){ 
                 $data =[ 'address' => 'algiers ouled fayet 18',
                           'city' => array( 'id' => 2,'name' => 'Boumerdes' )] ; 
-                $this->client->request('PATCH', '/admin/agency/1' , [] ,[],['content_type' => 'Application/json'],json_encode($data)); 
+                $this->client->request('PATCH', '/admin/agency/'. $this->id , [] ,[],['content_type' => 'Application/json'],json_encode($data)); 
                  $this->assertEquals(200, $this->client->getResponse()->getStatusCode()); 
                 // assserting that the data was really updated 
                 $result =json_decode(  $this->client->getResponse()->getContent(),true);
@@ -101,13 +104,13 @@
 
             public function delete_agency(){ 
  
-                $this->client->request('delete', '/admin/agency/1' , [] ,[],['content_type' => 'Application/json']); 
+                $this->client->request('delete', '/admin/agency/'.$this->id , [] ,[],['content_type' => 'Application/json']); 
                  $this->assertEquals(200, $this->client->getResponse()->getStatusCode()); 
                 // assserting that the data was really updated 
                 $agencyTable = static::$container->get('doctrine')->getManager()->getRepository( Agency::class) ;
                 $vehiculeTable = static::$container->get(VehicleRepository::class) ;
                 
-                $result =$vehiculeTable->findByAgencyId(1); 
+                $result =$vehiculeTable->findByAgencyId( $this->id); 
                 // asserting that the data  associated with the agency is really deleted
                 $this->assertEquals(count($result) , 0); 
             }

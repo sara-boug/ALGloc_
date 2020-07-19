@@ -42,6 +42,7 @@ final class Version1 extends AbstractMigration
         $this->addSql('ALTER TABLE model ADD CONSTRAINT FK_D79572D91C52F958 FOREIGN KEY (brand) REFERENCES brand (id)');
         $this->addSql('ALTER TABLE vehicle ADD CONSTRAINT FK_1B80E486D79572D9 FOREIGN KEY (model) REFERENCES model (id)');
         $this->addSql('ALTER TABLE vehicle ADD CONSTRAINT FK_1B80E48670C0C6E6 FOREIGN KEY (agency) REFERENCES agency (id)');
+        
     }
 
     public function down(Schema $schema) : void

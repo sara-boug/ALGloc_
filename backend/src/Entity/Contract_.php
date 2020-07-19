@@ -55,11 +55,11 @@
                 $this->id = $id;
             }
 
-            public function getDate(): DateTime
+            public function getDate() 
             {
                 return $this->date_;
             }
-            public function setDate(DateTime $date_)
+            public function setDate(  $date_)
             {
                 $this->date_ = $date_;
             }
@@ -83,20 +83,20 @@
                 $this->vehicle= $vehicle;
             }
 
-            public function getDeparture(): DateTime
+            public function getDeparture()
             {
                 return $this->departure;
             }
-            public function setDeparture(DateTime $departure)
+            public function setDeparture(  $departure)
             {
                 $this->departure = $departure;
             }
     
-            public function getArrival(): DateTime
+            public function getArrival() 
             {
                 return $this->arrival;
             }
-            public function setArrival(DateTime $arrival)
+            public function setArrival(  $arrival)
             {
                 $this->arrival = $arrival;
             }     
