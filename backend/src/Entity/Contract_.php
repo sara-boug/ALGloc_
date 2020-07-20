@@ -4,10 +4,15 @@
         use DateTime;
         use Doctrine\Common\Collections\Collection;
         use Doctrine\ORM\Mapping as ORM;
-
-        /**
+        use Hateoas\Configuration\Annotation as Hateoas; 
+        use JMS\Serializer\Annotation as Serializer; 
+ 
+         /**
          * @ORM\Entity(repositoryClass="App\Repository\Contract_Repository")
-         *
+         * @Serializer\XmlRoot("Contract")
+         * @Hateoas\Relation("self" , href=
+         * @Hateoas\Route("get_contract" , parameters={"id" ="expr(object.getid())"})
+         * )
          */
         class Contract_
         {
@@ -15,15 +20,16 @@
              * @ORM\Id
              * @ORM\GeneratedValue
              * @ORM\Column(type="integer")
+             * @Serializer\XmlAttribute
              */
             private $id;
-            /** @ORM\Column(type="integer" , length=200)*/
+            /** @ORM\Column(type="date" , length=200)*/
 
             private $date_; // this date concerns the contract
 
-            /** @ORM\Column(type="time" )*/
+            /** @ORM\Column(type="date" )*/
             private $arrival;
-            /** @ORM\Column(type="time" )*/
+            /** @ORM\Column(type="date" )*/
             private $departure;
 
             /**
@@ -33,6 +39,7 @@
             private $client;
             /**
              * @ORM\OneToMany(targetEntity="App\Entity\Invoice" , mappedBy="contract")
+             * @Serializer\Exclude
              */
 
             private $invoices;
@@ -55,13 +62,13 @@
                 $this->id = $id;
             }
 
-            public function getDate() 
+            public function getDate()  
             {
-                return $this->date_;
+                return  $this->date_;
             }
-            public function setDate(  $date_)
+            public function setDate( string $date_)
             {
-                $this->date_ = $date_;
+                $this->date_ = new DateTime($date_);
             }
 
             public function getclient(): Client
@@ -85,20 +92,20 @@
 
             public function getDeparture()
             {
-                return $this->departure;
+                return   $this->departure ;
             }
-            public function setDeparture(  $departure)
+            public function setDeparture( string  $departure)
             {
-                $this->departure = $departure;
+                $this->departure =new DateTime( $departure);
             }
     
-            public function getArrival() 
+            public function getArrival()
             {
-                return $this->arrival;
+                return $this->arrival ;
             }
-            public function setArrival(  $arrival)
+            public function setArrival( string $arrival)
             {
-                $this->arrival = $arrival;
+                $this->arrival =new DateTime( $arrival);
             }     
 
             public function getinvoices(): Collection

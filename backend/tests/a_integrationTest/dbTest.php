@@ -1,5 +1,5 @@
 <?php 
-  namespace tests\integerationTest;
+  namespace tests\a_integerationTest;
     use App\DataFixtures\AppFixtures;
     use Liip\TestFixturesBundle\Test\FixturesTrait;
     use App\Entity\Admin_;

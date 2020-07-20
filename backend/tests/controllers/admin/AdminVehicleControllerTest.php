@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
      private $client ; 
      private $admin ; 
      private $uploader; 
+     private $id ; 
      function setUp():void  { 
          $this->client= static::createClient();
          $this->admin = self::bootKernel()->getContainer()->get('App\service\Setting');
@@ -22,7 +23,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
          $this->getVehicleById(); 
          $this->patchVehicleById(); 
          $this->getVehicleImage(); 
-        // $this->deleteVehicleById();
+        $this->deleteVehicleById();
      }
      
      public function postVehicle() { 
@@ -44,16 +45,18 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  
           $this->client->request( 'POST', '/admin/vehicle' , [],['car' =>$image] , ['content-Type' => 'Application/json'] , 
           json_encode($data) ); 
-          $this->assertEquals($this->client->getResponse()-> getStatusCode() , 201)  ; 
+          $this->assertEquals($this->client->getResponse()-> getStatusCode() , 201); 
+          $this->id=(json_decode($this->client->getResponse()->getContent() , true))['id']; 
+
       }
 
       // testing the vehicles selection
       public function getVehicles() { 
         $this->client->request( 'GET', '/admin/vehicles' , [],[] , ['content-Type' => 'Application/json']  ); 
          $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
-        $this->client->request( 'GET', '/admin/vehicles/agency/1' , [],[] , ['content-Type' => 'Application/json']  ); 
+        $this->client->request( 'GET', '/admin/vehicles/agency/'.$this->id , [],[] , ['content-Type' => 'Application/json']  ); 
         $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
-        $this->client->request( 'GET', '/admin/vehicles/model/1' , [],[] , ['content-Type' => 'Application/json']  ); 
+        $this->client->request( 'GET', '/admin/vehicles/model/'.$this->id , [],[] , ['content-Type' => 'Application/json']  ); 
         $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
  
 
@@ -62,7 +65,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
     } 
 
     public function getVehicleById() { 
-        $this->client->request( 'GET', '/admin/vehicle/1' , [],[] , ['content-Type' => 'Application/json']  ); 
+        $this->client->request( 'GET', '/admin/vehicle/'.$this->id , [],[] , ['content-Type' => 'Application/json']  ); 
         $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  )  ; 
 
     }
@@ -74,11 +77,11 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
           "registration_number" => "200616C33"  , 
         ]; 
       
-        $this->client->request( 'PATCH', '/admin/vehicle/1' , [],['car' =>$image] , ['content-Type' => 'Application/json'] , 
+        $this->client->request( 'PATCH', '/admin/vehicle/'.$this->id , [],['car' =>$image] , ['content-Type' => 'Application/json'] , 
         json_encode($data) ); 
 
         $vehicleTable = static::$container->get('doctrine')->getManager()->getRepository( Vehicle::class) ;
-        $vehicle=  $vehicleTable->findOneBy(['id' =>1]); 
+        $vehicle=  $vehicleTable->findOneBy(['id' =>$this->id]); 
         $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200)  ;
         // asserting that the value is really updated  
         $this->assertEquals($vehicle->getRegistrationNumber() , $data["registration_number"]); 
@@ -87,7 +90,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 
     public function getVehicleImage() { 
-        $this->client->request( 'GET', '/admin/vehicle/1/image' ); 
+        $this->client->request( 'GET', '/admin/vehicle/'.$this->id.'/image' ); 
         $this->assertEquals($this->client->getResponse()-> getStatusCode(), 200)  ;
         $this->assertEquals( $this->client->getResponse()->headers->get("content-type") , "image/png"); 
         $this->uploader->deleteFolder(); 
@@ -98,7 +101,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 
     public function deleteVehicleById() { 
-        $this->client->request( 'DELETE', '/admin/vehicle/1' , [],[] , ['content-Type' => 'Application/json']  ); 
+        $this->client->request( 'DELETE', '/admin/vehicle/'.$this->id , [],[] , ['content-Type' => 'Application/json']  ); 
 
         $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  )  ; 
 

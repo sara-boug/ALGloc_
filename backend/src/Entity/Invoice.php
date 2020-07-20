@@ -15,7 +15,7 @@
              */
             private $id; 
             /** 
-             * @ORM\Column(type="time") 
+             * @ORM\Column(type="date") 
             */
             private $date_; 
             /**
@@ -32,12 +32,9 @@
             */
             private $contract_; 
 
-            function __construct(DateTime $date_ , float $amount ,bool $paid )
+            function __construct( )
             {
-                $this->date=$date_; 
-                $this->$amount=$amount; 
-                $this -> $paid=$paid; 
-                
+                 
             }
             public function getid():int{ 
                 return $this ->id; 
@@ -45,11 +42,11 @@
             public function setid(int $id){ 
             $this->id = $id; 
             }
-            public function getdate_():DateTime{ 
+            public function getdate():DateTime{ 
                 return $this ->date_; 
             }
-            public function setdate_(DateTime $date_) :void { 
-                $this->date_= $date_; 
+            public function setdate(string $date_) :void { 
+                $this->date_=new DateTime( $date_); 
             }
 
             public function getamount():float{ 
@@ -67,10 +64,10 @@
             }
         
 
-            public function getcontract_():Contract_{ 
+            public function getcontract():Contract_{ 
                 return $this ->contract_; 
             }
-            public function setcontract_(Contract_ $contract_){ 
+            public function setcontract(Contract_ $contract_){ 
                 $this->contract_= $contract_; 
             }
 

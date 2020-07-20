@@ -41,12 +41,12 @@ class ClientController extends AbstractController
                 $entityManager = $this->getDoctrine() ->getManager(); 
                 $body = json_decode($request->getContent(), true); // request body 
                 $client = new Client();      
-                $client ->setfullname_($body["fullname_"] ); 
+                $client ->setfullname($body["fullname_"] ); 
                 $client ->setemail($body["email"]);
                 $client ->setpassword( $body['password']); 
                 $client ->setaddress($body["address"]); 
-                $client->setphone_number($body["phone_number"]);
-                $client ->setlicense_number($body["license_number"]);
+                $client->setphoneNumber($body["phone_number"]);
+                $client ->setlicenseNumber($body["license_number"]);
                 // finding the city object 
                  $city = $entityManager->getRepository(City::class) ->findOneBy([
                      'id' => $body["city"]["id"] ]);  

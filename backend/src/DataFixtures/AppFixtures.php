@@ -6,6 +6,7 @@
         use App\Entity\Category;
         use App\Entity\City;
         use App\Entity\Client;
+        use App\Entity\Contract_;
         use App\Entity\Model;
         use App\Entity\Vehicle;
         use App\Entity\Wilaya;
@@ -33,6 +34,7 @@
                 $this->addModel($manager);
                 $this->addVehicle($manager);
                 $this->addClients($manager);
+                $this->addContracts($manager); 
 
             }
 
@@ -156,9 +158,26 @@
                     $client->setcity($this->getReference('city' . $i));
                     $manager->persist($client);
                     $manager->flush();
+                    $this->addReference('client'.$i , $client); 
+
 
                 }
 
             }
 
+            public function addContracts(ObjectManager $manager){ 
+                for ($i = 0; $i < self::data; $i++) {
+                     $contract = new Contract_() ; 
+                     $contract->setDate('now'); 
+                     $contract->setDeparture($i.'-1-2017');
+                     $contract->setArrival($i.'-2-2017');
+                     $contract->setVehicle($this->getReference('vehicle'.$i)); 
+                     $contract->setclient($this->getReference('client'.$i)); 
+                     $manager->persist($contract); 
+                     $manager->flush();
+                     $this->addReference('contract'.$i , $contract); 
+
+                }
+            }
+            
         }
