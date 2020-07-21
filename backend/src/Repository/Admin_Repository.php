@@ -11,7 +11,7 @@
         {
             parent::__construct($registry, Admin_::class); 
         }
-  
+           
         
     }
     

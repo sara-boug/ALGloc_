@@ -20,7 +20,8 @@
            $this->admin->logIn($this->client , $this) ; 
            $this->postContract(); 
            $this->getContracts(); 
-
+           $this->patchContract(); 
+           $this->deleteContract(); 
 
        }
 
@@ -28,15 +29,14 @@
             $date = new DateTime(); 
             $this->data= [
                 "date"=> 'now', 
-                "arrival"=> '17-12-2020', 
                 "departure"=> '1-11-2020',
+                "arrival"=> '17-12-2020', 
                 "client" =>array('id' =>1) , 
                 "vehicle" =>array('id' =>1) ,  
  
             ];
              $this->client->request(  'POST' , '/admin/contract' , [] , []  , ['Content-type'=> 'Application/json'] ,
              json_encode($this->data)); 
-             dd($this->client->getResponse()->getContent())  ; 
 
              $this->assertEquals($this->client->getResponse()-> getStatusCode() , 201  ) ; 
              $this->id=(json_decode($this->client->getResponse()->getContent() , true))['id']; 
@@ -64,8 +64,7 @@
             $this->client->request(  'POST' , '/admin/contract' , [] , []  , ['Content-type'=> 'Application/json'] ,
             json_encode($data3)); 
             $this->assertEquals($this->client->getResponse()-> getStatusCode() , 400  ) ; 
-            echo($this->client->getResponse()->getContent()); 
-
+ 
         }
 
         public function getContracts(){ 
@@ -73,6 +72,18 @@
             $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
         }
 
+        public function patchContract(){ 
+            $data = ["arrival"=> '18-12-2020']; 
+            $this->client->request(  'PATCH' , '/admin/contract/'.$this->id , [] , []  , ['Content-type'=> 'Application/json'] ,
+            json_encode($data)); 
+            $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
+        }
+
+        public function deleteContract(){ 
+            $this->client->request(  'DELETE' , '/admin/contract/'.$this->id , [] , []  , ['Content-type'=> 'Application/json'] ); 
+             echo($this->client->getResponse()->getContent()); 
+            $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
+        }
 
     }
 

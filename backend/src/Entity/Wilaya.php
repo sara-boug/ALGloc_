@@ -29,6 +29,8 @@
          /**
           * @ORM\OneToMany(targetEntity="App\Entity\City" , mappedBy="wilaya")
           */
+          /** @Serializer\Exclude */
+
 
          private $cities;
          public function __construct()

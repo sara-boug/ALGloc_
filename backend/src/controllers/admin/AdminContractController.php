@@ -5,8 +5,8 @@
         use App\Entity\Contract_;
         use App\Entity\Invoice;
         use App\Entity\Vehicle;
+        use App\Repository\Contract_Repository;
         use App\service\RouteSettings;
-        use DateInterval;
         use DateTime;
         use Doctrine\ORM\EntityManager;
         use Exception;
@@ -49,11 +49,11 @@
 
             }
             ###################### FUNCTIONS USED IN ROUTES ########################################
-            private function generateInvoice(Contract_ $contract, Vehicle $vehicle): Invoice
+            private function generateInvoice( DateTime $departure ,  DateTime $arrival , Contract_ $contract ): Invoice
             {    
-                 $diff =   $contract->getArrival()->diff(    $contract->getDeparture());
-                $days = $diff->format('%d') + $diff->format('%m') ; 
-                $cost = ($days * $vehicle->getRentalprice()) + $vehicle->getInssurancePrice() + $vehicle->getDeposit();
+                $diff =   $arrival->diff(    $departure);
+                $days = $diff->format('%d') + $diff->format('%m') ; // summing up the months and the days to obtain the day's difference
+                $cost = ($days * $contract->getVehicle()->getRentalprice()) + $contract->getVehicle()->getInssurancePrice() + $contract->getVehicle()->getDeposit();
                 $invoice = new Invoice();
                 $invoice->setdate('now'); 
                 $invoice->setamount($cost);
@@ -99,11 +99,11 @@
                     $em->persist($contract);
                     $em->flush();
                     // the invoice is automatically generated with the contracted
-                    $invoice = $this->generateInvoice($contract, $contract->getVehicle());
+                    $invoice = $this->generateInvoice( $contract->getDeparture() , $contract->getArrival()
+                         ,$contract );
                     $em->persist($invoice);
                     $em->flush();
                     $contractJson = $this->hateoas->serialize($contract, 'json');
-                    dd($contractJson);
                     return new Response($contractJson, Response::HTTP_CREATED, ["Content-type" => "application\json"]);
 
                 } catch (Exception $e) {
@@ -149,7 +149,7 @@
             }
 
             /** @Route( "/admin/contract/{id}"  , name="patch_contract" , methods ={"PATCH"} ) */
-            public function PatchContractById(int $id, Request $request)
+            public function patchContractById(int $id, Request $request , Contract_Repository $contractRepo)
             {
                 try {
                     $em = $this->getDoctrine()->getManager();
@@ -158,23 +158,58 @@
                     // in order to patch the arrival and departure  it shoulld'nt interfer  with another contract's departures and arrivals
                     if (isset($body["arrival"])) {
                         // checking whether the arrival
-                        if ($contract->getdeparture() > $body["arrival"]) {
+                        if ( ( new DateTime( $body["arrival"] ) ) < $contract->getdeparture() ) {
                             return new JsonResponse(['message' => "departure can not be after the arrival"], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
                         }
-                        $contracts = $em->getRepository(Contract_::class)->findBy(['vehicle' => $contract->getVehicle()->getid(), 'id' != $id]);
+                        $contracts = $contractRepo->selectExcept(  $id , $contract->getVehicle()->getid());
                         if ($this->checkdate($contract->getdeparture(), $body["arrival"], $contracts)) {
                             return new JsonResponse(['message' => "can not extend the period"], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
                         }
+                       // case both of the conditions are false then a new invoice is generated
+                       // the invoice is generated according to the number of days added 
+                       // the previous arrival and the newly updated arrival 
+                       // diff= Arrival2 - Arrival1
+                       $invoice=   $this->generateInvoice($contract->getArrival() , 
+                          new DateTime($body["arrival"] ), $contract  );   
+                        $em->persist($invoice); 
+                        $em->flush(); 
+                  
+                    } 
 
-                    }
-
-                    $contractJson = $this->hateoas->serialize($contract, 'json');
-                    return new Response($contractJson, Response::HTTP_OK, ["Content-type" => "application\json"]);
+                     // generating the contract json object which will also include the whole invoices  in case the period is extended
+                     $em->flush(); 
+                     $contractJson = $this->hateoas->serialize($contract, 'json');
+                     return new Response($contractJson, Response::HTTP_OK, ["Content-type" => "application\json"]);
 
                 } catch (Exception $e) {
+                     return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
+
+                }
+
+            }
+
+            /** @Route( "/admin/contract/{id}"  , name="delete_contract" , methods ={"DELETE"} ) */
+            public function deleteContractById(int $id  )
+            {  
+                try{  
+                    $em=$this->getDoctrine()->getManager(); 
+                    $contract = $em->getRepository(Contract_::class)->findOneBy(['id' => $id]);
+                    // firstly deleting  the invoices related to the contract due to foreign key constraints
+                    $invoices= $em->getRepository(Invoice::class)->findBy(['contract_' =>$contract->getid()]);
+                    foreach( $invoices as $invoice ) { 
+                        $em->remove($invoice) ;
+                        $em->flush(); 
+                    }
+                    // deleting the contract 
+                    $em->remove($contract); 
+                    $em->flush();
+                    return new JsonResponse(['message' => "deleted successfully"], Response::HTTP_OK, ["Content-type" => "application\json"]);
+
+                }catch(Exception $e) { 
                     return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
                 }
+
 
             }
 

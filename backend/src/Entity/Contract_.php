@@ -38,8 +38,7 @@
              */
             private $client;
             /**
-             * @ORM\OneToMany(targetEntity="App\Entity\Invoice" , mappedBy="contract")
-             * @Serializer\Exclude
+             * @ORM\OneToMany(targetEntity="App\Entity\Invoice" , mappedBy="contract_")
              */
 
             private $invoices;
