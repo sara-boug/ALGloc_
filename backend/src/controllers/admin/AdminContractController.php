@@ -189,21 +189,11 @@
             }
 
             /** @Route( "/admin/contract/{id}"  , name="delete_contract" , methods ={"DELETE"} ) */
-            public function deleteContractById(int $id  )
+            public function deleteContractById(int $id   , Contract_Repository  $contractRepo)
             {  
                 try{  
-                    $em=$this->getDoctrine()->getManager(); 
-                    $contract = $em->getRepository(Contract_::class)->findOneBy(['id' => $id]);
-                    // firstly deleting  the invoices related to the contract due to foreign key constraints
-                    $invoices= $em->getRepository(Invoice::class)->findBy(['contract_' =>$contract->getid()]);
-                    foreach( $invoices as $invoice ) { 
-                        $em->remove($invoice) ;
-                        $em->flush(); 
-                    }
-                    // deleting the contract 
-                    $em->remove($contract); 
-                    $em->flush();
-                    return new JsonResponse(['message' => "deleted successfully"], Response::HTTP_OK, ["Content-type" => "application\json"]);
+                      $contractRepo->delete($id); 
+                     return new JsonResponse(['message' => "deleted successfully"], Response::HTTP_OK, ["Content-type" => "application\json"]);
 
                 }catch(Exception $e) { 
                     return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);

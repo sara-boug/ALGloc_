@@ -5,9 +5,13 @@
     use Doctrine\ORM\Mapping as ORM;
     use Symfony\Component\Validator\Constraints as Assert;
     use Symfony\Component\Security\Core\User\UserInterface;
-     /**
+    use  Hateoas\Configuration\Annotation as Hateoas; 
+    use JMS\Serializer\Annotation as Serializer; 
+    /**
      * @ORM\Entity(repositoryClass="App\Repository\ClientRepository")
-     *
+     * @Serializer\XmlRoot("client")
+     * @Hateoas\Relation("self" , 
+     * href= @Hateoas\Route("get_client" , parameters = {"id" = "expr(object.getid())"}))
      */
     class Client  implements UserInterface
     {
@@ -29,7 +33,10 @@
         /** 
          * @ORM\Column(type="string" , length=200)
          * @Assert\NotBlank
+         *  @Serializer\Exclude 
          */
+         
+
         private $password;
         /** @ORM\Column(type="string" , length=300)
          * @Assert\NotBlank
@@ -52,20 +59,16 @@
         /** @ORM\OneToMany(targetEntity="App\Entity\Contract_" , mappedBy="client")*/
         private $contracts;
         /**@ORM\Column(type="json") */
+        /** @Serializer\Exclude */
+
         private  $roles =[]; 
-        /** @ORM\Column(type="text" , nullable= true ) */
+        /** @ORM\Column(type="text" , nullable= true ) 
+         *  @Serializer\Exclude 
+        */
+
         private $api_token; 
  
-       /* public function __construct1(string $fullname_, string $familyname, string $email, string $password_, string $address,
-            string $phone_number, string $license_number) {
-            $this->name = $fullname_;
-            $this->familyname = $familyname;
-            $this->address = $email;
-            $this->address = $address;
-            $this->phone_number = $phone_number;
-            $this->license_number = $license_number;
 
-        } */
         public function __construct()
         {
           
