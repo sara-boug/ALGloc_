@@ -39,10 +39,10 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
                   $em->flush();
                 }
                 //  deleting  the contract 
-                $contract = $em->getRepository(Contract_::class)->findOneBy(['id' =>$id]);
+                $contract = $em->getRepository(Contract_::class)->find( $id);
                 $em->remove($contract); 
-                $em->flush(); 
-
+                $em->flush();
+         
             }
 
 

@@ -4,7 +4,6 @@ namespace App\controllers\admin;
 use App\Entity\Agency;
 use App\Entity\City;
 use App\Repository\AgencyRepository;
-use App\service\FileUploader;
 use App\service\RouteSettings;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManager;
@@ -142,13 +141,13 @@ class AdminAgencyController extends AbstractController
         /** 
          * @Route("/admin/agency/{id}" , name="delete_agency" , methods ={"DELETE"})
          */
-        public function delete_agency(int $id):Response { 
+        public function delete_agency(int $id , AgencyRepository $agencyRepo):Response { 
           try { 
-            $agency= $this->getRepo(Agency::class)->find($id);
-              $this->entityManager()->remove($agency); 
-             $this->entityManager()->flush();
+            $agencyRepo->delete($id); 
              return new JsonResponse( ["message" =>'deleted'], Response::HTTP_OK , ["Content-type" => "application\json"]);
             }catch( Exception $e){ 
+                dd($e);
+
             return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
        }
 

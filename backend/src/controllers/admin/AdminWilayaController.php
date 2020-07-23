@@ -2,6 +2,7 @@
     namespace App\controllers\admin;
 
 use App\Entity\Wilaya;
+use App\Repository\WilayaRepository;
 use Doctrine\ORM\EntityManager;
 use Hateoas\HateoasBuilder;
 use Hateoas\UrlGenerator\CallableUrlGenerator;
@@ -101,14 +102,11 @@ class AdminWilayaController extends AbstractController {
      
 
          /** @Route("/admin/wilaya/{id}" , name="delete_wilaya" , methods={"DELETE"}) */
-         public function  deletewilayaById(int $id , Request $request ):Response 
+         public function  deletewilayaById(int $id , WilayaRepository $wilayaRepo):Response 
          { 
               try {  
-                 $this->em= $this->getDoctrine()->getManager(); 
-                 $wilaya = $this->em->getRepository(Wilaya::class) ->findOneBy(['id' =>$id]) ; 
-                 $this->em->remove($wilaya);
-                 $this->em->flush();
-                 return new JsonResponse(['message' => "deleted successfully"], Response::HTTP_OK, ["Content-type" => "application\json"]);
+                  $wilayaRepo->delete($id); 
+                  return new JsonResponse(['message' => "deleted successfully"], Response::HTTP_OK, ["Content-type" => "application\json"]);
                  
               }catch(Exception $e ) { 
                 return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);

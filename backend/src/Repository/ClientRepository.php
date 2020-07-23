@@ -28,7 +28,6 @@
              $contracts =$em->getRepository(Contract_::class)->findBy(['client'=>$id]); 
                foreach($contracts as   $contract) { 
                    $this->contractRepo ->delete($contract->getid()); 
-                   $em->flush();
              }
              $client = $em->getRepository(Client::class)->findOneBy(['id' =>$id]);
              $em->remove($client); 

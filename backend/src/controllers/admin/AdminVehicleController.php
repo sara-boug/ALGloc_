@@ -4,7 +4,8 @@
         use App\Entity\Agency;
         use App\Entity\Model;
         use App\Entity\Vehicle;
-        use App\service\FileUploader;
+use App\Repository\VehicleRepository;
+use App\service\FileUploader;
         use App\service\RouteSettings;
         use Exception;
         use Hateoas\HateoasBuilder;
@@ -203,13 +204,10 @@
             }
 
             /** @Route("/admin/vehicle/{id}" , name="delete_vehicle_by_id" , methods ={"DELETE"})  */
-            public function deleteVehicle(int $id): Response
+            public function deleteVehicle(int $id , VehicleRepository $vehicleRepo) : Response
             {
                 try {
-                    $em = $this->getDoctrine()->getManager();
-                    $vehicle = $this->getDoctrine()->getRepository(Vehicle::class)->findOneBy(['id' => $id]);
-                    $em->remove($vehicle);
-                    $em->flush();
+                    $vehicleRepo->delete($id); 
                     return new JsonResponse(["message" => "deleted successfully"], Response::HTTP_OK, ["Content-type" => "application\json"]);
                 } catch (Exception $e) {
                     return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);

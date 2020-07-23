@@ -15,6 +15,7 @@
      */
     class Client  implements UserInterface
     {
+        
         /**
          * @ORM\Id
          * @ORM\GeneratedValue

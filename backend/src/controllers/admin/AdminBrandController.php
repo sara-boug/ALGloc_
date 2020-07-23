@@ -2,6 +2,7 @@
     namespace App\controllers\admin;
 
 use App\Entity\Brand;
+use App\Repository\BrandRepository;
 use Hateoas\HateoasBuilder;
 use Hateoas\UrlGenerator\CallableUrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -99,13 +100,10 @@ class AdminBrandController extends AbstractController {
      
 
          /** @Route("/admin/brand/{id}" , name="delete_brand" , methods={"DELETE"}) */
-         public function  deleteBrandById(int $id , Request $request ):Response 
+         public function  deleteBrandById(int $id ,  BrandRepository $brandRepo ):Response 
          { 
               try {  
-                 $this->em= $this->getDoctrine()->getManager(); 
-                 $brand = $this->em->getRepository(Brand::class) ->findOneBy(['id' =>$id]) ; 
-                 $this->em->remove($brand);
-                 $this->em->flush();
+                $brandRepo->delete($id); 
                  return new JsonResponse(['message' => "deleted successfully"], Response::HTTP_OK, ["Content-type" => "application\json"]);
                  
               }catch(Exception $e ) { 

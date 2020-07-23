@@ -3,6 +3,7 @@
 
 use App\Entity\City;
 use App\Entity\Wilaya;
+use App\Repository\CityRepository;
 use Doctrine\ORM\EntityManager;
 use Hateoas\HateoasBuilder;
 use Hateoas\UrlGenerator\CallableUrlGenerator;
@@ -106,13 +107,10 @@ class AdminCityController extends AbstractController {
      
 
          /** @Route("/admin/city/{id}" , name="delete_city" , methods={"DELETE"}) */
-         public function  deleteCityById(int $id , Request $request ):Response 
+         public function  deleteCityById(int $id ,  CityRepository $cityRepo ):Response 
          { 
               try {  
-                 $this->em= $this->getDoctrine()->getManager(); 
-                 $city = $this->em->getRepository(City::class) ->findOneBy(['id' =>$id]) ; 
-                 $this->em->remove($city);
-                 $this->em->flush();
+                 $cityRepo->delete($id); 
                  return new JsonResponse(['message' => "deleted successfully"], Response::HTTP_OK, ["Content-type" => "application\json"]);
                  
               }catch(Exception $e ) { 

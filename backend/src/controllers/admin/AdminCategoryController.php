@@ -2,7 +2,8 @@
   namespace App\controllers\admin;
 
     use App\Entity\Category;
-    use App\service\RouteSettings;
+use App\Repository\CategoryRepository;
+use App\service\RouteSettings;
     use Exception;
     use Hateoas\HateoasBuilder;
     use Hateoas\UrlGenerator\CallableUrlGenerator;
@@ -100,13 +101,10 @@
         }
 
         /** @Route("/admin/category/{id}" , name="delete_category" , methods={"DELETE"}) */
-        public function deletecategoryById(int $id, Request $request): Response
+        public function deleteCategoryById(int $id,  CategoryRepository $categoryRepo): Response
         {
             try {
-                $this->em = $this->getDoctrine()->getManager();
-                $category = $this->em->getRepository(Category::class)->findOneBy(['id' => $id]);
-                $this->em->remove($category);
-                $this->em->flush();
+                 $categoryRepo->delete($id); 
                 return new JsonResponse(['message' => "deleted successfully"], Response::HTTP_OK, ["Content-type" => "application\json"]);
 
             } catch (Exception $e) {

@@ -4,7 +4,8 @@
     use App\Entity\Brand;
     use App\Entity\Category;
     use App\Entity\Model;
-    use App\service\RouteSettings;
+use App\Repository\ModelRepository;
+use App\service\RouteSettings;
     use Doctrine\ORM\EntityManager;
     use Exception;
     use Hateoas\HateoasBuilder;
@@ -112,13 +113,10 @@
         }
 
         /** @Route("/admin/model/{id}" , name="delete_model" , methods={"DELETE"}) */
-        public function deleteModelById(int $id, Request $request): Response
+        public function deleteModelById(int $id,  ModelRepository $modelRepo): Response
         {
             try {
-                $this->em = $this->getDoctrine()->getManager();
-                $model = $this->em->getRepository(Model::class)->findOneBy(['id' => $id]);
-                $this->em->remove($model);
-                $this->em->flush();
+                $modelRepo->delete($id); 
                 return new JsonResponse(['message' => "deleted successfully"], Response::HTTP_OK, ["Content-type" => "application\json"]);
 
             } catch (Exception $e) {
