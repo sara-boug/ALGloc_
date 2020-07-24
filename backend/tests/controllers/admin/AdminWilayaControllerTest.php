@@ -19,9 +19,7 @@
        public function testwilayaRoute(){ 
            $this->admin->logIn($this->client , $this) ; 
            $this->postWilaya(); 
-           $this->getWilaya(); 
-           $this->patchWilaya(); 
-           $this->getWilayas(); 
+            $this->patchWilaya(); 
            $this->deleteWilaya(); 
        }
 
@@ -35,14 +33,6 @@
 
         }
 
-       public function getwilaya(){ 
-           $this->client->request(  'GET' , '/admin/wilaya/'.$this->id , [] , []  , ['Content-type'=> 'Application/json']); 
-           $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
-           $wilayaName= (json_decode($this->client->getResponse()->getContent() , true))['name_']; 
-          // asserting that the data in the body is the same as the one sent to the db
-           $this->assertEquals($wilayaName ,strtolower( $this->data['name_'])); 
-
-       }
 
        public function patchwilaya(){ 
         $this->data= [
@@ -56,11 +46,6 @@
     }
 
 
-    public function getWilayas(){ 
-        $this->client->request(  'GET' , '/admin/wilayas' , [] , []  , ['Content-type'=> 'Application/json']); 
-         $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
-
-    }
 
     public function deletewilaya(){ 
         $this->client->request(  'DELETE' , '/admin/wilaya/'.$this->id , [] , []  , ['Content-type'=> 'Application/json']); 

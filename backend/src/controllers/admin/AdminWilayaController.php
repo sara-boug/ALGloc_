@@ -17,8 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 use App\service\RouteSettings; 
 // routes regarding Admin wilaya controller
 // /admin/wilaya      : description : posting a specefic  wilaya                       methods: POST
-// /admin/wilayas     : description : getting the whole available wilayas              methods:GET
-// /admin/wilaya/{id} : description : modifying, deleting or getting a specific wilaya by id    methods: GET , PATCH, DELETE
+// /admin/wilaya/{id} : description : modifying, deleting  wilaya by id    methods: PATCH, DELETE
 
 class AdminWilayaController extends AbstractController { 
 
@@ -61,22 +60,6 @@ class AdminWilayaController extends AbstractController {
 
     }
 
-         /** @Route("/admin/wilaya/{id}" , name="get_wilaya" , methods={"GET"}) */
-         public function  getWilayaById(int $id , Request $request ):Response 
-         { 
-              try {  
-                $this->em= $this->getDoctrine()->getManager(); 
-                 $wilaya = $this->em->getRepository(Wilaya::class) ->findOneBy(['id' =>$id]) ; 
-                 $wilayaJson= $this->hateoas->serialize($wilaya , 'json'); 
-                 return new  Response(  $wilayaJson , Response::HTTP_OK, ["Content-type" => "application\json"]);
-
-              }catch(Exception $e ) { 
-                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
-
-
-              }
-
-        }
     
          /** @Route("/admin/wilaya/{id}" , name="patch_wilaya" , methods={"PATCH"}) */
          public function   patchWilayaById(int $id , Request $request ):Response 
@@ -117,22 +100,6 @@ class AdminWilayaController extends AbstractController {
         }
 
 
-         /** @Route("/admin/wilayas" , name="get_wilayas" , methods={"GET"}) */
-         public function  getwilayas(  RouteSettings $rs ):Response 
-         { 
-              try {  
-                 $this->em= $this->getDoctrine()->getManager(); 
-                 $wilayas = $this->em->getRepository(wilaya::class) ->findAll();  
-                 $wilayasJson= $this->hateoas
-                 ->serialize( $rs->pagination($wilayas , 'get_wilayas') , 'json');
-                 return new  Response(  $wilayasJson , Response::HTTP_OK, ["Content-type" => "application\json"]);
-                  
-              }catch(Exception $e ) { 
-                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
-
-              }
-
-        }
    
 
    

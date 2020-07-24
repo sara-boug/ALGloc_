@@ -19,9 +19,7 @@
        public function testCategoryRoute(){ 
            $this->admin->logIn($this->client , $this) ; 
            $this->postCategory(); 
-           $this->getCategory(); 
            $this->patchCategory(); 
-           $this->getCategories(); 
            $this->deleteCategory(); 
        }
 
@@ -36,13 +34,6 @@
 
         }
 
-       public function getCategory(){ 
-           $this->client->request(  'GET' , '/admin/category/'.$this->id , [] , []  , ['Content-type'=> 'Application/json']); 
-
-           $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
-
-       }
-
        public function patchCategory(){ 
         $this->data= [
             "name_"=>"extra Large" , 
@@ -55,11 +46,6 @@
     }
 
 
-    public function getCategories(){ 
-        $this->client->request(  'GET' , '/admin/categories' , [] , []  , ['Content-type'=> 'Application/json']); 
-        $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
-
-    }
 
     public function deleteCategory(){ 
         $this->client->request(  'DELETE' , '/admin/category/'.$this->id , [] , []  , ['Content-type'=> 'Application/json']); 

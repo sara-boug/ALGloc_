@@ -19,11 +19,10 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
      public function testVehicleRoute(){ 
          $this->admin->logIn($this->client, $this); 
          $this->postVehicle(); 
-         $this->getVehicles(); 
-         $this->getVehicleById(); 
          $this->patchVehicleById(); 
          $this->getVehicleImage(); 
-        $this->deleteVehicleById();
+
+         $this->deleteVehicleById();
      }
      
      public function postVehicle() { 
@@ -49,26 +48,18 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
           $this->id=(json_decode($this->client->getResponse()->getContent() , true))['id']; 
 
       }
+       
+         // in order to test the the image uploaded by the admin 
+    public function getVehicleImage() { 
+        $this->client->request( 'GET', '/public/vehicle/'.$this->id.'/image' ); 
+        $this->assertEquals($this->client->getResponse()-> getStatusCode(), 200)  ;
+        $this->assertEquals( $this->client->getResponse()->headers->get("content-type") , "image/png"); 
+        $this->uploader->deleteFolder(); 
 
-      // testing the vehicles selection
-      public function getVehicles() { 
-        $this->client->request( 'GET', '/admin/vehicles' , [],[] , ['content-Type' => 'Application/json']  ); 
-         $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
-        $this->client->request( 'GET', '/admin/vehicles/agency/'.$this->id , [],[] , ['content-Type' => 'Application/json']  ); 
-        $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
-        $this->client->request( 'GET', '/admin/vehicles/model/'.$this->id , [],[] , ['content-Type' => 'Application/json']  ); 
-        $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
- 
-
-
-
-    } 
-
-    public function getVehicleById() { 
-        $this->client->request( 'GET', '/admin/vehicle/'.$this->id , [],[] , ['content-Type' => 'Application/json']  ); 
-        $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  )  ; 
-
+        
+  
     }
+
 
 
     public function patchVehicleById() { 
@@ -82,22 +73,12 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
         $vehicleTable = static::$container->get('doctrine')->getManager()->getRepository( Vehicle::class) ;
         $vehicle=  $vehicleTable->findOneBy(['id' =>$this->id]); 
-        $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200)  ;
+        $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200);
         // asserting that the value is really updated  
         $this->assertEquals($vehicle->getRegistrationNumber() , $data["registration_number"]); 
 
     }
 
-
-    public function getVehicleImage() { 
-        $this->client->request( 'GET', '/admin/vehicle/'.$this->id.'/image' ); 
-        $this->assertEquals($this->client->getResponse()-> getStatusCode(), 200)  ;
-        $this->assertEquals( $this->client->getResponse()->headers->get("content-type") , "image/png"); 
-        $this->uploader->deleteFolder(); 
-
-        
-  
-    }
 
 
     public function deleteVehicleById() { 

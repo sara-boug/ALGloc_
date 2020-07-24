@@ -19,9 +19,7 @@
        public function testBrandRoute(){ 
            $this->admin->logIn($this->client , $this) ; 
            $this->postBrand(); 
-           $this->getBrand(); 
            $this->patchBrand(); 
-           $this->getBrands(); 
            $this->deleteBrand(); 
        }
 
@@ -36,12 +34,6 @@
 
         }
 
-       public function getBrand(){ 
-           $this->client->request(  'GET' , '/admin/brand/'.$this->id , [] , []  , ['Content-type'=> 'Application/json']); 
-
-           $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
-
-       }
 
        public function patchBrand(){ 
         $this->data= [
@@ -55,11 +47,6 @@
     }
 
 
-    public function getBrands(){ 
-        $this->client->request(  'GET' , '/admin/brands' , [] , []  , ['Content-type'=> 'Application/json']); 
-        $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
-
-    }
 
     public function deleteBrand(){ 
         $this->client->request(  'DELETE' , '/admin/brand/'.$this->id , [] , []  , ['Content-type'=> 'Application/json']); 

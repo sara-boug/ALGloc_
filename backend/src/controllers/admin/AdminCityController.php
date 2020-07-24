@@ -64,22 +64,7 @@ class AdminCityController extends AbstractController {
 
     }
 
-         /** @Route("/admin/city/{id}" , name="get_city" , methods={"GET"}) */
-         public function  getCityById(int $id , Request $request ):Response 
-         { 
-              try {  
-                $this->em= $this->getDoctrine()->getManager(); 
-                 $city = $this->em->getRepository(City::class) ->findOneBy(['id' =>$id]) ; 
-                 $cityJson= $this->hateoas->serialize($city , 'json'); 
-                 return new  Response(  $cityJson , Response::HTTP_OK, ["Content-type" => "application\json"]);
 
-              }catch(Exception $e ) { 
-                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
-
-
-              }
-
-        }
     
          /** @Route("/admin/city/{id}" , name="patch_city" , methods={"PATCH"}) */
          public function   patchCityById(int $id , Request $request ):Response 
@@ -122,22 +107,7 @@ class AdminCityController extends AbstractController {
         }
 
 
-         /** @Route("/admin/cities" , name="get_cities" , methods={"GET"}) */
-         public function  getCities(  RouteSettings $rs ):Response 
-         { 
-              try {  
-                 $this->em= $this->getDoctrine()->getManager(); 
-                 $cities = $this->em->getRepository(City::class) ->findAll();  
-                 $citiesJson= $this->hateoas
-                 ->serialize( $rs->pagination($cities , 'get_cities') , 'json');
-                 return new  Response(  $citiesJson , Response::HTTP_OK , ["Content-type" => "application\json"]);
-                  
-              }catch(Exception $e ) { 
-                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST , ["Content-type" => "application\json"]);
 
-              }
-
-        }
    
 
    

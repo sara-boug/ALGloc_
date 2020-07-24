@@ -16,8 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 use App\service\RouteSettings; 
 // routes regarding Admin brand controller
 // /admin/brand      : description : posting a specefic  brand                       methods: POST
-// /admin/brands     : description : getting the whole available brands              methods:GET
-// /admin/brand/{id} : description : modifying, deleting or getting a specific brand by id    methods: GET , PATCH, DELETE
+// /admin/brand/{id} : description : modifying, deleting   a specific brand by id    methods: GET , PATCH, DELETE
 class AdminBrandController extends AbstractController { 
 
     private $hateoas; 
@@ -59,23 +58,6 @@ class AdminBrandController extends AbstractController {
 
     }
 
-         /** @Route( "/admin/brand/{id}" , name="get_brand" , methods={"GET"}) */
-         public function  getBrandById(int $id  ):Response 
-         { 
-              try {  
-                $this->em= $this->getDoctrine()->getManager(); 
-                 $brand = $this->em->getRepository(Brand::class) ->findOneBy(['id' =>$id]) ; 
-                 $brandJson= $this->hateoas->serialize($brand , 'json'); 
-                 return new  Response(  $brandJson , Response::HTTP_OK, ["Content-type" => "application\json"]);
-
-              }catch(Exception $e ) { 
-                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
-
-
-              }
-
-        }
-    
          /** @Route("/admin/brand/{id}" , name="patch_brand" , methods={"PATCH"}) */
          public function   patchBrandById(int $id , Request $request ):Response 
          { 
@@ -115,22 +97,6 @@ class AdminBrandController extends AbstractController {
         }
 
 
-         /** @Route("/admin/brands" , name="get_brands" , methods={"GET"}) */
-         public function  getbrands(  RouteSettings $rs ):Response 
-         { 
-              try {  
-                 $this->em= $this->getDoctrine()->getManager(); 
-                 $brands = $this->em->getRepository(brand::class) ->findAll();  
-                 $brandsJson= $this->hateoas
-                 ->serialize( $rs->pagination($brands , 'get_brands') , 'json');
-                 return new  Response(  $brandsJson , Response::HTTP_OK, ["Content-type" => "application\json"]);
-                  
-              }catch(Exception $e ) { 
-                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
-
-              }
-
-        }
    
 
    

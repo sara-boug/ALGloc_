@@ -13,16 +13,18 @@
         use Doctrine\Bundle\FixturesBundle\Fixture;
         use Doctrine\Common\Persistence\ObjectManager;
         use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+        use App\service\FileUploader; 
 
         class AppFixtures extends Fixture
         {
             public const data = 15; // which reffers to the number of data to insert
-
+            private $uploader ; 
             private $encoder;
 
-            public function __construct(UserPasswordEncoderInterface $encoder)
+            public function __construct(UserPasswordEncoderInterface $encoder , FileUploader $uploader)
             {
                 $this->encoder = $encoder;
+                $this->uploader = $uploader; 
             }
             public function load(ObjectManager $manager)
             {

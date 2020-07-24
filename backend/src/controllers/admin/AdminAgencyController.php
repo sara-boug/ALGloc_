@@ -1,15 +1,12 @@
 <?php
 namespace App\controllers\admin;
-
 use App\Entity\Agency;
 use App\Entity\City;
 use App\Repository\AgencyRepository;
-use App\service\RouteSettings;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManager;
 use Hateoas\HateoasBuilder; 
 use Exception;
-use Hateoas\Hateoas;
 use Hateoas\UrlGenerator\CallableUrlGenerator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -22,9 +19,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 //  routes regarding the agency Controller
 // /admin/agency         :  description: add one agency                      methods: post
 // /admin/agencies       :  description: iterating through all the agencies  methods: get
-// /admin/agency/{id}    :  description: modifying specific agency           methods :Patch  , Delete , get
-// /admin/agency/city/id :  description: get agency by city name             methods:  GET
-
+// /admin/agency/{id}    :  description: modifying specific agency           methods :Patch  , Delete
+ 
 class AdminAgencyController extends AbstractController
 {
      
@@ -79,21 +75,7 @@ class AdminAgencyController extends AbstractController
 
     }
 
-    /**
-     * @Route("/admin/agencies" , name="get_agencies" , methods={"GET"})
-     */
-    public function get_agencies(RouteSettings $setting): Response
-    {
-        try {
-            $agencies = $this->getRepo(Agency::class)->findAll();
-             $jsonAgencies =$this->hateoas->serialize( $setting->pagination($agencies ,"get_agencies" ), 'json'  ) ;        
-            return new Response($jsonAgencies, Response::HTTP_OK, ["Content-type" => "application\json"]);
 
-        } catch (Exception $e) {
-            return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
-
-        }
-    } 
      /**
       * @Route("/admin/agency/{id}" , name="agency_patch" , methods={"PATCH"}) 
       */
@@ -124,20 +106,6 @@ class AdminAgencyController extends AbstractController
 
         }
        
-       
-        /**
-         * @Route("/admin/agency/{id}" , name ="get_agency" , methods={"GET"})
-         */
-        public function get_agency(int $id):Response {
-            try { 
-              $agency= $this->getRepo(Agency::class)->find($id);
-              $jsonAgency = $this->hateoas->serialize($agency , 'json'); 
-              return new Response( $jsonAgency,Response::HTTP_OK, ["Content-type" => "application\json"]);
-               }catch( Exception $e){ 
-              return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
-
-             }
-        }
         /** 
          * @Route("/admin/agency/{id}" , name="delete_agency" , methods ={"DELETE"})
          */
@@ -153,20 +121,6 @@ class AdminAgencyController extends AbstractController
 
      }
      
-         /** 
-         * @Route("/admin/agency/city/{id}" , name="get_agency_by_cityId" , methods ={"GET"})
-         */
-        public function  get_agency_by_cityId(int $id , AgencyRepository $agencyRepo ,RouteSettings $setting):Response { 
-            try { 
-              $agencies=$agencyRepo->findByCityId($id); 
-              $jsonAgencies =$this->hateoas->serialize( $setting->pagination($agencies ,"get_agencies" ), 'json'  ) ;        
-              return new Response($jsonAgencies, Response::HTTP_OK, ["Content-type" => "application\json"]);
-  
-             }catch( Exception $e){ 
-              return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
-         }
-  
-       }
   
 
     }

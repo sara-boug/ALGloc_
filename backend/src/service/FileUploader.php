@@ -42,7 +42,7 @@ class FileUploader  {
          }
          public function deleteImage($image){ 
               $this->fileSystem->delete($this->directory.$image); 
-         }
+          }
          }
     
    

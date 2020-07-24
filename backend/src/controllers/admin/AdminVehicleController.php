@@ -24,13 +24,12 @@ use App\service\FileUploader;
         // /admin/vehicles     : description : getting the whole available vehicles               methods:GET
          
         // (to be imporved ) /admin/vehicles/agency/{id}     : description : getting the whole available vehicles  according to the agency      methods:GET
-        // (to be imporved) /admin/vehicles/modely/{id}     : description : getting the whole available vehicles  according to the  model      methods:GET
+        // (to be imporved) /admin/vehicles/model/{id}     : description : getting the whole available vehicles  according to the  model      methods:GET
 
         // /admin/vehicle/{id} : description : modifying, deleting or getting a spricig vehicle   methods: GET , PATCH, DELETE
         class AdminVehicleController extends AbstractController
         {
-            private $serializer;
-            private $hateoas;
+             private $hateoas;
              public function __construct(SerializerInterface $serializer, RouterInterface $router  )
             {
                 $this->serializer = $serializer;
@@ -89,64 +88,6 @@ use App\service\FileUploader;
                 }
             }
 
-            /** @Route("/admin/vehicles" , name="get_vehicles" , methods={"GET"}) */
-            public function get_vehicles_default(RouteSettings $rs): Response
-            {
-                try {
-                    $vehicles = $this->getDoctrine()->getRepository(Vehicle::class)->findAll();
-                    $vehiclesPag = $rs-> pagination($vehicles, "get_vehicles");
-
-                    $vehiclesJson = $this->hateoas->serialize($vehiclesPag, 'json');
-                    return new Response($vehiclesJson, Response::HTTP_OK, ["Content-type" => "application\json"]);
-                } catch (Exception $e) {
-                    return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
-
-                }
-            }
-            /** @Route("/admin/vehicles/agency/{id}" , name="get_vehicles_agency" , methods={"GET"}) */
-            public function getVehiclesByAgency(int $id , RouteSettings $rs): Response
-            {
-                try {
-                    $vehicles = $this->getDoctrine()->getRepository(Vehicle::class)->findBy(['agency' => $id]);
-                    $vehiclesPag = $rs->pagination($vehicles, "get_vehicles");
-                    $vehiclesJson = $this->hateoas->serialize($vehiclesPag, 'json');
-                    return new Response($vehiclesJson, Response::HTTP_OK, ["Content-type" => "application\json"]);
-                } catch (Exception $e) {
-                     return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
-
-                }
-            }
-
-            /**  @Route("/admin/vehicles/model/{id}" , name="get_vehicles_model" , methods={"GET"}) */
-            public function getVehiclesByModel(int $id , RouteSettings $rs): Response
-            {
-                try {
-                    $vehicles = $this->getDoctrine()->getRepository(Vehicle::class)->findBy(['model' => $id]);
-                    $vehiclesPag = $rs->pagination($vehicles, "get_vehicles");
-                    $vehiclesJson = $this->hateoas->serialize($vehiclesPag, 'json');
-                    return new Response($vehiclesJson, Response::HTTP_OK, ["Content-type" => "application\json"]);
-                } catch (Exception $e) {
-
-                    return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
-
-                }
-            }
-
-            /** @Route("/admin/vehicle/{id}" , name="get_vehicle_by_id" , methods ={"GET"})  */
-            public function getVehicleById(int $id): Response
-            {
-                try {
-                    $vehicle = $this->getDoctrine()->getRepository(Vehicle::class)->findOneBy([
-                        'id' => $id,
-                    ]);
-                    $vehicleJson = $this->hateoas->serialize($vehicle, 'json');
-                    return new Response($vehicleJson, Response::HTTP_OK, ["Content-type" => "application\json"]);
-                } catch (Exception $e) {
-                    return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
-
-                }
-
-            }
             /** @Route("/admin/vehicle/{id}" , name="patch_vehicle_by_id" , methods ={"PATCH"})  */
             public function patchVehicleById(int $id, Request $request, FileUploader $uploader): Response
             {
@@ -180,28 +121,6 @@ use App\service\FileUploader;
 
             }
 
-            /** @Route("/admin/vehicle/{id}/image" , name="get_vehicle_image" , methods ={"GET"})  */
-            public function getVehicleImage(int $id , FileUploader $uploader) 
-            {
-                try {
-                    $vehicle = $this->getDoctrine()->getRepository(Vehicle::class)->findOneBy(['id' => $id]);
-                    $vehicleImage = $vehicle->getImage();
-                    $url =  '/image/'.$vehicleImage ;
-                     $reponse=  new  StreamedResponse(   function()  use ( $uploader , $url) { 
-                            $outputStream= fopen('php://output' , 'wb'); 
-                            $stream = $uploader->readStream($url); 
-                            stream_copy_to_stream( $stream , $outputStream );
-                          }
-                        );
-                        ob_clean();
-                    $reponse->headers->set('content-type' ,"image/png"); 
-                    return $reponse;
-                } catch (Exception $e) {
-                    return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
-
-                }
-
-            }
 
             /** @Route("/admin/vehicle/{id}" , name="delete_vehicle_by_id" , methods ={"DELETE"})  */
             public function deleteVehicle(int $id , VehicleRepository $vehicleRepo) : Response

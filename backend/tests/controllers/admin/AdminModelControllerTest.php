@@ -21,11 +21,7 @@ class AdminModelControllerTest extends WebTestCase {
        public function testModelRoute(){ 
            $this->admin->logIn($this->client , $this) ; 
            $this->postModel(); 
-           $this->getModel(); 
            $this->patchModel(); 
-           $this->getModels(); 
-           $this->getModelsByBrand(); 
-           $this->getModelsByCategory() ;
            $this->deleteModel(); 
        }
 
@@ -42,13 +38,6 @@ class AdminModelControllerTest extends WebTestCase {
 
         }
 
-       public function getModel(){ 
-           $this->client->request(  'GET' , '/admin/model/1' , [] , []  , ['Content-type'=> 'Application/json']); 
-
-           $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
-
-       }
-
        public function patchModel(){ 
         $this->data= [
             "name_"=>"M'sila" , 
@@ -59,42 +48,12 @@ class AdminModelControllerTest extends WebTestCase {
         $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
 
     }
-
-
-    public function getModels(){ 
-        $this->client->request(  'GET' , '/admin/models' , [] , []  , ['Content-type'=> 'Application/json']); 
- 
-        $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
-
-    }
-
-
-    public function getModelsByBrand(){ 
-         $brandId= 1; 
-         $this->client->request(  'GET' , '/admin/models/brand/'.$brandId , [] , []  , ['Content-type'=> 'Application/json']); 
-         $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
-         $models = json_decode($this->client->getResponse()-> getContent() ,true); 
-         $this->assertEquals( $models[0]["brand"]["id"] , $brandId ) ; 
-    }
-
-      public function getModelsByCategory(){ 
-        $categoryId= 4; 
-        $this->client->request(  'GET' , '/admin/models/category/'.$categoryId , [] , []  , ['Content-type'=> 'Application/json']); 
-        $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
-      }
-
-
-
-
     public function deleteModel(){ 
         $this->client->request(  'DELETE' , '/admin/model/'.$this->id , [] , []  , ['Content-type'=> 'Application/json']); 
         $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
 
     }
-
-
-
-    }
+}
 
 
     

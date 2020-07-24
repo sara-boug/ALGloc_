@@ -19,9 +19,7 @@
        public function testCityRoute(){ 
            $this->admin->logIn($this->client , $this) ; 
            $this->postCity(); 
-           $this->getCity(); 
            $this->patchCity(); 
-           $this->getCities(); 
            $this->deleteCity(); 
        }
 
@@ -37,13 +35,6 @@
 
         }
 
-       public function getCity(){ 
-           $this->client->request(  'GET' , '/admin/city/1' , [] , []  , ['Content-type'=> 'Application/json']); 
-
-           $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
-
-       }
-
        public function patchCity(){ 
         $this->data= [
             "name_"=>"Ain Melh" , 
@@ -56,11 +47,6 @@
     }
 
 
-    public function getCities(){ 
-        $this->client->request(  'GET' , '/admin/cities' , [] , []  , ['Content-type'=> 'Application/json']); 
-         $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
-
-    }
 
     public function deleteCity(){ 
         $this->client->request(  'DELETE' , '/admin/city/'.$this->id , [] , []  , ['Content-type'=> 'Application/json']); 

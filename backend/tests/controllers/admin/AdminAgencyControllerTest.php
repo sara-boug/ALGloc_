@@ -2,9 +2,7 @@
         namespace App\tests\controllers\admin;
 
         use App\Entity\Agency;
-        use App\Entity\Vehicle;
         use App\Repository\VehicleRepository;
-        use PHPUnit\Framework\Constraint\Count;
         use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
         use Symfony\Bundle\FrameworkBundle\KernelBrowser;
   
@@ -33,9 +31,6 @@
             {   
                  $this->admin->logIn($this->client , $this);
                  $this->post_agency();
-                 $this->get_agencies(); 
-                 $this->get_agency();
-                 $this->get_agency_by_cityId();
                  $this->patch_agency(); 
                  $this->delete_agency(); 
             }
@@ -57,38 +52,6 @@
 
 
             }
-
-            public function get_agencies(){ 
-                $this->client->request('GET', '/admin/agencies' , [] ,[],['content_type' => 'Application/json']); 
-                $this->assertEquals(200, $this->client->getResponse()->getStatusCode()); 
-                // assserting that the array is not empty 
-                $this->assertNotEmpty($this->client->getResponse()->getContent() ); 
-                 
-            } 
-
-            public function get_agency(){ 
-                $this->client->request('GET', '/admin/agency/'.$this->id , [] ,[],['content_type' => 'Application/json']); 
-                 $this->assertEquals(200, $this->client->getResponse()->getStatusCode()); 
-                // assserting that the data was really updated 
-                $result =json_decode(  $this->client->getResponse()->getContent(),true);
-                // asserting that we are getting the real data
-                $this->assertEquals($this->data['email'] , $result['email']); 
-
-            }
-
-            
-            public function get_agency_by_cityId(){ 
-                $this->client->request('GET', '/admin/agency/city/1', [] ,[],['content_type' => 'Application/json']); 
-                $result =  $this->client->getResponse()->getContent();
-
-                $this->assertEquals(200, $this->client->getResponse()->getStatusCode()); 
-                // assserting that the data was really updated 
-                // asserting that we are getting the real data
-                $this->assertEquals(count($result) , 1 ); 
-
-            }
-
-            
 
 
             

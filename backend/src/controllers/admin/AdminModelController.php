@@ -19,12 +19,10 @@ use App\service\RouteSettings;
     use Symfony\Component\Routing\RouterInterface;
 
     // routes regarding Admin Model controller
-    // /admin/model      :   description  : posting a specefic model                                 methods: POST
-    // /admin/models     :    description : getting the whole available cities                       methods:GET
-    // /admin/model/{id} :   description  : modifying, deleting or getting a specific Model by id    methods: GET , PATCH, DELETE
-    // /admin/models/category/{id} : description :  selecting a model by a category   methods: GET 
-    // /admin/models/brand/{id}    : description :  selecting a  model by a  brand    methods: GET 
+    // /admin/model      :   description  : posting a specific model                                 methods: POST
+    // /admin/model/{id} :   description  : modifying, deleting or getting a specific Model by id    methods:  PATCH, DELETE
 
+    
 
     class AdminModelController extends AbstractController
     {
@@ -74,21 +72,6 @@ use App\service\RouteSettings;
 
         }
 
-        /** @Route("/admin/model/{id}" , name="get_model" , methods={"GET"}) */
-        public function getModelById(int $id, Request $request): Response
-        {
-            try {
-                $this->em = $this->getDoctrine()->getManager();
-                $model = $this->em->getRepository(Model::class)->findOneBy(['id' => $id]);
-                $modelJson = $this->hateoas->serialize($model, 'json');
-                return new Response($modelJson, Response::HTTP_OK , ["Content-type" => "application\json"]);
-
-            } catch (Exception $e) {
-                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
-
-            }
-
-        }
 
         /** @Route("/admin/model/{id}" , name="patch_model" , methods={"PATCH"}) */
         public function patchModelById(int $id, Request $request): Response
@@ -121,57 +104,6 @@ use App\service\RouteSettings;
 
             } catch (Exception $e) {
                 return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
-
-            }
-
-        }
-
-        /** @Route("/admin/models" , name="get_models" , methods={"GET"}) */
-        public function getModels(RouteSettings $rs): Response
-        {
-            try {
-                $this->em = $this->getDoctrine()->getManager();
-                $models = $this->em->getRepository(Model::class)->findAll();
-                $modelsJson = $this->hateoas
-                    ->serialize($rs->pagination($models, 'get_models'), 'json');
-                return new Response($modelsJson, Response::HTTP_OK , ["Content-type" => "application\json"]) ;
-
-            } catch (Exception $e) {
-                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
-
-            }
-
-        }
-
-        /** @Route("/admin/models/brand/{id}" , name="get_models_by_brand" , methods={"GET"}) */
-        public function getModelsByBrand( int $id , RouteSettings $rs): Response
-        {
-            try {
-                $this->em = $this->getDoctrine()->getManager();
-                $models = $this->em->getRepository(Model::class)->findBy(['brand' => $id ]);
-                $modelsJson = $this->hateoas
-                    ->serialize($rs->pagination($models, "get_models"), 'json');
-                return new Response($modelsJson, Response::HTTP_OK, ["Content-type" => "application\json"]);
-
-            } catch (Exception $e) {
-                dd($e); 
-                return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
-
-            }
-
-        }
-        /** @Route("/admin/models/category/{id}" , name="get_models_by_category" , methods={"GET"}) */
-        public function getModelsByCategory( int $id , RouteSettings $rs): Response
-        {
-            try {
-                $this->em = $this->getDoctrine()->getManager();
-                $models = $this->em->getRepository(Model::class)->findBy(['category' => $id ]);
-                $modelsJson = $this->hateoas
-                    ->serialize($rs->pagination($models, "get_models"), 'json');
-                return new Response($modelsJson, Response::HTTP_OK, ["Content-type" => "application\json"]);
-
-            } catch (Exception $e) {
-                 return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
             }
 
