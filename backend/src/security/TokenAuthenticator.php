@@ -11,6 +11,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 use \Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException; 
+use Exception;
+use App\Entity\Client;
+
 class TokenAuthenticator extends AbstractGuardAuthenticator
 {
     
@@ -25,26 +29,40 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
  
     public function supports(Request $request)
     {
+
           return true; 
     }
     
-    public function getUser($credentials,  UserProviderInterface $userProvider)
-    {
-        
-    }
     public function getCredentials(Request $request)
-    {
+    {   
+    
         $extractor = new AuthorizationHeaderTokenExtractor(
-            'Bearer',
+            'Bearer', 
             'Authorization'
         );
         $token = $extractor->extract($request);
-        if (!$token) {
-            print("no header found"); 
-            return;
-        }
-        return $token;
+       
 
+        if (!$token) {
+            return $request->server->get('Authorization');
+        }
+         return $token;
+
+    }
+    public function getUser($credentials, UserProviderInterface $userProvider)
+    {
+        try {
+            if ($credentials === null) {return null;}     
+                 
+             $data = $this->jwtEncoder->decode( str_replace('Bearer ', '' , $credentials));
+            dd($data);
+             $user= $this->em->getRepository(Client::class)
+                ->findOneBy(['api_token' => $credentials]);
+             return $user;
+        } catch ( Exception $e) {
+         
+            throw new CustomUserMessageAuthenticationException($e->getMessage());
+        }
     }
 
     public function checkCredentials($credentials, UserInterface $client)
@@ -59,7 +77,6 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {  
-        echo($exception);
        $data = [
             'message' => [$exception->getMessageKey(), $exception->getMessageData()]
         ];
@@ -78,6 +95,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     {
         return false;
     }
+
  
  
    

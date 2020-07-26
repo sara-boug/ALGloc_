@@ -10,14 +10,14 @@
     use Symfony\Component\HttpFoundation\Response;
     use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface; 
     use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface; 
-    use App\security\ClientAuth; 
+    use App\security\TokenAuthenticator; 
     use Exception;
 
 class ClientController extends AbstractController
     {       
         private $auth; 
         private $passwordEncoder; 
-            public function __construct( ClientAuth $auth    , UserPasswordEncoderInterface $passwordEncoder)
+            public function __construct( TokenAuthenticator $auth    , UserPasswordEncoderInterface $passwordEncoder)
             {    
                 $this->auth = $auth;
                 $this ->passwordEncoder = $passwordEncoder; 
@@ -33,8 +33,8 @@ class ClientController extends AbstractController
                  }  
         
         /**
-        *@Route("/signup", name="signup" , methods= {"post"})
-        */
+         *  @Route("/signup", name="signup_path" , methods= {"post"})
+         */
         public function signup(Request $request , ValidatorInterface $validator ): Response
         {   
              try {
@@ -66,7 +66,8 @@ class ClientController extends AbstractController
                 $entityManager ->flush(); 
 
                 return $this ->response(json_encode($body), Response::HTTP_OK);
-             } catch( Exception $e) {                 
+             } catch( Exception $e) {       
+                 dd($e) ;          
                  echo($e->getMessage()); 
                  return $this -> response(   "error" , Response::HTTP_BAD_REQUEST); 
               }        
@@ -111,7 +112,7 @@ class ClientController extends AbstractController
               }
               
             }catch (Exception $e ) { 
-                echo($e);
+                dd($e);
                 $exception = array("error" => $e->getMessage()) ; 
                 return $this ->response(json_encode($exception) , Response::HTTP_BAD_REQUEST); 
 
@@ -129,18 +130,7 @@ class ClientController extends AbstractController
 
 
        }
-
-        /**
-         * @Route("/profile/" , name="sample" , methods ={"GET"}) 
-        */
-        public function sample() :Response{ 
-            $this->denyAccessUnlessGranted('ROLE_USER'); 
-            print($this ->getUser()->getemail());
-            return $this ->response(json_encode( ['message' => "role User"]) , Response::HTTP_OK);     
-       }
-
-
-
+ 
 
 
     }

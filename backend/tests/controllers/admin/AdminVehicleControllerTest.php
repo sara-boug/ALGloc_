@@ -53,7 +53,8 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
     public function getVehicleImage() { 
         $this->client->request( 'GET', '/public/vehicle/'.$this->id.'/image' ); 
         $this->assertEquals($this->client->getResponse()-> getStatusCode(), 200)  ;
-        $this->assertEquals( $this->client->getResponse()->headers->get("content-type") , "image/png"); 
+         $this->assertEquals( $this->client->getResponse()->headers->get("content-type") , "image/png"); 
+        // clearing the 
         $this->uploader->deleteFolder(); 
 
         

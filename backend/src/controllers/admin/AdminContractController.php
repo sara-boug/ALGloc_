@@ -7,6 +7,7 @@
         use App\Entity\Vehicle;
         use App\Repository\Contract_Repository;
         use App\service\RouteSettings;
+        use  App\service\ContractService;
         use DateTime;
         use Doctrine\ORM\EntityManager;
         use Exception;
@@ -48,42 +49,17 @@
                 return false;
 
             }
-            ###################### FUNCTIONS USED IN ROUTES ########################################
-            private function generateInvoice( DateTime $departure ,  DateTime $arrival , Contract_ $contract ): Invoice
-            {    
-                $diff =   $arrival->diff(    $departure);
-                $days = $diff->format('%d') + $diff->format('%m') ; // summing up the months and the days to obtain the day's difference
-                $cost = ($days * $contract->getVehicle()->getRentalprice()) + $contract->getVehicle()->getInssurancePrice() + $contract->getVehicle()->getDeposit();
-                $invoice = new Invoice();
-                $invoice->setdate('now'); 
-                $invoice->setamount($cost);
-                $invoice->setpaid(false); // the invoice is initially set to non paid till the customer make the payment and the administrators modify the state
-                $invoice->setcontract($contract);
-                return $invoice;
-            }
-            public function jsonToContractObject($body, EntityManager $em): Contract_
-            {
-                $contract = new Contract_();
-                $contract->setDate($body['date']);
-                $contract->setArrival($body['arrival']);
-                $contract->setDeparture($body['departure']);
-                $client = $em->getRepository(Client::class)->findOneBy(['id' => $body["client"]["id"]]);
-                $vehicle = $em->getRepository(Vehicle::class)->findOneBy(['id' => $body["vehicle"]["id"]]);
-                $contract->setclient($client);
-                $contract->setVehicle($vehicle);
 
-                return $contract;
-
-            }
-            ################### ROUTES ####################################################
-
-            /** @Route( "/admin/contract"  , name="post_contract" , methods ={"POST"} ) */
-            public function postContract(Request $request)
+            /** 
+             * @Route("/admin/contract"  , name="post_contract" , methods ={"POST"} ) 
+             * 
+             */
+            public function postContract(Request $request , ContractService $contractService)
             {
                 try {
                     $em = $this->getDoctrine()->getManager();
                     $body = json_decode($request->getContent(), true);
-                    $contract = $this->jsonToContractObject($body, $em);
+                    $contract =  $contractService->JsonToContractObjectAdmin($body, $em);
                     if ($contract->getDeparture() > $contract->getArrival()) {
                         return new JsonResponse(['message' => "departure can not be after the arrival"], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
@@ -99,7 +75,7 @@
                     $em->persist($contract);
                     $em->flush();
                     // the invoice is automatically generated with the contracted
-                    $invoice = $this->generateInvoice( $contract->getDeparture() , $contract->getArrival()
+                    $invoice = $contractService->generateInvoice( $contract->getDeparture() , $contract->getArrival()
                          ,$contract );
                     $em->persist($invoice);
                     $em->flush();
@@ -149,7 +125,8 @@
             }
 
             /** @Route( "/admin/contract/{id}"  , name="patch_contract" , methods ={"PATCH"} ) */
-            public function patchContractById(int $id, Request $request , Contract_Repository $contractRepo)
+            public function patchContractById(int $id, Request $request
+             , Contract_Repository $contractRepo , ContractService $contractService)
             {
                 try {
                     $em = $this->getDoctrine()->getManager();
@@ -169,7 +146,7 @@
                        // the invoice is generated according to the number of days added 
                        // the previous arrival and the newly updated arrival 
                        // diff= Arrival2 - Arrival1
-                       $invoice=   $this->generateInvoice($contract->getArrival() , 
+                       $invoice=   $contractService->generateInvoice($contract->getArrival() , 
                           new DateTime($body["arrival"] ), $contract  );   
                         $em->persist($invoice); 
                         $em->flush(); 

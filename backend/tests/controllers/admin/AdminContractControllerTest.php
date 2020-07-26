@@ -2,6 +2,7 @@
 
    namespace tests\controllers\admin;
    use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+   use App\Entity\Vehicle; 
  use DateTime; 
     class AdminContractControllerTest extends WebTestCase { 
        private $admin ; 
@@ -37,7 +38,6 @@
             ];
              $this->client->request(  'POST' , '/admin/contract' , [] , []  , ['Content-type'=> 'Application/json'] ,
              json_encode($this->data)); 
-
              $this->assertEquals($this->client->getResponse()-> getStatusCode() , 201  ) ; 
              $this->id=(json_decode($this->client->getResponse()->getContent() , true))['id']; 
              // asserting that data containing departure after arrival are not accepted 
@@ -49,7 +49,7 @@
                 "vehicle" =>array('id' =>1) ,  
  
             ]; 
-            $this->client->request(  'POST' , '/admin/contract' , [] , []  , ['Content-type'=> 'Application/json'] ,
+             $this->client->request(  'POST' , '/admin/contract' , [] , []  , ['Content-type'=> 'Application/json'] ,
             json_encode($data2)); 
             $this->assertEquals($this->client->getResponse()-> getStatusCode() , 400  ) ; 
             // trying to allocate a vehicle already allocated at a specific period 
@@ -81,7 +81,6 @@
 
         public function deleteContract(){ 
             $this->client->request(  'DELETE' , '/admin/contract/'.$this->id , [] , []  , ['Content-type'=> 'Application/json'] ); 
-             echo($this->client->getResponse()->getContent()); 
             $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
         }
 
