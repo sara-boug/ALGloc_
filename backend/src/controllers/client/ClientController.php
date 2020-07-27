@@ -12,6 +12,7 @@
     use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface; 
     use App\security\TokenAuthenticator; 
     use Exception;
+use Symfony\Component\Security\Core\User\User;
 
 class ClientController extends AbstractController
     {       
@@ -67,7 +68,6 @@ class ClientController extends AbstractController
 
                 return $this ->response(json_encode($body), Response::HTTP_OK);
              } catch( Exception $e) {       
-                 dd($e) ;          
                  echo($e->getMessage()); 
                  return $this -> response(   "error" , Response::HTTP_BAD_REQUEST); 
               }        
@@ -89,11 +89,13 @@ class ClientController extends AbstractController
                   if($client !=null) {  
                        $verify= $this->passwordEncoder ->isPasswordValid($client ,$body['password']); 
                        if($verify==true) { 
-                           $token  =$generateToken ->create($client); 
+                           // generating  the token  throough the user Interface
+                            $user = new User($body['email'] , $client->getPassword());
+                            $token  =$generateToken ->create($user); 
                             $client ->setapi_token($token); // attribute in the client entity
-                           $entityManager ->persist($client); 
-                           $entityManager ->flush();       
-                           return $this ->response(json_encode( ['message' => "login success" , 
+                            $entityManager ->persist($client); 
+                            $entityManager ->flush();   
+                            return $this ->response(json_encode( ['message' => "login success" , 
                                                          'token' =>$client ->getapi_token()]) , Response::HTTP_OK); 
                        } else { 
                         return $this ->response(json_encode( ['error' => 'bad credentials']) 

@@ -38,7 +38,7 @@
      
 
             ) ; 
-         $this->assertEquals($this->client->getResponse()->getContent() , 200); 
+         $this->assertEquals($this->client->getResponse()->getStatusCode() , 200); 
            
          }
 

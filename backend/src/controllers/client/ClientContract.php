@@ -31,8 +31,8 @@ class ClientContract extends AbstractController{
         }
         private function getCurrentClient(EntityManager $em , $controller):Client
         { 
-             $user= $controller->getUser(); 
-             $client =$em->getRepository(Client::class)->findOneBy(['email' =>$user->email()]); 
+             $user= $controller->getUser(); //the user is of type client according to the token 
+             $client =$em->getRepository(Client::class)->findOneBy(['email' =>$user->getemail()]); 
              return $client; 
         }
         /** @Route("/client/contract" , name="post_contract_client" , methods={"POST"}) */
@@ -41,7 +41,7 @@ class ClientContract extends AbstractController{
             try{  
                  $em= $this->getDoctrine()->getManager();
                 $client =$this ->getCurrentClient($em , $this); 
-                $body= json_decode( $request->getContent()); 
+                $body= json_decode( $request->getContent() , true); 
                 $contract = $contractService->JsonToContractObject( $body , $em , $client );
                 $em->persist($contract) ; 
                 $em->flush();
@@ -52,6 +52,10 @@ class ClientContract extends AbstractController{
              }catch( Exception $e ) { 
                    return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
              } 
+
+        } 
+       
+        public function getcontract(){ 
 
         }
 

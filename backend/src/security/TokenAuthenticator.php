@@ -55,9 +55,8 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
             if ($credentials === null) {return null;}     
                  
              $data = $this->jwtEncoder->decode( str_replace('Bearer ', '' , $credentials));
-            dd($data);
-             $user= $this->em->getRepository(Client::class)
-                ->findOneBy(['api_token' => $credentials]);
+              $user= $this->em->getRepository(Client::class)
+                ->findOneBy(['email' => $data['username']]);
              return $user;
         } catch ( Exception $e) {
          
