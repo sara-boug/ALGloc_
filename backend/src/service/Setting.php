@@ -3,9 +3,18 @@
     use Exception;
     use Symfony\Bundle\FrameworkBundle\KernelBrowser;
     use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-    // a class containing all the repetetive  and main methods that would used in test case
+    use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Symfony\Component\Security\Core\User\User;
+
+// a class containing all the repetetive  and main methods that would used in test case
      class Setting
-    {   // used to login the  admin 
+     {  
+         private  $auth; 
+        public function  __construct(JWTTokenManagerInterface $auth)
+        {
+             $this->auth=  $auth; 
+        }
+        // used to login the  admin 
         public function logIn(KernelBrowser $client, WebTestCase $test)
         {
             
@@ -44,7 +53,6 @@
                             )
             );
             $client ->request('POST' , '/signup' ,[] ,[],['Content_Type' => 'Application/json'] , json_encode($data)) ;
-           
              $test->assertEquals( 200 , $client->getResponse() ->getStatusCode());   
                 
             }  
@@ -54,9 +62,14 @@
                 'email' => 'client@gmail.com', 
                 'password' => 'passwordClient' ] ; 
               $client ->request('POST' , '/login', [],[],['Content_Type' => 'Application/json'] , json_encode($data)) ; 
-              $token = json_decode(  $client ->getResponse()->getContent(), true)["token"]; 
-              $test->assertEquals(200, $client->getResponse()->getStatusCode()); 
-              return $token; 
+             
+              $data =  json_decode($client->getResponse()->getContent(), true)  ; 
+               $test->assertEquals(200, $client->getResponse()->getStatusCode()); 
+                // token and the id are necessary for testing later on 
+              return  [
+                   'token' =>  $this->generateToken()  , 
+                   'id' =>$data['id']
+              ]; 
 
         }
 
@@ -64,6 +77,12 @@
                  public function    header($token) {
                     // setting up authorization header for all the routes requring authorization
                      return [ 'Authorization' => 'Bearer '.$token]; 
+              }
+
+              public function generateToken() { 
+                  $user = new User('client@gmail.com' , 'passwordClient', ['ROLE_USER']); 
+                  $token = $this->auth->create($user);
+                  return $token; 
               }
      
 

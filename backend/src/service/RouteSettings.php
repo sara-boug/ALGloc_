@@ -2,6 +2,9 @@
     namespace App\service;
 
         use Hateoas\Representation\PaginatedRepresentation;
+        use App\Entity\Client; 
+        use  Doctrine\ORM\EntityManager; 
+
 
         class RouteSettings
         {
@@ -29,5 +32,13 @@
                     count($object), $absolute = true);
                 return $objectPag;
             }
+
+             // function which will be used to generate a current user of the client routes 
+            public function getCurrentClient(EntityManager $em , $user):Client
+            { 
+                 $client =$em->getRepository(Client::class)->findOneBy(['email' =>$user->getemail()]); 
+                 return $client; 
+            }
+    
 
         }

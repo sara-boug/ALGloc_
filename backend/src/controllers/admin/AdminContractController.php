@@ -8,6 +8,7 @@
         use App\Repository\Contract_Repository;
         use App\service\RouteSettings;
         use  App\service\ContractService;
+        use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
         use DateTime;
         use Doctrine\ORM\EntityManager;
         use Exception;
@@ -89,10 +90,14 @@
 
             }
 
-            /** @Route( "/admin/contracts"  , name="get_contracts" , methods ={"GET"} ) */
+            /**
+             *  @Route( "/admin/contracts"  , name="get_contracts" , methods ={"GET"} )
+             * 
+             */
             public function getContracts(RouteSettings $setting)
             {
                 try {
+                    dd($this->getUser()->getRoles());
                     $em = $this->getDoctrine()->getManager();
                     $constracts = $em->getRepository(Contract_::class)->findAll();
                     $contractsJson = $this->hateoas->serialize(
@@ -107,6 +112,7 @@
                 }
 
             }
+
 
             /** @Route( "/admin/contract/{id}"  , name="get_contract" , methods ={"GET"} ) */
             public function getContractById(int $id)

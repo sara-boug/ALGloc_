@@ -7,21 +7,43 @@
          private $client ; 
          private $setting; 
          private $data; 
+         private $id;
+         private $currentClient;
          // token used for the header 
          private $token ; 
          public function  setUp() :void  { 
             $this->client= static::createClient(); 
             $this->setting = self::bootKernel()->getContainer()->get('App\service\Setting'); 
             //signup the user 
-         //    $this->setting->signUpClient($this->client , $this); 
+             //$this->setting->signUpClient($this->client , $this); 
             // this token generated when the user login
-            $this->token= $this->setting->loginClient($this->client , $this); 
+            $login =  $this->setting->loginClient($this->client , $this);
+            $this->token= $login['token']; 
+            $this->id=$login['id'];
          
          }
             // testing the signup route
          public function testShowPost(){ 
-             $this->postContract(); 
+            $this->getClientProfile(); 
+            // $this->postContract(); 
+           //   $this->getContracts(); 
          
+         }
+         public function getClientProfile() { 
+            // testing whether a client can access another user's profile
+            $testId= $this->id+1;
+            $this->client ->request('GET' , '/client/'. $testId . '/profile' 
+            ,  [] ,[],['content_type' => 'Application/json' , 
+                   'Authorization' => 'Bearer '.$this->token
+                  ]);
+           $this->assertEquals($this->client->getResponse()->getStatusCode() , 401); 
+          // asserting that a client can access his own profile 
+           $this->client ->request('GET' , '/client/'. $this->id. '/profile' 
+           ,  [] ,[],['content_type' => 'Application/json' , 
+                  'Authorization' => 'Bearer '.$this->token
+                 ]);
+          $this->assertEquals($this->client->getResponse()->getStatusCode() ,200); 
+
          }
          public function postContract(){ 
              $this->data = [
@@ -38,8 +60,19 @@
      
 
             ) ; 
-         $this->assertEquals($this->client->getResponse()->getStatusCode() , 200); 
+          $this->assertEquals($this->client->getResponse()->getStatusCode() , 200); 
            
+         }
+           
+         public function getContracts(){ 
+       
+            $this->client ->request('GET' , '/admin/contracts' 
+            ,  [] ,[],['content_type' => 'Application/json' , 
+                   'Authorization' => 'Bearer '.$this->token
+                  ] );  
+             // 401 since a client can not a access an admin ressource 
+            $this->assertEquals($this->client->getResponse()->getStatusCode() , 401); 
+   
          }
 
       }

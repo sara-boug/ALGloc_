@@ -10,28 +10,37 @@
     use Symfony\Component\HttpFoundation\Response;
     use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface; 
     use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface; 
-    use App\security\TokenAuthenticator; 
+    use App\security\TokenAuthenticator;
+    use App\service\RouteSettings;
     use Exception;
-use Symfony\Component\Security\Core\User\User;
+    use Symfony\Component\Security\Core\User\User;
+    use Symfony\Component\HttpFoundation\JsonResponse; 
+    use Hateoas\HateoasBuilder; 
+    use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+    use Hateoas\UrlGenerator\CallableUrlGenerator;
+use Symfony\Component\Routing\RouterInterface;
 
 class ClientController extends AbstractController
     {       
-        private $auth; 
+        private $hateoas; 
         private $passwordEncoder; 
-            public function __construct( TokenAuthenticator $auth    , UserPasswordEncoderInterface $passwordEncoder)
+            public function __construct(  
+                UserPasswordEncoderInterface $passwordEncoder , RouterInterface $router)
             {    
-                $this->auth = $auth;
-                $this ->passwordEncoder = $passwordEncoder; 
+                 $this ->passwordEncoder = $passwordEncoder; 
+
+                $this->hateoas= HateoasBuilder::create()
+                ->setUrlGenerator(
+                    null , 
+                    new CallableUrlGenerator(function($route , array $parameter , $absolute) use ( $router ){ 
+                            return $router->generate($route , $parameter , UrlGeneratorInterface::ABSOLUTE_URL);
+                    })
+                )->build(); 
+    
+    
                 
             }
         
-            // this function use to avoid repetition in each route 
-                public  function response($body , $statusCode) : Response { 
-                    $response = new Response($body , $statusCode);
-                    $response->headers->set('content-type', 'Application/json');
-                    return $response; 
-        
-                 }  
         
         /**
          *  @Route("/signup", name="signup_path" , methods= {"post"})
@@ -54,8 +63,7 @@ class ClientController extends AbstractController
                  $client->setcity($city); 
                 $errors=$validator ->validate($client);  // validating the user input
                 if(count($errors)>0) {                 
-                    $errorsJson= json_encode(  array( "error" =>(string)$errors));
-                    return $this->response($errorsJson , Response::HTTP_BAD_REQUEST);   
+                    return new JsonResponse(["error" => $errors], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
                 } 
                 // if validated then the pssword would be encoded 
                 $client ->setpassword( $this->passwordEncoder->encodePassword($client , $body['password'])); 
@@ -65,11 +73,11 @@ class ClientController extends AbstractController
 
                 //executing the query 
                 $entityManager ->flush(); 
+                return new  JsonResponse( ["message" =>"signup success"], Response::HTTP_OK , ["Content-type" => "application\json"]);
+                
+              } catch( Exception $e) {       
+                return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
-                return $this ->response(json_encode($body), Response::HTTP_OK);
-             } catch( Exception $e) {       
-                 echo($e->getMessage()); 
-                 return $this -> response(   "error" , Response::HTTP_BAD_REQUEST); 
               }        
         }
        
@@ -90,34 +98,29 @@ class ClientController extends AbstractController
                        $verify= $this->passwordEncoder ->isPasswordValid($client ,$body['password']); 
                        if($verify==true) { 
                            // generating  the token  throough the user Interface
-                            $user = new User($body['email'] , $client->getPassword());
+                            $user = new User($body['email'] , $client->getPassword() , $client->getRoles());
                             $token  =$generateToken ->create($user); 
                             $client ->setapi_token($token); // attribute in the client entity
                             $entityManager ->persist($client); 
                             $entityManager ->flush();   
-                            return $this ->response(json_encode( ['message' => "login success" , 
-                                                         'token' =>$client ->getapi_token()]) , Response::HTTP_OK); 
+                            $clientJson= $this->hateoas->serialize($client , 'json');
+                            return new Response( $clientJson, Response::HTTP_OK, ["Content-type" => "application\json"]);
+
                        } else { 
-                        return $this ->response(json_encode( ['error' => 'bad credentials']) 
-                        , Response::HTTP_BAD_REQUEST); 
-                       }
+                        return new JsonResponse(["error" => "Bad Credentials"], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
+                    }
 
                   } else { 
-                    return $this ->response(json_encode( ['error' => 'bad credentials']) 
-                    , Response::HTTP_BAD_REQUEST); 
+                    return new JsonResponse(["error" => "Bad Credentials"], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
     
                   }
               } else { 
-                return $this ->response(json_encode( ['error' => 'empty values not accepted']) 
-                , Response::HTTP_BAD_REQUEST); 
+                return new JsonResponse(["error" => "Bad Credentials"], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
               }
               
             }catch (Exception $e ) { 
-                dd($e);
-                $exception = array("error" => $e->getMessage()) ; 
-                return $this ->response(json_encode($exception) , Response::HTTP_BAD_REQUEST); 
-
+                return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
             }
        }
          
@@ -128,8 +131,29 @@ class ClientController extends AbstractController
         */
         public function logout() :Response{ 
 
-        return $this ->response(json_encode( ['message' => "role User"]) , Response::HTTP_OK); 
+            return new JsonResponse(["error" => "logout Success"], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
+
+       } 
+
+
+       /** @Route("/client/{id}/profile" , name="get_client_profile" , methods={"GET"}) */
+       public function getClient(int $id , RouteSettings $routeSettings ){ 
+         try { 
+             $em = $this->getDoctrine()->getManager(); 
+             $client= $routeSettings->getCurrentClient($em , $this->getUser());
+             // enssuring that the User can not access other user's profile as well as data
+              if($id != $client->getid()) { 
+                 return new JsonResponse(["error" => "unauthorized"], Response::HTTP_UNAUTHORIZED, ["Content-type" => "application\json"]);
+             }
+           $clientJson = $this->hateoas->serialize($client , 'json'); 
+           return new Response($clientJson, Response::HTTP_OK, ["Content-type" => "application\json"]);
+
+
+         }catch(Exception $e )  {
+            return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
+
+         }
 
        }
  

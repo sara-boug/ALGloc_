@@ -17,7 +17,7 @@
 
         class AppFixtures extends Fixture
         {
-            public const data = 15; // which reffers to the number of data to insert
+            public const data = 4; // which reffers to the number of data to insert
             private $uploader ; 
             private $encoder;
 
