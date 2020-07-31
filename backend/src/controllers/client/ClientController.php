@@ -33,7 +33,7 @@ class ClientController extends AbstractController
                 ->setUrlGenerator(
                     null , 
                     new CallableUrlGenerator(function($route , array $parameter , $absolute) use ( $router ){ 
-                            return $router->generate($route , $parameter , UrlGeneratorInterface::ABSOLUTE_URL);
+                             return $router->generate($route  , $parameter , UrlGeneratorInterface::ABSOLUTE_URL);
                     })
                 )->build(); 
     
@@ -103,6 +103,8 @@ class ClientController extends AbstractController
                             $client ->setapi_token($token); // attribute in the client entity
                             $entityManager ->persist($client); 
                             $entityManager ->flush();   
+                            $client->setLink("get_client_profile"); 
+
                             $clientJson= $this->hateoas->serialize($client , 'json');
                             return new Response( $clientJson, Response::HTTP_OK, ["Content-type" => "application\json"]);
 
@@ -144,12 +146,12 @@ class ClientController extends AbstractController
              $client= $routeSettings->getCurrentClient($em , $this->getUser());
              // enssuring that the User can not access other user's profile as well as data
               if($id != $client->getid()) { 
-                 return new JsonResponse(["error" => "unauthorized"], Response::HTTP_UNAUTHORIZED, ["Content-type" => "application\json"]);
+                 return new JsonResponse(["error" => "Not Found"], Response::HTTP_NOT_FOUND, ["Content-type" => "application\json"]);
              }
+            $client->setLink("get_client_profile"); 
            $clientJson = $this->hateoas->serialize($client , 'json'); 
            return new Response($clientJson, Response::HTTP_OK, ["Content-type" => "application\json"]);
-
-
+ 
          }catch(Exception $e )  {
             return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 

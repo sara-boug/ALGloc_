@@ -37,7 +37,7 @@ class AdminBrandController extends AbstractController {
                 $brand = new  brand(); 
                 $brand->setName($body["name_"]);  
                 return $brand; 
-        }
+         }
 
     /** @Route("/admin/brand" , name="post_brand" , methods={"POST"}) */
     public function  postBrand( Request $request ) : Response { 

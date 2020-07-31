@@ -97,7 +97,6 @@
             public function getContracts(RouteSettings $setting)
             {
                 try {
-                    dd($this->getUser()->getRoles());
                     $em = $this->getDoctrine()->getManager();
                     $constracts = $em->getRepository(Contract_::class)->findAll();
                     $contractsJson = $this->hateoas->serialize(

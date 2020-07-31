@@ -6,6 +6,7 @@
     use Symfony\Component\HttpFoundation\Request;
     use Symfony\Component\HttpFoundation\Response;
     use Symfony\Component\Routing\Annotation\Route;
+    use Symfony\Component\HttpFoundation\JsonResponse;
 
     class AdminController extends AbstractController
     {
@@ -23,6 +24,7 @@
          */
         public function login_post(): Response
         {
+            try {
             if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
                 return $this->json([
                     'error' => 'Invalid login request: check that the Content-Type header is "application/json".',
@@ -30,7 +32,11 @@
             } else {
                 return $this->response(json_encode(['message' => "login success"]), Response::HTTP_OK, ["Content-type" => "application\json"]);
 
-            }
+            } 
+        } catch(Exception $e ) { 
+            return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
+
+        }
         }
         
         /**

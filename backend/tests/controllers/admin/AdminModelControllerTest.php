@@ -28,8 +28,8 @@ class AdminModelControllerTest extends WebTestCase {
         public function postModel(){ 
             $this->data= [
                  "name_"=> "Alfa Romeo 88" , 
-                 "brand" =>array('id' => 4), 
-                 "category" =>array('id' => 5)
+                 "brand" =>array('id' => 2), 
+                 "category" =>array('id' => 2)
             ];
             $this->client->request(  'POST' , '/admin/model' , [] , []  , ['Content-type'=> 'Application/json'] ,
              json_encode($this->data)); 
@@ -40,7 +40,7 @@ class AdminModelControllerTest extends WebTestCase {
 
        public function patchModel(){ 
         $this->data= [
-            "name_"=>"M'sila" , 
+            "name_"=>"new Model" , 
            
         ];
         $this->client->request(  'PATCH' , '/admin/model/'.$this->id, [] , []  , ['Content-type'=> 'Application/json'] ,

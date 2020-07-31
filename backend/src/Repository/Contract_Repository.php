@@ -45,6 +45,17 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
          
             }
 
+            public function selectContractByIdClientId(int $id , $clientId){ 
+               $em = $this->getEntityManager(); 
+               $query=  $em->createQuery(
+                   'SELECT C FROM App\Entity\Contract_ C 
+                     where ( C.id =:id  and C.client=: client )'
+               ) ->setParameter( 'id' , $id)
+                 ->setParameter('client' , $clientId); 
+               return $query ->getResult();
+
+            }
+
 
             
 

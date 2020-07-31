@@ -81,6 +81,8 @@
 
         public function deleteContract(){ 
             $this->client->request(  'DELETE' , '/admin/contract/'.$this->id , [] , []  , ['Content-type'=> 'Application/json'] ); 
+            echo("deleted"); 
+
             $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
         }
 

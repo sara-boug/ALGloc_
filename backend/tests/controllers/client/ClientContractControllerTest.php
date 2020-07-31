@@ -15,34 +15,37 @@
             $this->client= static::createClient(); 
             $this->setting = self::bootKernel()->getContainer()->get('App\service\Setting'); 
             //signup the user 
-             //$this->setting->signUpClient($this->client , $this); 
+             $this->setting->signUpClient($this->client , $this); 
             // this token generated when the user login
             $login =  $this->setting->loginClient($this->client , $this);
-            $this->token= $login['token']; 
-            $this->id=$login['id'];
+            $this->token= $login['token']; // token used to set up the header 
+            $this->id=$login['id'];   // the id used to get the current user
          
          }
             // testing the signup route
          public function testShowPost(){ 
-            $this->getClientProfile(); 
-            // $this->postContract(); 
-           //   $this->getContracts(); 
+             //$this->getClientProfile(); 
+             $this->postContract(); 
+           //  $this->getContracts(); 
          
          }
          public function getClientProfile() { 
+            // asserting that a client can access his own profile 
+           $this->client ->request('GET' , '/client/'. $this->id. '/profile' 
+           ,  [] ,[],['content_type' => 'Application/json' , 
+                  'Authorization' => 'Bearer '.$this->token
+                 ]);
+ 
+          $this->assertEquals($this->client->getResponse()->getStatusCode() ,200); 
+
             // testing whether a client can access another user's profile
             $testId= $this->id+1;
             $this->client ->request('GET' , '/client/'. $testId . '/profile' 
             ,  [] ,[],['content_type' => 'Application/json' , 
                    'Authorization' => 'Bearer '.$this->token
                   ]);
-           $this->assertEquals($this->client->getResponse()->getStatusCode() , 401); 
-          // asserting that a client can access his own profile 
-           $this->client ->request('GET' , '/client/'. $this->id. '/profile' 
-           ,  [] ,[],['content_type' => 'Application/json' , 
-                  'Authorization' => 'Bearer '.$this->token
-                 ]);
-          $this->assertEquals($this->client->getResponse()->getStatusCode() ,200); 
+
+           $this->assertEquals($this->client->getResponse()->getStatusCode() , 404); 
 
          }
          public function postContract(){ 
@@ -57,15 +60,14 @@
             ,  [] ,[],['content_type' => 'Application/json' , 
                    'Authorization' => 'Bearer '.$this->token
                   ],json_encode($this->data)
-     
-
             ) ; 
-          $this->assertEquals($this->client->getResponse()->getStatusCode() , 200); 
+            dd($this->client->getResponse()->getContent());  
+
+           $this->assertEquals($this->client->getResponse()->getStatusCode() , 200); 
            
          }
            
          public function getContracts(){ 
-       
             $this->client ->request('GET' , '/admin/contracts' 
             ,  [] ,[],['content_type' => 'Application/json' , 
                    'Authorization' => 'Bearer '.$this->token
@@ -73,6 +75,11 @@
              // 401 since a client can not a access an admin ressource 
             $this->assertEquals($this->client->getResponse()->getStatusCode() , 401); 
    
+         }
+        // the purpose of the this function is to delete the contract adding it by the client 
+        // in order not to overwhelm the  db
+         public function deleteContract(){ 
+
          }
 
       }

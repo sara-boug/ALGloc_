@@ -13,8 +13,7 @@
        {   
            $this->client = static::createClient(); 
            $this->admin= self::bootKernel()->getContainer()->get('App\service\Setting'); 
-
-       }
+        }
 
        public function testCityRoute(){ 
            $this->admin->logIn($this->client , $this) ; 
@@ -50,7 +49,7 @@
 
     public function deleteCity(){ 
         $this->client->request(  'DELETE' , '/admin/city/'.$this->id , [] , []  , ['Content-type'=> 'Application/json']); 
-       echo($this->client->getResponse()->getContent()); 
+
         $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
 
     }

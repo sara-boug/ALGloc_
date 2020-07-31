@@ -26,10 +26,11 @@ use Symfony\Component\Security\Core\User\User;
                     "email": "admin",
                     "password": "admin"
                 }');
-
+ 
              $test->assertEquals(200, $client->getResponse()->getStatusCode());
          }catch( Exception $e) { 
-          }
+             
+           }
         }
 
         public function logout(KernelBrowser $client, WebTestCase $test)
@@ -62,7 +63,7 @@ use Symfony\Component\Security\Core\User\User;
                 'email' => 'client@gmail.com', 
                 'password' => 'passwordClient' ] ; 
               $client ->request('POST' , '/login', [],[],['Content_Type' => 'Application/json'] , json_encode($data)) ; 
-             
+
               $data =  json_decode($client->getResponse()->getContent(), true)  ; 
                $test->assertEquals(200, $client->getResponse()->getStatusCode()); 
                 // token and the id are necessary for testing later on 

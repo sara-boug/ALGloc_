@@ -11,7 +11,7 @@
          * @ORM\Entity(repositoryClass="App\Repository\Contract_Repository")
          * @Serializer\XmlRoot("Contract")
          * @Hateoas\Relation("self" , href=
-         * @Hateoas\Route("get_contract" , parameters={"id" ="expr(object.getid())"})
+         * @Hateoas\Route("expr(object.getLink())", parameters={"id" ="expr(object.getid())"})
          * )
          */
         class Contract_
@@ -48,9 +48,18 @@
              */
 
             private $vehicle;
+             /**  @Serializer\Exclude  */ 
+            private $link  ="get_contract" ;  // the default set to admin contract
 
             public function __construct()
             {
+            }
+            public function setLink($link){ 
+                  $this->link = $link; 
+            }
+            public function getLink(){ 
+                return $this->link; 
+
             }
             public function getid(): int
             {

@@ -45,7 +45,9 @@
             {
               
                 $this->client->request('DELETE', '/admin/client/'. $this->id, [], [], ['content_type' => 'Application/json']);
-                 $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+                echo("deleted"); 
+
+                $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
  
             }
 

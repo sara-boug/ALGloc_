@@ -52,8 +52,7 @@ class AdminWilayaController extends AbstractController {
             $this->em->flush(); 
             $wilayaJson= $this->hateoas->serialize($wilaya , 'json'); 
             return new  Response(  $wilayaJson , Response::HTTP_CREATED, ["Content-type" => "application\json"]);
-
-        }catch(Exception $e) { 
+         }catch(Exception $e) { 
             return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
         }

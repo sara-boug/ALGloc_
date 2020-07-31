@@ -84,7 +84,6 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
     public function deleteVehicleById() { 
         $this->client->request( 'DELETE', '/admin/vehicle/'.$this->id , [],[] , ['content-Type' => 'Application/json']  ); 
-
         $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  )  ; 
 
     }

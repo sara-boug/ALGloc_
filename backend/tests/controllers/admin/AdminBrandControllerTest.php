@@ -8,12 +8,11 @@
        private $client ; 
        private $data; 
        private $id; 
-
        public function setUp() :void 
        {   
            $this->client = static::createClient(); 
            $this->admin= self::bootKernel()->getContainer()->get('App\service\Setting'); 
-
+ 
        }
 
        public function testBrandRoute(){ 
@@ -55,7 +54,7 @@
     }
 
 
-
+ 
     }
 
 

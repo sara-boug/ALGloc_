@@ -11,7 +11,7 @@
      * @ORM\Entity(repositoryClass="App\Repository\ClientRepository")
      * @Serializer\XmlRoot("client")
      * @Hateoas\Relation("self" , 
-     * href= @Hateoas\Route("get_client" , parameters = {"id" = "expr(object.getid())"}))
+     * href= @Hateoas\Route( "expr(object.getLink())", parameters = {"id" = "expr(object.getid())"}))
      */
     class Client  implements UserInterface
     {
@@ -68,11 +68,23 @@
         */
 
         private $api_token; 
+       /**  @Serializer\Exclude  */ 
+
+        private $link="get_client" ;  // the default is to return the admin client route
  
 
         public function __construct()
         {
           
+        } 
+        // this function allow modifying the links between clients and admins
+        public function setLink(   $link )  { 
+              
+               $this->link = $link   ;
+            
+        }
+        public function getLink(){ 
+            return $this->link;
         }
         public function getid()
         {

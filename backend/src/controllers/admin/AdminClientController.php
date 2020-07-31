@@ -39,6 +39,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
                     try { 
                         $em= $this->getDoctrine()->getManager() ; 
                         $client= $em->getRepository(Client::class)->findOneBy(['id' =>$id]); 
+
                         $clientJson =  $this->hateoas->serialize($client , 'json'); 
                         return new Response($clientJson, Response::HTTP_OK, ["Content-type" => "application\json"]);
 

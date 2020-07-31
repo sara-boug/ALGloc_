@@ -21,8 +21,8 @@
            $this->postWilaya(); 
             $this->patchWilaya(); 
            $this->deleteWilaya(); 
-       }
-
+        }
+         
         public function postWilaya(){ 
             $this->data= ['name_'=> "Adrrar"];
             $this->client->request(  'POST' , '/admin/wilaya' , [] , []  , ['Content-type'=> 'Application/json'] ,
@@ -49,8 +49,7 @@
 
     public function deletewilaya(){ 
         $this->client->request(  'DELETE' , '/admin/wilaya/'.$this->id , [] , []  , ['Content-type'=> 'Application/json']); 
-       echo($this->client->getResponse()->getContent()); 
-        $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
+         $this->assertEquals($this->client->getResponse()-> getStatusCode() , 200  ) ; 
 
     }
 
