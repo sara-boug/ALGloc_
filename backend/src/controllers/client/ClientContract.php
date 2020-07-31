@@ -1,24 +1,20 @@
 <?php 
 namespace App\controllers\client;
 
-use App\Entity\Client;
 use App\Entity\Contract_;
 use App\Repository\Contract_Repository;
 use App\service\ContractService;
 use App\service\RouteSettings;
-use Doctrine\ORM\EntityManager;
 use Exception;
     use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
     use Symfony\Component\Routing\RouterInterface; 
     use Hateoas\HateoasBuilder; 
     use Hateoas\UrlGenerator\CallableUrlGenerator;
-    use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
-    use Symfony\Component\Routing\Generator\UrlGeneratorInterface; 
+     use Symfony\Component\Routing\Generator\UrlGeneratorInterface; 
     use Symfony\Component\Routing\Annotation\Route ; 
     use Symfony\Component\HttpFoundation\Response; 
     use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use App\service\Setting; 
 
 class ClientContract extends AbstractController{ 
     private $hateoas; 
@@ -42,11 +38,31 @@ class ClientContract extends AbstractController{
                 $client =$routeSetting ->getCurrentClient($em , $this->getUser()); 
                 $body= json_decode( $request->getContent() , true); 
                 $contract = $contractService->JsonToContractObject( $body , $em , $client );
-                $em->persist($contract) ; 
-                $em->flush();
+                if ($contract->getDeparture() > $contract->getArrival()) {
+                    return new JsonResponse(['message' => "departure can not be after the arrival"], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
+
+                }
+                // checking the availability consists of selecting all the contracts related to the vehicle
+                // then checking whether the period choosen by the client doesn't interfer with another contract 
+                $contracts = $em->getRepository(Contract_::class)->findBy(
+                    ['vehicle' => $contract->getVehicle()->getid()]);
+                 
+                $availability = $contractService->contractCheckDate(
+                                $contract->getDeparture() ,  $contract->getArrival() , $contracts); 
+                if ($availability) {
+                    return new JsonResponse(['message' => "Vehicle Already Allocated at this period"], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
+
+                }
+                 $em->persist($contract) ; 
+                 $em->flush();
+                 // generating the contract automatically with client
+                 $invoice=  $contractService->generateInvoice($contract->getDeparture() 
+                 , $contract->getArrival() , $contract); 
+                 $em->persist($invoice); 
+                 $em->flush(); 
                  $contract->setLink("get_contract_client"); 
                  $contract->getclient() ->setLink("get_contract_client"); // setting up the link for the client related to the contract
-                $contractJson= $this->hateoas->serialize($contract , 'json');
+                 $contractJson= $this->hateoas->serialize($contract , 'json');
               
                 return new Response( $contractJson, Response::HTTP_OK , ["Content-type" => "application\json"]);
      
@@ -64,7 +80,11 @@ class ClientContract extends AbstractController{
                 $client= $routeSettings->getCurrentClient($em , $this->getUser()); 
                 $clientContracts= $em->getRepository(Contract_::class)
                 ->findBy(['client' => $client->getid()]); 
-
+                // setting up the contract link for each elements in the contracts array 
+                foreach($clientContracts as $contract){ 
+                    $contract->setLink("get_contract_client"); 
+                    $contract->getclient() ->setLink("get_contract_client"); // setting up the link for the client related to the contract
+                }
                $contractsJson= $this->hateoas->serialize(
                $routeSettings->pagination($clientContracts ,"get_contracts_client"  ),
                'json');
@@ -79,10 +99,10 @@ class ClientContract extends AbstractController{
 
          /** @Route("/client/contract/{id}",  name="get_contract_client" , methods={"GET"}) */
         public function getContract(int $id , Contract_Repository $contractRepo 
-         , RouteSettings $RoutSetting ){ 
+         , RouteSettings $routSetting ){ 
               try { 
                   $em = $this->getDoctrine()->getManager(); 
-                  $client = $RoutSetting->getCurrentClient($em, $this->getUser()) ; 
+                  $client = $routSetting->getCurrentClient($em, $this->getUser()) ; 
                   $clientContract = $contractRepo->selectContractByIdClientId($id , $client->getid()); 
                    
                   if(! $clientContract ) { 
@@ -102,7 +122,33 @@ class ClientContract extends AbstractController{
                 return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
               }
-        }
+        } 
+
+         /** @Route("/client/contract/{id}",  name="patch_contract_client" , methods={"PATCH"}) */
+         public function patchContract(int $id, Request $request 
+          , Contract_Repository $contractRepo  ,  ContractService $contractService , RouteSettings $routeSettings) { 
+           try {  
+               $em=$this->getDoctrine()->getManager(); 
+               $body= json_decode( $request->getContent() ,true );
+               // getting the authorized client
+               $client= $routeSettings->getCurrentClient($em, $this->getUser()); 
+               $contract=  $em->getRepository(Contract_::class)->findOneBy(['id'=> $id , 'client' =>$client ]);
+               if( !$contract ) {
+                return new JsonResponse(["message" => "Not Found"], Response::HTTP_NOT_FOUND, ["Content-type" => "application\json"]);
+               }
+               $contractService -> patchContractArrival($contract , $em,  $contractRepo, $id , $body);
+               $contract->setLink("get_contract_client"); 
+               $contract->getclient() ->setLink("get_contract_client"); // setting up the link for the client related to the contract
+               $contractJson = $this->hateoas->serialize($contract, 'json');
+               return new Response($contractJson, Response::HTTP_OK, ["Content-type" => "application\json"]);
+
+           }catch(Exception $e){ 
+            return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
+
+           }
+
+
+         }
 
         
     }

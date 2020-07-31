@@ -38,18 +38,6 @@
                     )->build();
 
             }
-            private function checkdate($departure1, $arrival1, array $contracts)
-            {
-                // this function used to check whether the the vehicle is already linked to a contract
-                foreach ($contracts as $c) {
-                    if (($arrival1 > $c->getdeparture() && $arrival1 < $c->getarrival()) ||
-                        ($departure1 > $c->getdeparture() && $departure1 < $c->getarrival())) {
-                        return true;
-                    }
-                }
-                return false;
-
-            }
 
             /** 
              * @Route("/admin/contract"  , name="post_contract" , methods ={"POST"} ) 
@@ -68,13 +56,14 @@
                     $contracts = $em->getRepository(Contract_::class)->findBy(
                         ['vehicle' => $contract->getVehicle()->getid()]);
 
-                    $dataTaken = $this->checkdate($contract->getDeparture(), $contract->getArrival(), $contracts);
-                    if ($dataTaken) {
+                    $availability = $contractService->contractCheckDate($contract->getDeparture(), $contract->getArrival(), $contracts);
+                    if ($availability) {
                         return new JsonResponse(['message' => "Vehicle Already Allocated at this period"], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
                     }
                     $em->persist($contract);
                     $em->flush();
+
                     // the invoice is automatically generated with the contracted
                     $invoice = $contractService->generateInvoice( $contract->getDeparture() , $contract->getArrival()
                          ,$contract );
@@ -135,33 +124,13 @@
             {
                 try {
                     $em = $this->getDoctrine()->getManager();
+                    // the contract which is supposed to be updated
                     $contract = $em->getRepository(Contract_::class)->findOneBy(['id' => $id]);
                     $body = json_decode($request->getContent(), true);
-                    // in order to patch the arrival and departure  it shoulld'nt interfer  with another contract's departures and arrivals
-                    if (isset($body["arrival"])) {
-                        // checking whether the arrival
-                        if ( ( new DateTime( $body["arrival"] ) ) < $contract->getdeparture() ) {
-                            return new JsonResponse(['message' => "departure can not be after the arrival"], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
-                        }
-                        $contracts = $contractRepo->selectExcept(  $id , $contract->getVehicle()->getid());
-                        if ($this->checkdate($contract->getdeparture(), $body["arrival"], $contracts)) {
-                            return new JsonResponse(['message' => "can not extend the period"], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
-                        }
-                       // case both of the conditions are false then a new invoice is generated
-                       // the invoice is generated according to the number of days added 
-                       // the previous arrival and the newly updated arrival 
-                       // diff= Arrival2 - Arrival1
-                       $invoice=   $contractService->generateInvoice($contract->getArrival() , 
-                          new DateTime($body["arrival"] ), $contract  );   
-                        $em->persist($invoice); 
-                        $em->flush(); 
-                  
-                    } 
-
-                     // generating the contract json object which will also include the whole invoices  in case the period is extended
-                     $em->flush(); 
-                     $contractJson = $this->hateoas->serialize($contract, 'json');
-                     return new Response($contractJson, Response::HTTP_OK, ["Content-type" => "application\json"]);
+                    // patching the contract Arrival 
+                    $contractService->patchContractArrival($contract , $em , $contractRepo, $id , $body); 
+                    $contractJson = $this->hateoas->serialize($contract, 'json');
+                    return new Response($contractJson, Response::HTTP_OK, ["Content-type" => "application\json"]);
 
                 } catch (Exception $e) {
                      return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
