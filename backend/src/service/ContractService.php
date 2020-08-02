@@ -55,17 +55,20 @@
             {
                 // this function used to check whether the the vehicle is already linked to a contract
                 foreach ($contracts as $c) {
-                    if (($arrival1 > $c->getdeparture() && $arrival1 < $c->getarrival()) ||
-                        ($departure1 > $c->getdeparture() && $departure1 < $c->getarrival())) {
+                    if (
+                        ($arrival1 > $c->getdeparture() && $arrival1 < $c->getarrival()) ||
+                        ($departure1 > $c->getdeparture() && $departure1 < $c->getarrival()) &
+                        ($c->getCancelled() ==false)) { // ensuring that the contract is not cancelled
                         return true;
                     }
+                    
                 }
                 return false;
 
             }
  
             public function patchContractArrival( Contract_ $contract,EntityManager $em 
-            , Contract_Repository $contractRepo , int $id  , $body ) { 
+            , Contract_Repository $contractRepo , int $id  , $body ) :Contract_{ 
                 // selecting the whole contracts related to the vehicle except the current one which is the id's 
                 $contracts = $contractRepo->selectExcept(  $id , $contract->getVehicle()->getid());
 
@@ -89,8 +92,7 @@
                   
                     } 
 
-                     // generating the contract json object which will also include the whole invoices  in case the period is extended
-                     $em->flush(); 
+                  return $contract ;        
 
             }
 

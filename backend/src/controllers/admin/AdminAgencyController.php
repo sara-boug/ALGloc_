@@ -69,6 +69,7 @@ class AdminAgencyController extends AbstractController
             return new Response( $jsonAgency, Response::HTTP_CREATED , ["Content-type" => "application\json"]);
 
         } catch (Exception $e) {
+           
             return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
 
         }

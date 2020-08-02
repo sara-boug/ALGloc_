@@ -39,7 +39,7 @@
                
 
                 $this->client->request('POST', '/admin/agency', [], [], ['content_type' => 'Application/json'], json_encode($this->data));
-                 $this->assertEquals(201, $this->client->getResponse()->getStatusCode());
+                $this->assertEquals(201, $this->client->getResponse()->getStatusCode());
                 // finding  the insert  agency from the db
                  $this->id=(json_decode($this->client->getResponse()->getContent() , true))['id']; 
                 $agencyTable = static::$container->get('doctrine')->getManager()->getRepository( Agency::class) ;

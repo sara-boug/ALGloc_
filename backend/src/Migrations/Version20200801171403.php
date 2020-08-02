@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20200719180947 extends AbstractMigration
+final class Version20200801171403 extends AbstractMigration
 {
     public function getDescription() : string
     {
@@ -27,8 +27,8 @@ final class Version20200719180947 extends AbstractMigration
         $this->addSql('CREATE TABLE category (id INT AUTO_INCREMENT NOT NULL, name_ VARCHAR(200) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
         $this->addSql('CREATE TABLE city (id INT AUTO_INCREMENT NOT NULL, wilaya INT DEFAULT NULL, name_ VARCHAR(200) NOT NULL, INDEX IDX_2D5B0234CF6AF33B (wilaya), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
         $this->addSql('CREATE TABLE client (id INT AUTO_INCREMENT NOT NULL, city INT DEFAULT NULL, fullname_ VARCHAR(200) NOT NULL, email VARCHAR(200) NOT NULL, password VARCHAR(200) NOT NULL, address VARCHAR(300) NOT NULL, phone_number VARCHAR(200) NOT NULL, license_number VARCHAR(200) NOT NULL, api_token LONGTEXT DEFAULT NULL, UNIQUE INDEX UNIQ_C7440455E7927C74 (email), INDEX IDX_C74404552D5B0234 (city), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
-        $this->addSql('CREATE TABLE contract_ (id INT AUTO_INCREMENT NOT NULL, client INT NOT NULL, vehicle INT NOT NULL, date_ DATE NOT NULL, arrival DATE NOT NULL, departure DATE NOT NULL, INDEX IDX_3B88C590C7440455 (client), INDEX IDX_3B88C5901B80E486 (vehicle), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
-        $this->addSql('CREATE TABLE invoice (id INT AUTO_INCREMENT NOT NULL, contract_ INT DEFAULT NULL, date_ TIME NOT NULL, amount DOUBLE PRECISION NOT NULL, paid TINYINT(1) NOT NULL, INDEX IDX_906517443B88C590 (contract_), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE contract_ (id INT AUTO_INCREMENT NOT NULL, client INT NOT NULL, vehicle INT NOT NULL, date_ DATE NOT NULL, arrival DATE NOT NULL, departure DATE NOT NULL, cancelled TINYINT(1) DEFAULT \'0\', INDEX IDX_3B88C590C7440455 (client), INDEX IDX_3B88C5901B80E486 (vehicle), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE invoice (id INT AUTO_INCREMENT NOT NULL, contract_ INT DEFAULT NULL, date_ DATE NOT NULL, amount DOUBLE PRECISION NOT NULL, paid TINYINT(1) NOT NULL, INDEX IDX_906517443B88C590 (contract_), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
         $this->addSql('CREATE TABLE model (id INT AUTO_INCREMENT NOT NULL, category INT DEFAULT NULL, brand INT DEFAULT NULL, name_ VARCHAR(200) NOT NULL, INDEX IDX_D79572D964C19C1 (category), INDEX IDX_D79572D91C52F958 (brand), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
         $this->addSql('CREATE TABLE vehicle (id INT AUTO_INCREMENT NOT NULL, model INT NOT NULL, agency INT NOT NULL, registration_number VARCHAR(255) NOT NULL, rental_price DOUBLE PRECISION NOT NULL, inssurance_price DOUBLE PRECISION NOT NULL, deposit DOUBLE PRECISION NOT NULL, passenger_number INT NOT NULL, image_ VARCHAR(255) NOT NULL, suitcase_number INT NOT NULL, state_ VARCHAR(200) NOT NULL, gearbox VARCHAR(100) NOT NULL, status_ VARCHAR(300) NOT NULL, INDEX IDX_1B80E486D79572D9 (model), INDEX IDX_1B80E48670C0C6E6 (agency), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
         $this->addSql('CREATE TABLE wilaya (id INT AUTO_INCREMENT NOT NULL, name_ VARCHAR(200) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');

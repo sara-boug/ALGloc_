@@ -129,6 +129,8 @@
                     $body = json_decode($request->getContent(), true);
                     // patching the contract Arrival 
                     $contractService->patchContractArrival($contract , $em , $contractRepo, $id , $body); 
+                    // applying the changes on the contract 
+                    $em->flush(); 
                     $contractJson = $this->hateoas->serialize($contract, 'json');
                     return new Response($contractJson, Response::HTTP_OK, ["Content-type" => "application\json"]);
 

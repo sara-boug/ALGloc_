@@ -48,6 +48,8 @@
              */
 
             private $vehicle;
+             /** @ORM\Column(type="boolean" ,  nullable = true ,  options={ "default" : false } ) */
+            private $cancelled = false ; 
              /**  @Serializer\Exclude  */ 
             private $link  ="get_contract" ;  // the default set to admin contract
 
@@ -123,6 +125,15 @@
             public function setinvoices(Collection $invoices): void
             {
                 $this->invoices = $invoices;
+            }
+
+            public function  getcancelled():bool
+            { 
+                return $this->cancelled;
+                     
+            }
+            public function setcancelled( bool $cancelled){ 
+                $this->cancelled= $cancelled; 
             }
 
         }

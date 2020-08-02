@@ -1,16 +1,17 @@
 <?php 
 namespace App\controllers\client;
 
-use App\Entity\Contract_;
-use App\Repository\Contract_Repository;
-use App\service\ContractService;
-use App\service\RouteSettings;
-use Exception;
+    use App\Entity\Contract_;
+    use App\Repository\Contract_Repository;
+    use App\service\ContractService;
+    use App\service\RouteSettings;
+    use DateTime;
+    use Exception;
     use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
     use Symfony\Component\Routing\RouterInterface; 
     use Hateoas\HateoasBuilder; 
     use Hateoas\UrlGenerator\CallableUrlGenerator;
-     use Symfony\Component\Routing\Generator\UrlGeneratorInterface; 
+    use Symfony\Component\Routing\Generator\UrlGeneratorInterface; 
     use Symfony\Component\Routing\Annotation\Route ; 
     use Symfony\Component\HttpFoundation\Response; 
     use Symfony\Component\HttpFoundation\JsonResponse;
@@ -136,7 +137,18 @@ class ClientContract extends AbstractController{
                if( !$contract ) {
                 return new JsonResponse(["message" => "Not Found"], Response::HTTP_NOT_FOUND, ["Content-type" => "application\json"]);
                }
-               $contractService -> patchContractArrival($contract , $em,  $contractRepo, $id , $body);
+                $contract= $contractService -> patchContractArrival($contract , $em,  $contractRepo, $id , $body);
+                // updating the cancelled attribute
+                // contract can only be cancelled  at minimum of 30 days 
+                if(isset($body['cancelled'])) {
+                     $diff=   $contract->getDeparture()->diff( new DateTime('now'));  
+                     $days= $diff->format('%d') + $diff->format('%m') ; // the number of days between the current day and the departure day
+                      if($days<30) { 
+                        return new JsonResponse(["error" => "can not cancel the date "], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
+                      }
+                      $contract->setcancelled(true); 
+                    }
+                $em->flush(); 
                $contract->setLink("get_contract_client"); 
                $contract->getclient() ->setLink("get_contract_client"); // setting up the link for the client related to the contract
                $contractJson = $this->hateoas->serialize($contract, 'json');
@@ -150,6 +162,14 @@ class ClientContract extends AbstractController{
 
          }
 
+
+        
+
+
+
+        
+
+ 
         
     }
 

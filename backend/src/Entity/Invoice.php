@@ -2,10 +2,14 @@
         namespace App\Entity;
         use Doctrine\ORM\Mapping as ORM; 
         use DateTime;
-
+        use Hateoas\Configuration\Annotation as Hateoas; 
+        use JMS\Serializer\Annotation as Serializer;
 
         /**
          * @ORM\Entity(repositoryClass="App\Repository\InvoiceRepository") 
+         * @Serializer\XmlRoot("invoice")
+         * @Hateoas\Relation("self" , href= 
+         * @Hateoas\Route("expr(object.getLink())" , parameters={"id" = "expr(object.getid())"}))
          */
         class Invoice  {
             /**
@@ -31,11 +35,24 @@
              * @ORM\JoinColumn(name="contract_" , referencedColumnName="id")
             */
             private $contract_; 
+            /** @Serializer\Exclude */
+
+            private  $link = "get_invoice";
+
 
             function __construct( )
             {
                  
             }
+         // this function allow modifying the links between clients and admins routes
+           public function setLink( string  $link )  { 
+               $this->link = $link   ;
+                
+            }
+            public function getLink(){ 
+                return $this->link;
+            }
+
             public function getid():int{ 
                 return $this ->id; 
             }

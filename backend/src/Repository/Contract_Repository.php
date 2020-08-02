@@ -2,8 +2,8 @@
     namespace App\Repository;
 
         use App\Entity\Contract_;
-use App\Entity\Invoice;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+        use App\Entity\Invoice;
+        use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
         use Doctrine\Persistence\ManagerRegistry;
 
         class Contract_Repository extends ServiceEntityRepository
