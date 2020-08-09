@@ -139,18 +139,19 @@ class ClientController extends AbstractController
        } 
 
 
-       /** @Route("/client/{id}/profile" , name="get_client_profile" , methods={"GET"}) */
-       public function getClient(int $id , RouteSettings $routeSettings ){ 
+       /** @Route("/client/current" , name="get_current_client" , methods={"GET"}) */
+       public function getClientCurrent(int $id , RouteSettings $routeSettings ){ 
          try { 
              $em = $this->getDoctrine()->getManager(); 
-             $client= $routeSettings->getCurrentClient($em , $this->getUser());
-             // enssuring that the User can not access other user's profile as well as data
-              if($id != $client->getid()) { 
-                 return new JsonResponse(["error" => "Not Found"], Response::HTTP_NOT_FOUND, ["Content-type" => "application\json"]);
+             if(! $this->getUser()) { 
+              return new JsonResponse( ["message" => "not Found"],  Response::HTTP_NOT_FOUND, ["Content-type" => "application\json"]);
+
              }
+             $client= $routeSettings->getCurrentClient($em , $this->getUser());
+             // ensuring that the User can not access other user's profile as well as data
             $client->setLink("get_client_profile"); 
-           $clientJson = $this->hateoas->serialize($client , 'json'); 
-           return new Response($clientJson, Response::HTTP_OK, ["Content-type" => "application\json"]);
+            $clientJson = $this->hateoas->serialize($client , 'json'); 
+            return new Response($clientJson, Response::HTTP_OK, ["Content-type" => "application\json"]);
  
          }catch(Exception $e )  {
             return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
@@ -159,6 +160,27 @@ class ClientController extends AbstractController
 
        }
  
+
+              /** @Route("/client/{id}/profile" , name="get_client_profile" , methods={"GET"}) */
+              public function getClient(int $id , RouteSettings $routeSettings ){ 
+                try { 
+                    $em = $this->getDoctrine()->getManager(); 
+                    $client= $routeSettings->getCurrentClient($em , $this->getUser());
+                    // enssuring that the User can not access other user's profile as well as data
+                     if($id != $client->getid()) { 
+                        return new JsonResponse(["error" => "Not Found"], Response::HTTP_NOT_FOUND, ["Content-type" => "application\json"]);
+                    }
+                   $client->setLink("get_client_profile"); 
+                  $clientJson = $this->hateoas->serialize($client , 'json'); 
+                  return new Response($clientJson, Response::HTTP_OK, ["Content-type" => "application\json"]);
+        
+                }catch(Exception $e )  {
+                   return new JsonResponse(["error" => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);
+       
+                }
+       
+              }
+        
 
 
     }

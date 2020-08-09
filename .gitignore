@@ -25,5 +25,4 @@ symfony.lock
 
 frontend/node_modules 
 frontend/package-lock.json
-
-###< symfony/framework-bundle ###
+ ###< symfony/framework-bundle ###
