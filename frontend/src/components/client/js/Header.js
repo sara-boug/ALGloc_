@@ -45,7 +45,7 @@ class Header extends Component {
      }
      render(){ 
          return( 
-            <nav className= "shadow-lg navbar  navbar-dark  bg-dark"> 
+            <nav className= "shadow-lg navbar  navbar-dark  bg-dark sticky-top"> 
              <NavLink  exact to="/"> <a className="navbar-brand big"><strong>ALG</strong>loc</a>
              <i class="fas fa-car-side fa-lg"></i>   </NavLink>
              <this.setupUser></this.setupUser>

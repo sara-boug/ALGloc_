@@ -4,6 +4,7 @@ import Home from './js/Home';
 import Header from './js/Header';
 import Register from './js/Register'; 
 
+
 class App extends Component {
     render() {
         return (
@@ -13,6 +14,7 @@ class App extends Component {
                     <div>
                        <Header />
                          <Switch>
+                          <Route path="/" component={Home} />
                           <Route path="/register" component={Register} /> 
                         </Switch>                      
                       </div>

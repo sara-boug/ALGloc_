@@ -1,12 +1,11 @@
-
 body { 
     margin:auto;
-    background-color: #141414;;
+    background-color: #141414;
 }
 .middle { 
     display: flex;
-   flex-direction: column;
-   width: 20px;
+    flex-direction: column;
+    width: 20px;
     justify-content: center;
     align-items: center;
  }
@@ -14,8 +13,6 @@ body {
     width: 1px;
     border-right: 1px solid  #9b9b9b17;
     height: 250px;
- 
-   
 }
 .or{ 
     border-radius: 100%;
@@ -23,7 +20,7 @@ body {
     width: 50px;
     border: 5px solid  #141414;
     background-color: #383636;
-     color: white;
+    color: white;
      text-align: center;
       
  }
