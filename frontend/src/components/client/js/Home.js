@@ -1,6 +1,7 @@
     import React, { Component } from 'react';
     import "../../css/home.css";
     import axios from 'axios';
+    import Footer from './Footer';
 
     class Home extends Component {
       constructor(props) {
@@ -146,7 +147,7 @@
        }
        render() {
         return (
-          <div className="container h-75">
+           <div className="container">
             <div className="row">
               <div className="col-sm-3" id="filters">
                 <this.agencyFilter></this.agencyFilter>
@@ -161,8 +162,7 @@
               </div>
             </div>
           </div>
-
-
+ 
         );
       }
     }
