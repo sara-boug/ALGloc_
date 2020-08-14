@@ -72,10 +72,10 @@
             {
                 for ($i = 0; $i < self::data; $i++) {
                     $agency = new Agency();
-                    $agency->setAgencyCode("789Glmpk");
-                    $agency->setPhoneNumber("067894568");
-                    $agency->setEmail("emailAgency@gmail.com");
-                    $agency->setAddress("bat64 cheraga");
+                    $agency->setAgencyCode("789Glmp".$i);
+                    $agency->setPhoneNumber("06789456".$i);
+                    $agency->setEmail("emailAgency".$i."@gmail.com");
+                    $agency->setAddress("bat64 cheraga N".$i);
                     $agency->setCity($this->getReference('city' . $i));
                     $manager->persist($agency);
                     $manager->flush();

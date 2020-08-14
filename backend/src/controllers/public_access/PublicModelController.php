@@ -1,7 +1,7 @@
 <?php
     namespace App\controllers\public_access;
 
-        use App\Entity\model;
+        use App\Entity\Model;
         use App\Entity\Brand; 
         use App\Entity\Category;
         use App\service\RouteSettings;

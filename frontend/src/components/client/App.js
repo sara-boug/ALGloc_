@@ -15,8 +15,9 @@ class App extends Component {
                     <div>
                        <Header />
                          <Switch>
+                         <Route path="/register" component={Register} /> 
+
                           <Route path="/" component={Home} />
-                          <Route path="/register" component={Register} /> 
                         </Switch>  
                         <Footer></Footer>
 
