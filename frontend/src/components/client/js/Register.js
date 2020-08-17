@@ -16,7 +16,7 @@ class Register extends Component {
     signUp() {
         return (
             <div className="col-sm-5 rounded" id="signup">
-                <div className="col-sm  header">  Don't have an account yet? <a href="#"><strong className="form-header"> Sign Up</strong> </a></div>
+                <div className="col-sm  header">  Don't have an account yet?  <strong className="form-header"> Sign Up</strong>  </div>
                 <form>
                     <div className="form-row">
                         <div className="form-group col-md-6">
@@ -69,7 +69,7 @@ class Register extends Component {
     login() {
         return (
             <div className="col-sm-3 rounded" id="signup">
-                <div className="col-sm  header">  Already registered? <strong className="form-header"> <a>login</a></strong> </div>
+                <div className="col-sm  header">  Already registered? <strong className="form-header"> login </strong> </div>
                 <form>
                     <div className="form-group">
                         <label for="email">Email</label>
