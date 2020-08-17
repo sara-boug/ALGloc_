@@ -1,23 +1,25 @@
 import React, { Component } from 'react';
 import "../../css/home.css";
 import axios from 'axios';
-import Footer from './Footer';
 
 class Home extends Component {
   constructor(props) {
     super(props);
+    
     this.state = {
-      filters: [],
-      host: "http://localhost:8000",
-      categories: [],
-      vehicles: [],
-      agencies: [],
-      models: [],
-      brands: [],
+            host: "http://localhost:8000",
+            filters:    [],
+            categories: [],
+            vehicles:   [],
+            agencies:   [],
+            models:     [],
+            brands:     []
+
     }
+    
     this.agencyFilter = this.agencyFilter.bind(this);
     this.upperFilter = this.upperFilter.bind(this);
-    this.handleFilterClick = this.handleFilterClick.bind(this); // this function used to handdle the click the filter on the left of the page 
+    this.handleFilterClick = this.handleFilterClick.bind(this); // this function used to handle the click the filter on the left of the page 
     this.categoryFilter = this.categoryFilter.bind(this);
     this.carCards = this.carCards.bind(this);
     this.modelFilter = this.modelFilter.bind(this);
@@ -35,7 +37,7 @@ class Home extends Component {
       var element = elements[i];
        var elementUI = <div class="custom-control custom-checkbox fade show"   key={element[attribute]}>
         <input type="checkbox" class="custom-control-input" id={element[attribute]} name="checkbox-stacked"
-          onChange={(e) => this.handleFilterClick( e)} />
+          onChange={(e) => this.handleFilterClick(e)} />
         <label class="custom-control-label text-monospace" for={element[attribute]} >{element[attribute]}</label>
       </div>
      filterElements.push(elementUI);
@@ -52,13 +54,7 @@ class Home extends Component {
 
 
   }
-  /*shouldComponentUpdate(nextProps , nextState){ 
-     if(this.state.filters == nextState.filters){
-       return false ; 
-     }
-     return true;
-   }*/
-  componentDidMount() {
+    componentDidMount() {
     $('.toast').toast('show');
 
     try {
@@ -84,6 +80,23 @@ class Home extends Component {
       console.log(e);
     }
   }
+  // handling filter Click 
+  handleFilterClick(event){ 
+     const filters = this.state.filters;
+     const filtername= event.currentTarget.id ;
+      if(  event.currentTarget.checked) {
+
+      filters.push(filtername);  // on each click a filter is added to the array of filters  in the state
+    } else {
+     filters.pop(filtername);
+    }
+    this.setState({
+      filters : filters
+    })
+  
+  }
+  
+ 
  
   // filters
   agencyFilter() {
@@ -97,8 +110,7 @@ class Home extends Component {
   }
   modelFilter() {
  
-    console.log(this.state.models); 
-    return  this.filters(this.state.models ,"name_","Model"); 
+     return  this.filters(this.state.models ,"name_","Model"); 
 
   }
   brandFilter() {
@@ -106,29 +118,14 @@ class Home extends Component {
     return  this.filters(this.state.brands ,"name_","Brand"); 
 
    }
-  handleFilterClick(  e) {
-    var filters = this.state.filters;  
-    var filtername= e.currentTarget.id ;
-      if(  e.currentTarget.checked) {
-
-      filters.push(filtername);  // on each click a filter is added to the array of filters  in the state
-    } else {
-     filters.pop(filtername);
-    }
-     this.setState({
-      filters:filters
-    }); 
-
-   }
    delete(element , e){ 
      console.log(e.currentTarget);
       e.currentTarget.remove();
    }
-  upperFilter() {  // this part contains the filters selected by the left bar 
- 
-     let currentFilters = [] ; 
-
-        this.state.filters.forEach((filter) =>{
+  upperFilter( ) {  // this part contains the filters selected by the left bar 
+   const filters = this.state.filters; 
+  const currentFilters = []; 
+    filters.forEach((filter) =>{
 
         var filterUI = 
           <div className="toast rounded-pill fade show" role="alert" aria-live="polite"
