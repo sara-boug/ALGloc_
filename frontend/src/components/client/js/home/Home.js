@@ -23,7 +23,6 @@ class Home extends Component {
     this.handleFilterClick = this.handleFilterClick.bind(this); // this function used to handle the click the filter on the left of the page 
     this.categoryFilter = this.categoryFilter.bind(this);
     this.modelFilter = this.modelFilter.bind(this);
-    this.pagination = this.pagination.bind(this);
     this.deleteElement = this.deleteElement.bind(this); 
      this.filters = ( elements , attribute , filterTitle) =>{ 
         const filterElements = [];
@@ -122,16 +121,6 @@ class Home extends Component {
 
    }
  
-  pagination() { // the pagination used to display the car cards 
-    return (
-      <ul className="pagination">
-        <li className="page-item disabled" >  <a className="page-link" href="#"> previous</a></li>
-        <li className="page-item"> <a className="page-link" href="#"> 1</a></li>
-        <li className="page-item"> <a className="page-link" href="#"> 2</a></li>
-        <li className="page-item"> <a className="page-link" href="#">Next </a></li>
-      </ul>
-    );
-  }
     // handling the delete  element on the X icon of the filter element 
     deleteElement ( target){  // since the  filters array in the state containes nodes of the  filters 
        // and filters's title is extracted from the id of target
@@ -166,7 +155,6 @@ class Home extends Component {
                <UpperFilter filters = {this.state.filters} 
                   delete = {this.deleteElement}></UpperFilter>
                   <Vehicle host={this.state.host}></Vehicle>
-                    <this.pagination></this.pagination>
             </div>
           </div>
         </div>

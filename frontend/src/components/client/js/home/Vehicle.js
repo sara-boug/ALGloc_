@@ -6,25 +6,41 @@ class  Vehicle  extends Component {
            super(props);
            this.state ={ 
                host : this.props.host , 
-              vehicles : [] 
+               vehicles : [] , 
+               vehiclesUI: [] ,  
+               pages: null ,    // number of pagination item
+               limit:null ,  // content limit of the each pages for ex: 4 elements on each page
+               total : null , // the length of  all the collection to be displayed
+               currentVehicles: []  // array container the vehicles to be displayed according to the pagination 
            }
-           this.displayVehicle = this.displayVehicle.bind(this); 
+           this.vehiclesArray = this.vehiclesArray.bind(this); 
            this.setVehicleAgency = this.setVehicleAgency.bind(this); 
-
+           this.pagination = this.pagination.bind(this);  // pagination is added to the vehicle class
+          this.handlePagination = this.handlePagination.bind(this);     
+          this.displayVehicles = this.displayVehicles.bind(this);                                          // since its related to the  vehicle
 
      }
      componentDidMount(){ 
          axios.get(this.state.host + "/public/vehicles") 
          .then((res) => { 
+             var data = res.data ; 
              this.setState({
-                 vehicles: res.data
+                    vehicles: res.data , 
+                    // pagination parameters
+                    pages:  data["pages"],
+                    limit:  data["limit"], 
+                    total:  data["total"] 
              })
+         }) .then(()=> { 
+            this.vehiclesArray(); 
+            this.handlePagination(0);
+
          })
      }
 
-   displayVehicle(){ 
-
+   vehiclesArray(){ 
        const vehicles  = this.state.vehicles ; 
+       console.log(vehicles);
        const vehiclesUI = []; 
        for(var i in vehicles) { 
         if (!Number.isInteger(parseInt(i))) {  break ; } 
@@ -56,9 +72,11 @@ class  Vehicle  extends Component {
         
              vehiclesUI.push(vehicleUI);
          
-        }
-        console.log(vehiclesUI); 
-        return vehiclesUI; 
+        } 
+        this.setState({
+            vehiclesUI:vehiclesUI 
+        })
+   
    }
    setVehicleAgency(agency) {   // the agency dropdown found in the right bottom of the agency card 
        return (
@@ -81,10 +99,55 @@ class  Vehicle  extends Component {
        )
 
    }
+   pagination() { // the pagination used to display the vehicles 
+    // total number of pages items equals to the pages parameters
+    var pagesItem  =[] ; 
+    var pagesNum = this.state.pages; 
+    for( var i= 0 ; i<pagesNum ; i++ ) { 
+        var item=  <li className="page-item" key = {i} id={i}
+          onClick={(e) => {this.handlePagination(e.currentTarget.id)}}> <a className="page-link"> {i+1}</a></li>
+         pagesItem.push(item);
+    }
+    return (
+      <ul className="pagination">
+        <li className="page-item disabled" >  <a className="page-link" href="#"> previous</a></li>
+         {pagesItem}
+         <li className="page-item"> <a className="page-link" href="#">Next </a></li>
+      </ul>
+    );
+  }
+   handlePagination(elementId){ 
+       const limit = this.state.limit;
+       const n = (elementId *limit) + limit;
+       const currentPages = [] ; 
+       if (n < this.state.total) { 
+            for(var i=elementId*limit  ; i < n  ; i++) { 
+                console.log(i); 
+                  currentPages.push(this.state.vehiclesUI[i]) ; 
+            }
+        } else {  
+          for(var i=elementId *limit ; i < this.state.total  ; i++) { 
+               currentPages.push(this.state.vehiclesUI[i]) ; 
+            }
+          }
+             this.setState({
+                currentVehicles : currentPages
+            })
+
+            return currentPages ;  
+            
+   }
+   displayVehicles(){ 
+        return  this.state.currentVehicles; 
+   }
+
     render(){
      return (
-         <this.displayVehicle></this.displayVehicle>
-      );
+         <div>
+         <this.displayVehicles></this.displayVehicles>
+         <this.pagination></this.pagination>
+         </div>
+       );
     }
   
   

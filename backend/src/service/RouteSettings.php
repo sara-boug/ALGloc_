@@ -16,16 +16,17 @@
             // returns a json object containing the collection of object according to their selection
             public function pagination(array $object, string $routeName)
             {
-                $limit = 10;
+                $limit = 2;
                 //getting the exact count of the total of the  pages
-                $total = $object % $limit == 0 ? count($object) / $limit : (count($object) / $limit) + 1;
+                 $total =(int) count($object) % $limit == 0 ? count($object) / $limit : (count($object) / $limit) + 1;
+              
                 $objectPag = new PaginatedRepresentation( // enabling paginations
                     $object,
                     $routeName,
                     array(),
-                    1,
+                    0,
                     $limit,
-                    $total,
+                    $total ,
                     'page',
                     'limit',
                      false,
