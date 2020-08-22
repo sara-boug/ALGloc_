@@ -22,9 +22,10 @@ class Home extends Component {
     this.agencyFilter = this.agencyFilter.bind(this);
     this.handleFilterClick = this.handleFilterClick.bind(this); // this function used to handle the click the filter on the left of the page 
     this.categoryFilter = this.categoryFilter.bind(this);
+    this.brandFilter = this.brandFilter.bind(this); 
     this.modelFilter = this.modelFilter.bind(this);
     this.deleteElement = this.deleteElement.bind(this); 
-     this.filters = ( elements , attribute , filterTitle) =>{ 
+     this.filters = ( elements , attribute , filterTitle , type) =>{ 
         const filterElements = [];
          
      for (var i in elements) {
@@ -35,13 +36,13 @@ class Home extends Component {
       var element = elements[i];
        var elementUI = <div class="custom-control custom-checkbox fade show"   key={element[attribute]}>
         <input type="checkbox" class="custom-control-input" id={element[attribute]} name="checkbox-stacked"
-          onChange={(e) => this.handleFilterClick(e)} />
+          onChange={(e) => this.handleFilterClick(e , type)} />
         <label class="custom-control-label text-monospace" for={element[attribute]} >{element[attribute]}</label>
       </div>
      filterElements.push(elementUI);
     };
     return (
-      <div className="filter agencyFilter rounded">
+      <div className="filter  rounded" id ={type} >
         <div className="title">{filterTitle} :  </div>
         <div className="components">
           {filterElements}
@@ -79,13 +80,15 @@ class Home extends Component {
     }
   }
   // handling filter Click 
-  handleFilterClick(event){ 
+  handleFilterClick(event , type){ 
     try {
       const filters = this.state.filters;
-     const filter= event.currentTarget ;
-     if( filter.checked) {
-
-        filters.push(filter);  // on each click a filter is added to the array of filters  in the state
+     const filter= {
+               filter:   event.currentTarget, 
+               type: type
+             };
+     if( filter.filter.checked) {
+         filters.push(filter);  // on each click a filter is added to the array of filters  in the state
       } else {
         filters.pop(filter);
       }
@@ -103,21 +106,21 @@ class Home extends Component {
   // filters
   agencyFilter() {
  
-       return  this.filters(this.state.agencies ,"agency_code","Agency"); 
+       return  this.filters(this.state.agencies ,"agency_code","Agency" ,  "agency"); 
   }  
   categoryFilter() {
  
-    return  this.filters(this.state.categories ,"name_","Category"); 
+    return  this.filters(this.state.categories ,"name_","Category" , "category"); 
 
   }
   modelFilter() {
  
-     return  this.filters(this.state.models ,"name_","Model"); 
+     return  this.filters(this.state.models ,"name_","Model", "model"); 
 
   }
   brandFilter() {
  
-    return  this.filters(this.state.brands ,"name_","Brand"); 
+    return  this.filters(this.state.brands ,"name_","Brand" , "brand"); 
 
    }
  
@@ -126,13 +129,12 @@ class Home extends Component {
        // and filters's title is extracted from the id of target
        const filters = this.state.filters; 
        const newFilters = []; 
-       filters.forEach((filter) => { 
+       filters.forEach((element) => { 
+           var filter = element.filter; 
             if(filter.id == target.id) { 
                  filter.checked = false ;  // setting the checkbox to checked 
-                 console.log(filter);
-               // delete filters.pop(filter);
-             } else {
-            newFilters.push(filter); 
+              } else {
+            newFilters.push(element); 
              }
        }); 
          this.setState({
@@ -150,11 +152,12 @@ class Home extends Component {
               <this.agencyFilter></this.agencyFilter>
                 <this.categoryFilter></this.categoryFilter>
               <this.modelFilter></this.modelFilter>
+              <this.brandFilter></this.brandFilter>
              </div>
             <div className="col-sm-9">
                <UpperFilter filters = {this.state.filters} 
                   delete = {this.deleteElement}></UpperFilter>
-                  <Vehicle host={this.state.host}></Vehicle>
+                  <Vehicle filters = {this.state.filters}  host={this.state.host} ></Vehicle>
             </div>
           </div>
         </div>

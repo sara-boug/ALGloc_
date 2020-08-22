@@ -5,87 +5,111 @@ class  Vehicle  extends Component {
      constructor(props){ 
            super(props);
            this.state ={ 
-               imageDir:  "../../../../../../backend/uploads/" , // since the project is developped locally we go for __dir__
-               host : this.props.host , 
-               vehicles : [] , 
-               vehiclesUI: [] ,  
-               pages: null ,    // number of pagination item
-               limit:null ,  // content limit of the each pages for ex: 4 elements on each page
-               total : null , // the length of  all the collection to be displayed
-               currentVehicles: []  // array container the vehicles to be displayed according to the pagination 
+               sample : null , 
+               filters:this.props.filters, 
+               host : this.props.host, 
+               defaultvehicles : [] , // default vehicles to be displayed when no filter available
+               vehicles :[], 
+               vehiclesUI: [],  
+               pages: null ,     // number of pagination item
+               limit:null ,      // content limit of each pages for ex: 4 elements on each page
+               total : null,     // the length of  all the collection to be displayed
+               currentVehicles: []// array containes the vehicles to be displayed according to the pagination 
            }
-           this.vehiclesArray = this.vehiclesArray.bind(this); 
-           this.setVehicleAgency = this.setVehicleAgency.bind(this); 
-           this.pagination = this.pagination.bind(this);  // pagination is added to the vehicle class
-          this.handlePagination = this.handlePagination.bind(this);     
-          this.displayVehicles = this.displayVehicles.bind(this);                                          // since its related to the  vehicle
+           this.vehiclesArray =      this.vehiclesArray.bind(this); 
+           this.setVehicleAgency =   this.setVehicleAgency.bind(this); 
+           this.pagination =         this.pagination.bind(this);  // pagination is added to the vehicle class
+           this.handlePagination =   this.handlePagination.bind(this);     
+           this.displayVehicles =    this.displayVehicles.bind(this);  
+           this.displayData = (url) => {   
+            axios.get(url) 
+            .then((res) => { 
+             var data = res.data ; 
+             this.setState({
+                    vehicles: data , 
+                    pages:  data["pages"],
+                    limit:  data["limit"], 
+                    total:  data["total"] 
+ 
+               })
+             }) .then(() => { 
+               this.vehiclesArray(this.state.vehicles); 
+               this.handlePagination(0); 
+ 
+             }); 
+ 
+           }; 
+                      }    
+      vehiclesArray(vehicles){ 
+        const vehiclesUI = []; 
+      for(var i in vehicles) { 
+        if (!Number.isInteger(parseInt(i))) {  break ; } 
+              var vehicle = vehicles[i]; 
+              var vehicleUI = <div className="car-cards" key={vehicle["id"]} >    
+                <img src={this.state.host + "/public/vehicle/"+ vehicle["id"]+ "/image"  }  
+                  className="rounded-pill" />
+                <div className="information">
+                  <div className="left">
+                    <div className="carTitle"> {vehicle["model"]["name_"]}
+                    <div className="category-model text-monospace">
+                      {vehicle["model"]["brand"]["name_"] +" " + vehicle["model"]["category"]["name_"]} </div> </div>
+                    <div className="secondaryInfo">
+                      <div> state : {vehicle["state_"]}</div>
+                      <div> gearbox:  {vehicle["gearbox"]}</div>
+                      <div> max passengers: { vehicle["passenger_number"]} </div>
+                      <div> max suitcase : { vehicle["suitcase_number"] }</div>
+                    </div>
+                  </div>
+                  <div className="right">
+                    <i class="fas fa-plus-circle"></i>
+                    <div className="price"> <p> Rental : {vehicle["rental_price"]} DA   </p>
+                      <p>Inssurance :  {vehicle["inssurance_price"]} DA</p>
+                    </div>
+                     { this.setVehicleAgency(vehicle['agency']) }
+                   </div>
+                </div>
+              </div>
+      
+           vehiclesUI.push(vehicleUI);
+       
+      } 
+      this.setState({
+          vehiclesUI:vehiclesUI 
+      })
+ 
+ }
 
-     }
+       componentWillReceiveProps(prevProps ) { 
+       if(prevProps.filters.length>0 ) {  
+           this.displayData(this.state.host + "/public/vehicles/agency/1"); 
+          }
+       }
+  
      componentDidMount(){ 
          axios.get(this.state.host + "/public/vehicles") 
          .then((res) => { 
              var data = res.data ; 
              this.setState({
-                    vehicles: res.data , 
+                    vehicles: data , 
+                    defaultvehicles: data , // defaultvehicles  to be displayed when no filter available
                     // pagination parameters
                     pages:  data["pages"],
                     limit:  data["limit"], 
                     total:  data["total"] 
              })
-         }) .then(()=> { 
-            this.vehiclesArray(); 
-            this.handlePagination(0);
+         }).then(()=> {    
+           this.vehiclesArray(this.state.vehicles);
 
-         })
-     }
-    getVehicleImage(id){  
-      axios.get(this.state.host + "/public/vehicle/"+ id + "image")
-            .then(()=> { 
+              this.handlePagination(0);
+ 
+     } ); 
 
-            })
-       
+    } 
 
-    }
-   vehiclesArray(){ 
-       const vehicles  = this.state.vehicles ; 
-       console.log(vehicles);
-       const vehiclesUI = []; 
-       for(var i in vehicles) { 
-        if (!Number.isInteger(parseInt(i))) {  break ; } 
-                var vehicle = vehicles[i]; 
-                var vehicleUI = <div className="car-cards" key={vehicle["id"]} >
-                  <img src={this.state.host + "/public/vehicle/"+ vehicle["id"]+ "/image" }  
-                    className="rounded-pill" />
-                  <div className="information">
-                    <div className="left">
-                      <div className="carTitle"> {vehicle["model"]["name_"]}
-                      <div className="category-model text-monospace">
-                        {vehicle["model"]["brand"]["name_"] +" " + vehicle["model"]["category"]["name_"]} </div> </div>
-                      <div className="secondaryInfo">
-                        <div> state : {vehicle["state_"]}</div>
-                        <div> gearbox:  {vehicle["gearbox"]}</div>
-                        <div> max passengers: { vehicle["passenger_number"]} </div>
-                        <div> max suitcase : { vehicle["suitcase_number"] }</div>
-                      </div>
-                    </div>
-                    <div className="right">
-                      <i class="fas fa-plus-circle"></i>
-                      <div className="price"> <p> Rental : {vehicle["rental_price"]} DA   </p>
-                        <p>Inssurance :  {vehicle["inssurance_price"]} DA</p>
-                      </div>
-                       { this.setVehicleAgency(vehicle['agency']) }
-                     </div>
-                  </div>
-                </div>
-        
-             vehiclesUI.push(vehicleUI);
-         
-        } 
-        this.setState({
-            vehiclesUI:vehiclesUI 
-        })
-   
-   }
+
+
+ 
+
    setVehicleAgency(agency) {   // the agency dropdown found in the right bottom of the agency card 
        return (
         <div className="btn-group dropright">
@@ -130,8 +154,7 @@ class  Vehicle  extends Component {
        const currentPages = [] ; 
        if (n < this.state.total) { 
             for(var i=elementId*limit  ; i < n  ; i++) { 
-                console.log(i); 
-                  currentPages.push(this.state.vehiclesUI[i]) ; 
+                   currentPages.push(this.state.vehiclesUI[i]) ; 
             }
         } else {  
           for(var i=elementId *limit ; i < this.state.total  ; i++) { 
@@ -145,8 +168,8 @@ class  Vehicle  extends Component {
             return currentPages ;  
             
    }
-   displayVehicles(){ 
-        return  this.state.currentVehicles; 
+   displayVehicles(){  
+          return  this.state.currentVehicles; 
    }
 
     render(){
@@ -154,6 +177,7 @@ class  Vehicle  extends Component {
          <div>
          <this.displayVehicles></this.displayVehicles>
          <this.pagination></this.pagination>
+ 
          </div>
        );
     }

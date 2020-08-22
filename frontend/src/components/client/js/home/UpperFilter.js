@@ -5,8 +5,8 @@ function UpperFilter(props) {
 
        const filters = props.filters; 
        const currentFilters = []; 
-         filters.forEach((filter) =>{
-        
+         filters.forEach((element) =>{
+             var filter = element.filter; 
              var filterUI = 
                <div className="toast rounded-pill fade show" role="alert" aria-live="polite"
                 aria-atomic="true" data-autohide="false"   id={filter.id} key={filter.id}  onClick={ (e)=>{ props.delete(e.currentTarget)}}>
