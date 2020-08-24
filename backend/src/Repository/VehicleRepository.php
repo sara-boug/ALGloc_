@@ -41,7 +41,16 @@ use App\Entity\Vehicle;
            
           
         }
-    }
+
+        public function  selectVehicle( int $categoryId) {  // selecting a vehicle by category  
+            $em=$this->getEntityManager(); 
+             $query= $em->createQuery('SELECT V FROM App\Entity\Vehicle V
+                 WHERE  V.model = (
+                 SELECT M FROM App\Entity\Model M WHERE  M.category=:categoryId )' )
+                 ->setParameter('categoryId', $categoryId); 
+              return $query->getResult(); 
+            }
+        }
     
 
 ?> 

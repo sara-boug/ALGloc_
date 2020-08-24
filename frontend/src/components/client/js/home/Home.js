@@ -10,7 +10,13 @@ class Home extends Component {
     
     this.state = {
             host: "http://localhost:8000",
-            filters:    [],
+            filters:   { 
+                 "agency" :  [] , 
+                "model": [] , 
+                "category": [] , 
+                  "brand": [] 
+                 
+            } , 
             categories: [],
             vehicles:   [],
             agencies:   [],
@@ -83,14 +89,12 @@ class Home extends Component {
   handleFilterClick(event , type){ 
     try {
       const filters = this.state.filters;
-     const filter= {
-               filter:   event.currentTarget, 
-               type: type
-             };
-     if( filter.filter.checked) {
-         filters.push(filter);  // on each click a filter is added to the array of filters  in the state
+      const  filter = event.currentTarget ; 
+     if( filter.checked) {
+       
+         filters[type].push(filter);  // on each click a filter is added to the array of filters  in the state
       } else {
-        filters.pop(filter);
+        filters[type].pop(filter);
       }
     this.setState({
       filters : filters

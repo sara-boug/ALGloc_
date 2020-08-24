@@ -76,12 +76,12 @@ class  Vehicle  extends Component {
       this.setState({
           vehiclesUI:vehiclesUI 
       })
- 
- }
+    }
 
        componentWillReceiveProps(prevProps ) { 
+        const idParams = "[1,3]" ; 
        if(prevProps.filters.length>0 ) {  
-           this.displayData(this.state.host + "/public/vehicles/agency/1"); 
+           this.displayData(this.state.host + "/public/vehicles/agency/"+idParams); 
           }
        }
   

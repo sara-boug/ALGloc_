@@ -1,6 +1,7 @@
 <?php
  namespace App\controllers\public_access; 
 use App\Entity\Vehicle;
+use App\Repository\VehicleRepository;
 use App\service\RouteSettings;
 use Hateoas\HateoasBuilder;
 use Hateoas\UrlGenerator\CallableUrlGenerator;
@@ -14,6 +15,7 @@ use Exception;
 use Symfony\Component\Routing\Annotation\Route ;
 use Symfony\Component\HttpFoundation\StreamedResponse; 
 use App\service\FileUploader;
+use Doctrine\Common\Collections\Collection;
 
 // /public/vehicles     : description : getting the whole available vehicles               methods:GET
 // (to be imporved ) /public/vehicles/agency/{id}     : description : getting the whole available vehicles  according to the agency      methods:GET
@@ -52,13 +54,34 @@ class PublicVehicleController extends AbstractController
 
         }
     }
-
-    /** @Route("/public/vehicles/agency/{id}" , name="get_vehicles_agency" , methods={"GET"}) */
-    public function getVehiclesByAgency(int $id, RouteSettings $rs): Response
+     //  \[[0-9,]+[0-9]*\]
+    /** @Route("/public/vehicles/agency/{ids<\{.*\:.*\}>}" , name="get_vehicles_agency", methods={"GET"}) */
+    public function getVehiclesByAgency(   $ids, RouteSettings $rs , VehicleRepository $vehicleRepo): Response
     {
-        try {
-            $vehicles = $this->getDoctrine()->getRepository(Vehicle::class)->findBy(['agency' => $id]);
-            $vehiclesPag = $rs->pagination($vehicles, "get_vehicles");
+        try { 
+             $array =json_decode($ids , true);  // filtration's parameters  are passed to the route  as json object
+             $vehicles =   array(); 
+             if(isset($array["agency"]) ) { 
+                foreach( $array["agency"] as   $id  ) {
+                    $vehicles_ = $this->getDoctrine()->getRepository(Vehicle::class)->findBy(['agency' =>  $id]);
+                    array_push($vehicles, ...$vehicles_) ; 
+                }
+             }
+
+             if( isset($array["model"])) { 
+                 foreach($array["model"] as $id)  { 
+                        $vehicles_ = $this->getDoctrine()->getRepository(Vehicle::class)->findBy(['model' =>  $id ]);
+                        array_push($vehicles, ...$vehicles_) ; 
+
+                 }
+             }
+             if( isset($array["category"])) { 
+                foreach($array["category"] as $id)  { 
+                       $vehicles_ = $vehicleRepo->selectVehicle( $id) ; 
+                       if($vehicles) array_push($vehicles, ...$vehicles_) ; 
+                }
+            }
+             $vehiclesPag = $rs->pagination($vehicles, "get_vehicles");
             $vehiclesJson = $this->hateoas->serialize($vehiclesPag, 'json');
             return new Response($vehiclesJson, Response::HTTP_OK, ["Content-type" => "application\json"]);
         } catch (Exception $e) {
