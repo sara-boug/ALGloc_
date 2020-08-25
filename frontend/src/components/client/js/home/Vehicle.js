@@ -5,8 +5,7 @@ class  Vehicle  extends Component {
      constructor(props){ 
            super(props);
            this.state ={ 
-               sample : null , 
-               filters:this.props.filters, 
+                filters:this.props.filters, 
                host : this.props.host, 
                defaultvehicles : [] , // default vehicles to be displayed when no filter available
                vehicles :[], 
@@ -24,7 +23,8 @@ class  Vehicle  extends Component {
            this.displayData = (url) => {   
             axios.get(url) 
             .then((res) => { 
-             var data = res.data ; 
+              console.log(res);
+             var data = res.data ;         
              this.setState({
                     vehicles: data , 
                     pages:  data["pages"],
@@ -35,11 +35,20 @@ class  Vehicle  extends Component {
              }) .then(() => { 
                this.vehiclesArray(this.state.vehicles); 
                this.handlePagination(0); 
- 
              }); 
- 
            }; 
-                      }    
+
+           this.transfer = ( filters ) => { 
+                 const newArray = [ ]; 
+                     filters.forEach(element => {
+                        newArray.push('"' + element + '"'); 
+                   });
+
+                   return newArray; 
+        
+          }
+    
+               }    
       vehiclesArray(vehicles){ 
         const vehiclesUI = []; 
       for(var i in vehicles) { 
@@ -79,16 +88,29 @@ class  Vehicle  extends Component {
     }
 
        componentWillReceiveProps(prevProps ) { 
-        const idParams = "[1,3]" ; 
-       if(prevProps.filters.length>0 ) {  
-           this.displayData(this.state.host + "/public/vehicles/agency/"+idParams); 
-          }
+        if(this.props.filterNum>0) {
+          console.log("yes"); 
+            const filters  = this.state.filters ; // since the route parameter is expected to be json object
+             const params = '{ "agency": ['+ this.transfer( filters["agency"]) + '],'+
+                              ' "model"  : ['+ this.transfer( filters["model"]) + '],'+
+                              ' "category"  : ['+ this.transfer( filters["category"]) + '],'+
+                              ' "brand"  : ['+ this.transfer( filters["brand"]) + ']'+
+                             '}'; 
+           this.displayData(this.state.host + "/public/vehicles/"+params); 
+       } else  { 
+        console.log("No"); 
+
+           this.setState({ 
+             vehicles: this.state.defaultvehicles
+             
+           })
+       }
        }
   
      componentDidMount(){ 
          axios.get(this.state.host + "/public/vehicles") 
          .then((res) => { 
-             var data = res.data ; 
+             const  data = res.data ; 
              this.setState({
                     vehicles: data , 
                     defaultvehicles: data , // defaultvehicles  to be displayed when no filter available

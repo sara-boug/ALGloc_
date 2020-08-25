@@ -15,13 +15,14 @@ class Home extends Component {
                 "model": [] , 
                 "category": [] , 
                   "brand": [] 
-                 
             } , 
+            filterNum: 0 , 
             categories: [],
             vehicles:   [],
             agencies:   [],
             models:     [],
             brands:     []
+
 
     }
      this.container = this.container.bind(this); 
@@ -90,11 +91,17 @@ class Home extends Component {
     try {
       const filters = this.state.filters;
       const  filter = event.currentTarget ; 
-     if( filter.checked) {
+      if( filter.checked) {
        
-         filters[type].push(filter);  // on each click a filter is added to the array of filters  in the state
-      } else {
-        filters[type].pop(filter);
+         filters[type].push(filter.id);  // on each click a filter is added to the array of filters  in the state
+          this.setState({
+            filterNum : this.state.filterNum +1 
+          }) ; 
+        } else {
+        filters[type].pop(filter.id);
+        this.setState({
+          filterNum : this.state.filterNum -1 
+        }) ; 
       }
     this.setState({
       filters : filters
@@ -161,7 +168,8 @@ class Home extends Component {
             <div className="col-sm-9">
                <UpperFilter filters = {this.state.filters} 
                   delete = {this.deleteElement}></UpperFilter>
-                  <Vehicle filters = {this.state.filters}  host={this.state.host} ></Vehicle>
+                  <Vehicle filters = {this.state.filters}  host={this.state.host} 
+                    filterNum ={ this.state.filterNum} ></Vehicle>
             </div>
           </div>
         </div>

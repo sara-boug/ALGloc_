@@ -54,8 +54,8 @@ class PublicVehicleController extends AbstractController
 
         }
     }
-     //  \[[0-9,]+[0-9]*\]
-    /** @Route("/public/vehicles/agency/{ids<\{.*\:.*\}>}" , name="get_vehicles_agency", methods={"GET"}) */
+     //  \[[0-9,]+[0-9]*\]  <\{.*\:.*\}>
+    /** @Route("/public/vehicles/{ids}" , name="get_vehicles_agency", methods={"GET"}) */
     public function getVehiclesByAgency(   $ids, RouteSettings $rs , VehicleRepository $vehicleRepo): Response
     {
         try { 
@@ -63,26 +63,27 @@ class PublicVehicleController extends AbstractController
              $vehicles =   array(); 
              if(isset($array["agency"]) ) { 
                 foreach( $array["agency"] as   $id  ) {
-                    $vehicles_ = $this->getDoctrine()->getRepository(Vehicle::class)->findBy(['agency' =>  $id]);
-                    array_push($vehicles, ...$vehicles_) ; 
+                    $vehicles_ = $vehicleRepo ->selectVehicleByAgencyName($id); 
+                    if($vehicles_) array_push($vehicles, ...$vehicles_) ; 
                 }
              }
 
              if( isset($array["model"])) { 
                  foreach($array["model"] as $id)  { 
                         $vehicles_ = $this->getDoctrine()->getRepository(Vehicle::class)->findBy(['model' =>  $id ]);
-                        array_push($vehicles, ...$vehicles_) ; 
+                        if($vehicles_) array_push($vehicles, ...$vehicles_) ; 
 
                  }
              }
              if( isset($array["category"])) { 
                 foreach($array["category"] as $id)  { 
-                       $vehicles_ = $vehicleRepo->selectVehicle( $id) ; 
-                       if($vehicles) array_push($vehicles, ...$vehicles_) ; 
-                }
-            }
+                       $vehicles_ = $vehicleRepo->selectVehicleByCategoryName( $id) ; 
+                       if($vehicles_) array_push($vehicles, ...$vehicles_) ; 
+                    }
+            } 
              $vehiclesPag = $rs->pagination($vehicles, "get_vehicles");
             $vehiclesJson = $this->hateoas->serialize($vehiclesPag, 'json');
+
             return new Response($vehiclesJson, Response::HTTP_OK, ["Content-type" => "application\json"]);
         } catch (Exception $e) {
             return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST, ["Content-type" => "application\json"]);

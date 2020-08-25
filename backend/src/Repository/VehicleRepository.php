@@ -42,15 +42,24 @@ use App\Entity\Vehicle;
           
         }
 
-        public function  selectVehicle( int $categoryId) {  // selecting a vehicle by category  
+        public function  selectVehicleByCategoryName( string $categoryName) {  // selecting a vehicle by category  
             $em=$this->getEntityManager(); 
              $query= $em->createQuery('SELECT V FROM App\Entity\Vehicle V
                  WHERE  V.model = (
-                 SELECT M FROM App\Entity\Model M WHERE  M.category=:categoryId )' )
-                 ->setParameter('categoryId', $categoryId); 
+                 SELECT C FROM App\Entity\Category C WHERE  C.name_=:categoryName )' )
+                 ->setParameter('categoryName', $categoryName); 
               return $query->getResult(); 
             }
-        }
-    
+
+            public function  selectVehicleByAgencyName( string $agencyName) {  // selecting a vehicle by category  
+                $em=$this->getEntityManager(); 
+                 $query= $em->createQuery('SELECT V FROM App\Entity\Vehicle V
+                     WHERE  V.agency = (
+                     SELECT A FROM App\Entity\Agency A WHERE  A.agency_code=:agencyName )' )
+                     ->setParameter('agencyName', $agencyName); 
+                  return $query->getResult(); 
+                }
+    }
+
 
 ?> 
