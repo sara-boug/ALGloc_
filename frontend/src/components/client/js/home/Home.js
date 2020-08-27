@@ -18,7 +18,13 @@ class Home extends Component {
       vehicles: [],
       agencies: [],
       models: [],
-      brands: []
+      brands: [], 
+      // handling the spinners download separately 
+      agency_spinner_hidden : false,
+      category_spinner_hidden : false,
+      model_spinner_hidden : false,
+      brand_spinner_hidden : false
+
 
 
     }
@@ -29,7 +35,7 @@ class Home extends Component {
     this.brandFilter = this.brandFilter.bind(this);
     this.modelFilter = this.modelFilter.bind(this);
     this.deleteElement = this.deleteElement.bind(this);
-    this.filters = (elements, attribute, filterTitle, type) => {
+    this.filters = (elements, attribute, filterTitle, type , spinner_hidden) => {
     const filterElements = [];
 
       for (var i in elements) {
@@ -45,11 +51,16 @@ class Home extends Component {
         </div>
         filterElements.push(elementUI);
       };
+      const spinner = <div class="d-flex justify-content-center" > 
+      <div class="spinner-border" role="status"     hidden = {spinner_hidden}> </div> </div>
       return (
         <div className="filter  rounded" id={type} >
           <div className="title">{filterTitle} :  </div>
+
           <div className="components">
             {filterElements}
+            { spinner}
+
           </div>
         </div>
       );
@@ -59,23 +70,30 @@ class Home extends Component {
   }
   componentDidMount() {
     $('.toast').toast('show');
-
+     
     try {
       axios.get(this.state.host + "/public/agencies")  // get  the available agencies
         .then(res => {
-          this.setState({ agencies: JSON.parse(JSON.stringify(res.data)) });
+          this.setState({ agencies: JSON.parse(JSON.stringify(res.data)) , 
+            agency_spinner_hidden :  true 
+        });
+
         });
       axios.get(this.state.host + "/public/categories")  // get the cavailable categories
         .then(res => {
-          this.setState({ categories: JSON.parse(JSON.stringify(res.data)) });
+          this.setState({ categories: JSON.parse(JSON.stringify(res.data)) , 
+            category_spinner_hidden :  true  });
         });
       axios.get(this.state.host + "/public/brands")  // get the cavailable categories
         .then(res => {
-          this.setState({ brands: JSON.parse(JSON.stringify(res.data)) });
+          this.setState({ brands: JSON.parse(JSON.stringify(res.data)) , 
+            brand_spinner_hidden :  true });
         });
       axios.get(this.state.host + "/public/models")  // get the cavailable categories
         .then(res => {
-          this.setState({ models: JSON.parse(JSON.stringify(res.data)) });
+          this.setState({ models: JSON.parse(JSON.stringify(res.data)), 
+            model_spinner_hidden :  true  });
+
         });
 
 
@@ -97,7 +115,7 @@ class Home extends Component {
         filters["content"][type].pop(filter.id);
         filters["ui"][type].pop(filter);
 
-      //  filtersUI[type].push(filter);
+        //filtersUI[type].push(filter);
         this.setState({  filterNum: this.state.filterNum - 1     });
         //filters["ui"] = filtersUI ; 
 
@@ -116,21 +134,21 @@ class Home extends Component {
   // filters
   agencyFilter() {
 
-    return this.filters(this.state.agencies, "agency_code", "Agency", "agency");
+    return this.filters(this.state.agencies, "agency_code", "Agency", "agency" , this.state.agency_spinner_hidden);
   }
   categoryFilter() {
 
-    return this.filters(this.state.categories, "name_", "Category", "category");
+    return this.filters(this.state.categories, "name_", "Category", "category" , this.state.category_spinner_hidden);
 
   }
   modelFilter() {
 
-    return this.filters(this.state.models, "name_", "Model", "model");
+    return this.filters(this.state.models, "name_", "Model", "model" , this.state.model_spinner_hidden);
 
   }
   brandFilter() {
 
-    return this.filters(this.state.brands, "name_", "Brand", "brand");
+    return this.filters(this.state.brands, "name_", "Brand", "brand" , this.state.brand_spinner_hidden);
 
   }
 

@@ -235,6 +235,30 @@ button.close {  /* modifying the close button of the upper filter*/
 
       color:gray; 
 } 
+
+  /* style ofr spinner  */ 
+  .spinner-grow    { 
+    width: 1.5rem; 
+    height: 1.5rem;
+    background-color: #fa651a93;
+    margin-left: 5px;
+    margin-right:5px;
+    margin-bottom: 10px;
+
+   }
+   .spinner-middle{ 
+    width: 2rem; 
+    height:2rem;
+   }
+   .spinner-border { 
+    width: 1.5rem; 
+    height: 1.5rem;
+    border-color: #b1b5cc00;
+    border-right-color: #fa651a93;
+    border-bottom-color: #fa651a93;
+ 
+    
+   }
    /* custom scrolbar*/ 
 ::-webkit-scrollbar{
  width: 20px;

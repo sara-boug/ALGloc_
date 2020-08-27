@@ -5,6 +5,7 @@ class Vehicle extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      spinner_hidden : false,        
       filters: this.props.filters["content"],
       host: this.props.host,
       defaultvehicles: [], // default vehicles to be displayed when no filter available
@@ -20,7 +21,10 @@ class Vehicle extends Component {
     this.pagination = this.pagination.bind(this);  // pagination is added to the vehicle class
     this.handlePagination = this.handlePagination.bind(this);
     this.displayVehicles = this.displayVehicles.bind(this);
+    this.displaySpinner =  this.displaySpinner.bind(this); 
     this.displayData = (url) => {
+      this.setState({   spinner_hidden :  false}); 
+
       axios.get(url)
         .then((res) => {
             var data = res.data;
@@ -29,11 +33,12 @@ class Vehicle extends Component {
             pages: data["pages"],
             limit: data["limit"],
             total: data["total"]
-
           })
         }).then(() => {
         this.vehiclesArray(this.state.vehicles);
           this.handlePagination(0);
+          this.setState({   spinner_hidden :  true }); 
+
         });
     };
 
@@ -108,6 +113,7 @@ class Vehicle extends Component {
  
  
   componentDidMount() {
+     //   this.setState({  spinner_hidden :  "false"}); 
     axios.get(this.state.host + "/public/vehicles")
       .then((res) => {
         const data = res.data;
@@ -122,6 +128,9 @@ class Vehicle extends Component {
       }).then(() => {
         this.vehiclesArray(this.state.vehicles);
         this.handlePagination(0);
+         this.setState({   spinner_hidden :   true}); 
+
+
       });
 
   }
@@ -189,17 +198,28 @@ class Vehicle extends Component {
 
   }
   displayVehicles() {
-
-    return this.state.currentVehicles;
+     return this.state.currentVehicles;
   }
+  displaySpinner() { 
+    
+    const spinner =
+    <div className="d-flex justify-content-center align-items-center">
+     <div class="spinner-grow"    role="status"  hidden=  {this.state.spinner_hidden} >  </div>  
+     <div class="spinner-grow spinner-middle"    role="status"  hidden=  {this.state.spinner_hidden} >  </div>  
+     <div class="spinner-grow"    role="status"  hidden=  {this.state.spinner_hidden} >  </div>  
 
+     </div>
+    return spinner; 
+  }
+ 
   render() {
     return (
       <div>
-        <this.displayVehicles></this.displayVehicles>
-        <this.pagination></this.pagination>
+         <this.displaySpinner> </this.displaySpinner>
+          <this.displayVehicles></this.displayVehicles>
+          <this.pagination></this.pagination>
 
-      </div>
+     </div>
     );
   }
 
