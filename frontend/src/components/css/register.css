@@ -93,4 +93,18 @@ form {
     color: #C0C0C0;
 }
 
- 
+.alert-danger { 
+       padding:  10px ; 
+        background-color:#dc3545 ; 
+        color:#f2bfbf;
+        border : none ;
+         text-align: center;
+         font-size: 17px;
+
+}
+.alert-danger i { 
+    color:#f2bfbf; 
+    margin-right: 10px;
+    margin-left: 10px;
+
+}

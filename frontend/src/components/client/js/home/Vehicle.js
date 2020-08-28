@@ -91,8 +91,7 @@ class Vehicle extends Component {
     })
   }
   componentWillReceiveProps(prevProps) {
-    console.log(prevProps.filters); 
-          if (prevProps.filterNum !== this.props.filterNum) {
+           if (prevProps.filterNum !== this.props.filterNum) {
            if( prevProps.filterNum > 0 ) {  
              const filters = this.state.filters; // since the route parameter is expected to be json object
              const params =  '{ "agency": [' + this.transfer(filters["agency"]) + '],' +

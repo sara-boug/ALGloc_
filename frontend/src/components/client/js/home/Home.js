@@ -166,7 +166,6 @@ class Home extends Component {
               filters["ui"][title][i].checked = false;  // setting the checkbox to checked 
         } else {
            newFilters["content"][title].push(filter);
-           console.log(filters["ui"][title][i]); 
            newFilters["ui"][title].push(filters["ui"][title][i]);
 
         }

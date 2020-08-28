@@ -13,7 +13,7 @@ class Header extends Component {
         }
         this.setupUser = this.setupUser.bind(this); 
         
-    }
+    } 
      componentDidMount(){ 
          var  headers = new Headers(); 
   
@@ -30,7 +30,6 @@ class Header extends Component {
     }
   
      setupUser() {  // this function deals with the nabbar whether to add  sigup/login button or display the user 
-         console.log("hello world"); 
         if(this.state.user ==null){
          return (
              <div className="header-button">
@@ -46,8 +45,8 @@ class Header extends Component {
      render(){ 
          return( 
             <nav className= "shadow-lg navbar  navbar-dark  bg-dark sticky-top"> 
-             <NavLink  exact to="/"> <a className="navbar-brand big"><strong>ALG</strong>loc</a>
-             <i class="fas fa-car-side fa-lg"></i>   </NavLink>
+             <NavLink  exact to="/"> <div className="navbar-brand big"><strong>ALG</strong>loc</div>
+             <i className="fas fa-car-side fa-lg"></i>   </NavLink>
              <this.setupUser></this.setupUser>
                  </nav>
          ); 
