@@ -42,14 +42,13 @@ body {
     display: flex;
     flex-direction: row;
     justify-content: space-around;
-    
 
  }
 .container-fluid { 
       display: flex;
-     flex-direction: column;
-    justify-content: space-around;
-    margin-top: 2%;
+      flex-direction: column;
+      justify-content: space-around;
+      margin-top: 2%;
      } 
   .header { 
     color: #C0C0C0;
@@ -100,7 +99,6 @@ form {
         border : none ;
          text-align: center;
          font-size: 17px;
-
 }
 .alert-danger i { 
     color:#f2bfbf; 

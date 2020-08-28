@@ -8,22 +8,25 @@ class Register extends Component {
         this.state = {
             host: "http://localhost:8000", 
              signup : { 
-                 "fullname" : ""  ,
+                 "fullname_" : ""  ,
                  "email" : "" , 
                  "password" : "" , 
                  "confirmPassword" : "" , 
                  "address" : "" , 
-                 "city" : "" , 
-                 "license_number" : "" 
+                 "phone_number" : "" , 
+            
+                 "license_number" : "" ,
+                 "city" : { 
+                     "id": "" , 
+                     "name_": ""
+                 }
              },
             login : { 
                "email" : "" , 
                "password" : "" 
              } , 
-             cities: [] , 
-             alert_hidden : true,
-             singupAlert: "Danger"
-
+             cities: [] 
+ 
         }
         this.signUp = this.signUp.bind(this);
         this.login = this.login.bind(this);
@@ -42,7 +45,18 @@ class Register extends Component {
 
      }
      handleChangeSignup(event ,   attribute  ) { 
-         const signup = this.state.signup ; // state attribute    
+
+          const signup = this.state.signup ; // state attribute    
+          if(attribute == "city") {  // the city attribute is special since it recieves an object composed of id and name
+            const value =  (event.target.value ).split( "," ) ;
+              signup[attribute]["id"] =   value[0]; 
+              signup[attribute]["name_"] = value[1];
+              this.setState({
+                singnup:  signup
+              }); 
+              return;
+    
+        } 
           signup[attribute] = event.target.value; 
           this.setState({
             singnup:  signup
@@ -51,12 +65,14 @@ class Register extends Component {
      }
      handleSignup( event) { 
           event.preventDefault ; 
-          console.log(this.state.signup); 
-          /*axios.post(this.state.host + "/signup" , this.state.signup) 
+          const signupObject = this.state.signup ; 
+          delete signupObject["confirmPassword"] ; 
+          console.log(signupObject);
+          axios.post(this.state.host + "/signup" , signupObject) 
           .then((res)=> { 
               const data =res.data;
               console.log(res); 
-          });*/
+          });
      }
       
   
@@ -65,8 +81,11 @@ class Register extends Component {
            const citiesUI = [ ]; 
            for( var i in cities) {
                if(!Number.isInteger(parseInt(i))) { break ;}
-               var city = <option key={cities[i]["id"]} value={cities[i]["name_"]} 
-                >{cities[i]["name_"]}</option> ; 
+               var city = [cities[i]["id"] ,   cities[i]["name_"] ];
+
+                var city = <option key={cities[i]["id"]} 
+                                 value={  city  } 
+                                 id={cities[i]["id"]} >{cities[i]["name_"]}</option> ; 
                 citiesUI.push(city);
            }
            
@@ -74,14 +93,22 @@ class Register extends Component {
                  {citiesUI}
                </select>
           ) ; 
-     }
+     }  
+     // hnadling the  alert on the top of the form 
         signupAlert() { 
           var message  =  " "  ;
           var  alert_hidden = true ;
           if ( this.state.signup["password"] !==this.state.signup["confirmPassword"] ){ 
                        message  =  " passwords  are not identical"  ;
                        alert_hidden = false;
-         }  
+         } 
+         if(this.state.signup["email"].length> 0 &&
+            !this.state.signup["email"].trim()
+            .match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.com)$/)) { 
+                message  =  "invalid email address"  ;
+                alert_hidden = false;
+
+         }
          const alert = <div className ="alert alert-danger" role="alert" 
          hidden = {alert_hidden}> <i className="fas fa-exclamation-circle"></i> { message } </div> ; 
         return alert ;
@@ -96,10 +123,10 @@ class Register extends Component {
                     <div className="form-row">
  
                         <div className="form-group col-md-6">
-                            <label htmlFor="fullname">fullname </label>
-                            <input type="text" className="form-control "  id="fullname" 
-                             value={this.state.signup["fullname"]} 
-                              onChange =  { (e) => { this.handleChangeSignup(e ,"fullname" )}}  required/>
+                            <label htmlFor="fullname_">fullname_ </label>
+                            <input type="text" className="form-control "  id="fullname_" 
+                             value={this.state.signup["fullname_"]} 
+                              onChange =  { (e) => { this.handleChangeSignup(e ,"fullname_" )}}  required/>
                         </div>
                         <div className="form-group col-md-6">
                             <label htmlFor="email">Email </label>
@@ -108,6 +135,15 @@ class Register extends Component {
                             onChange =  { (e) => { this.handleChangeSignup(e ,"email" )}} 
                              required/>
                         </div>
+                    </div>
+                    <div className="form-group"> 
+                     <label htmlFor = "phone_number"> Phone number </label>
+                     <input type="number" className="form-control" id="phone_number"
+                        value={this.state.signup["phone_number"]} 
+                        onChange =  { (e) => { this.handleChangeSignup(e ,"phone_number" )}}
+                        required/>
+     
+             
                     </div>
 
                     <div className="form-row">
