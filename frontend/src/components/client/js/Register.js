@@ -14,7 +14,6 @@ class Register extends Component {
                  "confirmPassword" : "" , 
                  "address" : "" , 
                  "phone_number" : "" , 
-            
                  "license_number" : "" ,
                  "city" : { 
                      "id": "" , 
@@ -25,8 +24,13 @@ class Register extends Component {
                "email" : "" , 
                "password" : "" 
              } , 
-             cities: [] 
+             cities: [] , 
+             modal_message: {  // parameters for the modal popup 
+                  "title": " " , 
+                  "body" : " " , 
+                  "button_hidden" :true
  
+             }
         }
         this.signUp = this.signUp.bind(this);
         this.login = this.login.bind(this);
@@ -34,18 +38,31 @@ class Register extends Component {
         this.handleChangeSignup = this.handleChangeSignup.bind(this); 
         this.handleSignup = this.handleSignup.bind(this);  
         this.signupAlert  = this.signupAlert.bind(this) ; 
+        this.loginModal = this.loginModal.bind(this); 
         }
      componentWillMount() { 
          axios.get(this.state.host + "/public/cities")
          .then((res) => {
              this.setState({ 
                cities:res.data
-             }); 
+             });
+             // setting up a default value for the city attribute in the signup state 
+             const cities = this.state.cities
+             const signup= this.state.signup; 
+            signup["city"]["id"] = cities[0]["id"];
+            signup["city"]["name_"] = cities[0]["name_"];
+
+            this.setState({ 
+                signup : signup  
+           }); 
+           console.log(signup);
+
+             
          }); 
-
      }
+     
      handleChangeSignup(event ,   attribute  ) { 
-
+         event.preventDefault; 
           const signup = this.state.signup ; // state attribute    
           if(attribute == "city") {  // the city attribute is special since it recieves an object composed of id and name
             const value =  (event.target.value ).split( "," ) ;
@@ -64,31 +81,53 @@ class Register extends Component {
 
      }
      handleSignup( event) { 
+        try {
           event.preventDefault ; 
           const signupObject = this.state.signup ; 
           delete signupObject["confirmPassword"] ; 
-          console.log(signupObject);
-          axios.post(this.state.host + "/signup" , signupObject) 
-          .then((res)=> { 
-              const data =res.data;
-              console.log(res); 
+          $('#modal-login').modal('show');
+          var spinner_hidden = false ; 
+          this.setState ({
+              modal_message :{
+                  "title" :  <div> <div class="spinner-border" role="status" hidden={spinner_hidden} >  </div>  Loading...</div> , 
+                  "body" :   <p> </p> , 
+                  "button_hidden": true 
+               }
           });
+          axios.post(this.state.host + "/signup" , signupObject) 
+          .then((res)=> {
+              const data =res.data;
+            
+              this.setState ({
+                modal_message :{
+                    "title" : <div> <i class="far fa-check-circle"></i>  singnup sucess</div> , 
+                    "body" :  <div> login now...  </div> ,
+                    "button_hidden" : false 
+                 }
+            });
+              
+            }) 
+
+
+       
      }
       
   
      citiesSelect() { 
-           const cities = this.state.cities ; 
+           var cities = this.state.cities ; 
            const citiesUI = [ ]; 
-           for( var i in cities) {
+            let j =1 ; 
+           for(var   i in cities) {
                if(!Number.isInteger(parseInt(i))) { break ;}
                var city = [cities[i]["id"] ,   cities[i]["name_"] ];
 
-                var city = <option key={cities[i]["id"]} 
+                var city = <option  key={cities[i]["id"]} 
                                  value={  city  } 
                                  id={cities[i]["id"]} >{cities[i]["name_"]}</option> ; 
+                  j++; 
                 citiesUI.push(city);
+                
            }
-           
           return ( <select  className="form-control" id="city" onChange =  { (e) => { this.handleChangeSignup(e ,"city" )}} > 
                  {citiesUI}
                </select>
@@ -102,34 +141,62 @@ class Register extends Component {
                        message  =  " passwords  are not identical"  ;
                        alert_hidden = false;
          } 
+         // email model validation 
          if(this.state.signup["email"].length> 0 &&
             !this.state.signup["email"].trim()
             .match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.com)$/)) { 
                 message  =  "invalid email address"  ;
                 alert_hidden = false;
-
          }
          const alert = <div className ="alert alert-danger" role="alert" 
          hidden = {alert_hidden}> <i className="fas fa-exclamation-circle"></i> { message } </div> ; 
         return alert ;
      }
+     loginModal() { 
+          return (
+              <div className="modal fade" tabIndex="-1" role="dialog" id="modal-login" data-backdrop="false"> 
+               <div className="modal-dialog modal-dialog-centered" role ="document" > 
+                <div className="modal-content"> 
+                <div className="modal-header text-monospace">
+                 <p className="modal-title text-monospace">
+                  {this.state.modal_message.title}  </p>
+                 <button type="button" className="close" data-dismiss="modal" aria-label="close" 
+                 hidden={this.state.modal_message["button_hidden"]}>
+                     <span aria-hidden="true">&times;</span>
+                 </button>
+                 </div> 
+                 <div className="modal-body text-monospace"> 
+                 {this.state.modal_message.body} 
+                  </div>
+                 <div className="modal-footer text-monospace">
+                     <button type="button" className="btn" data-dismiss="modal" hidden={this.state.modal_message["button_hidden"]}> login</button>
+                 </div>
+                </div>
+               </div>
+              </div> 
+
+          ); 
+
+     }
      signUp() {
         return (
-            <div className="col-sm-5 rounded" id="signup">
+        
+            <div className="col-sm-5 rounded" id="signup">  
+              <this.loginModal></this.loginModal>
                 <div className="col-sm  header">  Don't have an account yet?  <strong className="form-header"> Sign Up</strong>  </div>                
                  
-                 <form>
+                 <form onSubmit= {(e) => {this.handleSignup(e)}}>
                      <this.signupAlert></this.signupAlert>
                     <div className="form-row">
  
                         <div className="form-group col-md-6">
-                            <label htmlFor="fullname_">fullname_ </label>
+                            <label htmlFor="fullname_">fullname</label>
                             <input type="text" className="form-control "  id="fullname_" 
                              value={this.state.signup["fullname_"]} 
                               onChange =  { (e) => { this.handleChangeSignup(e ,"fullname_" )}}  required/>
                         </div>
                         <div className="form-group col-md-6">
-                            <label htmlFor="email">Email </label>
+                            <label htmlFor="email">email </label>
                             <input type="email" className="form-control" id="email" 
                             value={this.state.signup["email"]} 
                             onChange =  { (e) => { this.handleChangeSignup(e ,"email" )}} 
@@ -137,10 +204,10 @@ class Register extends Component {
                         </div>
                     </div>
                     <div className="form-group"> 
-                     <label htmlFor = "phone_number"> Phone number </label>
+                     <label htmlFor = "phone_number"> phone number </label>
                      <input type="number" className="form-control" id="phone_number"
                         value={this.state.signup["phone_number"]} 
-                        onChange =  { (e) => { this.handleChangeSignup(e ,"phone_number" )}}
+                        onChange=  { (e) => { this.handleChangeSignup(e ,"phone_number" )}}
                         required/>
      
              
@@ -155,14 +222,14 @@ class Register extends Component {
                             required/>
                         </div>
                         <div className="form-group col-md-6">
-                            <label htmlFor="passwordConfirm">Confirm Password </label>
+                            <label htmlFor="passwordConfirm">confirm password </label>
                             <input type="password" className="form-control" id="passwordConfirm" 
                             value={this.state.signup["confirmPassword"]} 
                             onChange =  { (e) => { this.handleChangeSignup(e ,"confirmPassword" )}} 
                             required/>                        </div>
                     </div>
                     <div className="form-group">
-                        <label htmlFor="address">Adress</label>
+                        <label htmlFor="address"> domicil adress</label>
                         <input type="address" className="form-control" id="address" 
                         value={this.state.signup["address"]} 
                         onChange =  { (e) => { this.handleChangeSignup(e ,"address" )}}
@@ -171,11 +238,11 @@ class Register extends Component {
                     </div>
                     <div className="form-row">
                         <div className="form-group col-md-6">
-                            <label htmlFor="city">City</label>
+                            <label htmlFor="city">city</label>
                              <this.citiesSelect></this.citiesSelect>
                         </div>
                         <div className="form-group col-md-6">
-                            <label htmlFor="licenseNumber">license Number </label>
+                            <label htmlFor="licenseNumber"> driving license Number </label>
                             <input type="text" className="form-control" id="licenseNumber" 
                             value={this.state.signup["license_number"]} 
                             onChange =  { (e) => { this.handleChangeSignup(e ,"license_number" )}}
@@ -183,8 +250,7 @@ class Register extends Component {
                         </div>
                     </div>
                     <div className="text-center form-group col-md-12" >
-                        <button type="submit" className="btn  rounded-pill" id="submit" 
-                         onClick = {(e) => {this.handleSignup(e)}}>Submit</button>
+                        <button type="submit" className="btn  rounded-pill" id="submit">submit</button>
                     </div>
                 </form>
             </div>
