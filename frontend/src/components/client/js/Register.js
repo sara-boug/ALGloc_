@@ -81,7 +81,6 @@ class Register extends Component {
 
      }
      handleSignup( event) { 
-        try {
           event.preventDefault ; 
           const signupObject = this.state.signup ; 
           delete signupObject["confirmPassword"] ; 
@@ -105,11 +104,18 @@ class Register extends Component {
                     "button_hidden" : false 
                  }
             });
-              
-            }) 
+        }).catch((e)=> { 
+            this.setState ({
+                modal_message :{
+                    "title" : <div> <i class="fas fa-exclamation-triangle"></i> error accured</div> , 
+                    "body" :  <div> try to singup later or login</div> ,
+                    "button_hidden" : false 
+                 }
+                }); 
 
+        }); 
 
-       
+        
      }
       
   
