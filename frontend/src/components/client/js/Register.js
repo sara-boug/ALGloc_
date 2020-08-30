@@ -5,6 +5,7 @@ import "../../css/register.css";
 class Register extends Component {
     constructor(props) {
         super(props);
+        this.signup_disabled = React.createRef; 
         this.state = {
             host: "http://localhost:8000", 
              signup : { 
@@ -29,8 +30,7 @@ class Register extends Component {
                   "title": " " , 
                   "body" : " " , 
                   "button_hidden" :true
- 
-             }
+             } 
         }
         this.signUp = this.signUp.bind(this);
         this.login = this.login.bind(this);
@@ -41,6 +41,7 @@ class Register extends Component {
         this.loginModal = this.loginModal.bind(this); 
         }
      componentWillMount() { 
+        
          axios.get(this.state.host + "/public/cities")
          .then((res) => {
              this.setState({ 
@@ -49,17 +50,28 @@ class Register extends Component {
              // setting up a default value for the city attribute in the signup state 
              const cities = this.state.cities
              const signup= this.state.signup; 
-            signup["city"]["id"] = cities[0]["id"];
-            signup["city"]["name_"] = cities[0]["name_"];
-
-            this.setState({ 
+             signup["city"]["id"] = cities[0]["id"];
+             signup["city"]["name_"] = cities[0]["name_"];
+             this.setState({ 
                 signup : signup  
+              }); 
+            console.log(signup);
            }); 
-           console.log(signup);
+     } 
 
-             
-         }); 
+     componentWillUpdate() { // repition to be fixed 
+        if ( this.state.signup["password"] !==this.state.signup["confirmPassword"] ){ 
+              this.signup_disabled =  true ; 
+              // email model validation 
+            } else  if(this.state.signup["email"].length> 0 &&
+            !this.state.signup["email"].trim()
+            .match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.com)$/)) { 
+                this.signup_disabled =  true ; 
+            } else { 
+                this.signup_disabled = false; 
+            }
      }
+ 
      
      handleChangeSignup(event ,   attribute  ) { 
          event.preventDefault; 
@@ -104,25 +116,22 @@ class Register extends Component {
                     "button_hidden" : false 
                  }
             });
-        }).catch((e)=> { 
+        }).catch((e)=> {  // handling the excetion that may accur during data display
             this.setState ({
                 modal_message :{
                     "title" : <div> <i class="fas fa-exclamation-triangle"></i> error accured</div> , 
-                    "body" :  <div> try to singup later or login</div> ,
+                    "body" :  <div> try to signup later or login</div> ,
                     "button_hidden" : false 
                  }
                 }); 
-
         }); 
 
-        
      }
       
   
      citiesSelect() { 
            var cities = this.state.cities ; 
            const citiesUI = [ ]; 
-            let j =1 ; 
            for(var   i in cities) {
                if(!Number.isInteger(parseInt(i))) { break ;}
                var city = [cities[i]["id"] ,   cities[i]["name_"] ];
@@ -130,8 +139,7 @@ class Register extends Component {
                 var city = <option  key={cities[i]["id"]} 
                                  value={  city  } 
                                  id={cities[i]["id"]} >{cities[i]["name_"]}</option> ; 
-                  j++; 
-                citiesUI.push(city);
+                  citiesUI.push(city);
                 
            }
           return ( <select  className="form-control" id="city" onChange =  { (e) => { this.handleChangeSignup(e ,"city" )}} > 
@@ -139,24 +147,30 @@ class Register extends Component {
                </select>
           ) ; 
      }  
-     // hnadling the  alert on the top of the form 
+     // hnadling the  alert on the top of the form  inputs 
         signupAlert() { 
           var message  =  " "  ;
           var  alert_hidden = true ;
-          if ( this.state.signup["password"] !==this.state.signup["confirmPassword"] ){ 
+          this.signup_disabled = false; 
+
+           if ( this.state.signup["password"] !==this.state.signup["confirmPassword"] ){ 
                        message  =  " passwords  are not identical"  ;
-                       alert_hidden = false;
-         } 
+                       alert_hidden = false ; 
+                       this.signup_disabled =  true ; 
+
          // email model validation 
-         if(this.state.signup["email"].length> 0 &&
+        } else  if(this.state.signup["email"].length> 0 &&
             !this.state.signup["email"].trim()
             .match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.com)$/)) { 
                 message  =  "invalid email address"  ;
-                alert_hidden = false;
-         }
+                alert_hidden = false ; 
+                 this.signup_disabled = true; 
+
+         }  
+         
          const alert = <div className ="alert alert-danger" role="alert" 
          hidden = {alert_hidden}> <i className="fas fa-exclamation-circle"></i> { message } </div> ; 
-        return alert ;
+         return alert ;
      }
      loginModal() { 
           return (
@@ -175,7 +189,8 @@ class Register extends Component {
                  {this.state.modal_message.body} 
                   </div>
                  <div className="modal-footer text-monospace">
-                     <button type="button" className="btn" data-dismiss="modal" hidden={this.state.modal_message["button_hidden"]}> login</button>
+             <button type="button" className="btn" data-dismiss="modal" 
+             hidden={this.state.modal_message["button_hidden"]} > login</button>
                  </div>
                 </div>
                </div>
@@ -183,7 +198,9 @@ class Register extends Component {
 
           ); 
 
-     }
+     } 
+
+ 
      signUp() {
         return (
         
@@ -256,7 +273,8 @@ class Register extends Component {
                         </div>
                     </div>
                     <div className="text-center form-group col-md-12" >
-                        <button type="submit" className="btn  rounded-pill" id="submit">submit</button>
+                        <button type="submit" className="btn  rounded-pill" id="submit" 
+                           disabled = {this.signup_disabled}>submit</button>
                     </div>
                 </form>
             </div>
