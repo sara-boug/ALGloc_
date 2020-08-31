@@ -88,6 +88,11 @@ form {
      margin-top: 20px;
      background-color:  #FA641A;
      color: white;
+     width : 30%;
+ }
+ #login .btn#submit { 
+    width : 70%;
+
  }
 
  label { 

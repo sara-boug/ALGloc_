@@ -189,7 +189,7 @@ class Register extends Component {
           return (
               <div className="modal fade" tabIndex="-1" role="dialog" id="modal-login" data-backdrop="false"> 
                <div className="modal-dialog modal-dialog-centered" role ="document" > 
-                <div className="modal-content"> 
+                <div className="modal-content text-monospace"> 
                 <div className="modal-header text-monospace">
                  <p className="modal-title text-monospace">
                   {this.state.modal_message.title}  </p>
@@ -203,7 +203,7 @@ class Register extends Component {
                   </div>
                  <div className="modal-footer text-monospace">
              <button type="button" className="btn" data-dismiss="modal" 
-             hidden={this.state.modal_message["button_hidden"]} > login</button>
+             hidden={this.state.modal_message["button_hidden"]} > OK</button>
                  </div>
                 </div>
                </div>
@@ -315,19 +315,26 @@ class Register extends Component {
 
         axios.post(this.state.host +"/login" ,login)
               .then((res) => { 
+                $('#modal-login').modal('hide');
+
              this.setState({
                  redirect:true
              });
-             $('#modal-login').modal('hide');                   
-                   
-            }).catch((e)=>{ 
-               console.log(e) ; 
+             }).catch((e) => { 
+                this.setState ({
+                    modal_message :{
+                        "title" : <div> <i class="fas fa-exclamation-triangle"></i> credentials error</div> , 
+                        "body" :  <div> consider inserting correct creadentials or try to signup </div> ,
+                        "button_hidden" : false 
+                      }
+                    }); 
+        
             })
 
     }
     login() {
         return (
-            <div className="col-sm-3 rounded" id="signup">
+            <div className="col-sm-3 rounded" id="login">
                <this.loginModal></this.loginModal>
                 <div className="col-sm  header">  Already registered? <strong className="form-header"> login </strong> </div>
                 <form onSubmit = {(e)=> { this.handleLogin(e)}}>
@@ -350,7 +357,6 @@ class Register extends Component {
                     <div className="text-center form-group col-md-12" >
 
                     <button type="submit" className="btn rounded-pill" id="submit">Submit</button>
-         
                     <Redirect   to ={this.redirect}>   </Redirect>
             
                     </div>
