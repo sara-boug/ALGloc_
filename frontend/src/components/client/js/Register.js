@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import axios from 'axios' ; 
+import {Redirect , Route , HashRouter as Router , NavLink} from "react-router-dom" ; 
 import "../../css/register.css";
 
 class Register extends Component {
     constructor(props) {
         super(props);
         this.signup_disabled = React.createRef; 
+        this.redirect = React.createRef ; 
         this.state = {
             host: "http://localhost:8000", 
              signup : { 
@@ -30,7 +32,8 @@ class Register extends Component {
                   "title": " " , 
                   "body" : " " , 
                   "button_hidden" :true
-             } 
+             }, 
+             redirect : false 
         }
         this.signUp = this.signUp.bind(this);
         this.login = this.login.bind(this);
@@ -39,10 +42,14 @@ class Register extends Component {
         this.handleSignup = this.handleSignup.bind(this);  
         this.signupAlert  = this.signupAlert.bind(this) ; 
         this.loginModal = this.loginModal.bind(this); 
+        this.handleChangeLogin = this.handleChangeLogin.bind(this); 
+        this.handleLogin = this.handleLogin.bind(this); 
         }
      componentWillMount() { 
         
-         axios.get(this.state.host + "/public/cities")
+        this.signup_disabled = false; // setting up the sign up disable button 
+         this.redirect = "/register" ; 
+        axios.get(this.state.host + "/public/cities")
          .then((res) => {
              this.setState({ 
                cities:res.data
@@ -59,8 +66,8 @@ class Register extends Component {
            }); 
      } 
 
-     componentWillUpdate() { // repition to be fixed 
-        if ( this.state.signup["password"] !==this.state.signup["confirmPassword"] ){ 
+     componentWillUpdate(prevProps , prevState ) { // repition to be fixed 
+         if ( this.state.signup["password"] !==this.state.signup["confirmPassword"] ){ 
               this.signup_disabled =  true ; 
               // email model validation 
             } else  if(this.state.signup["email"].length> 0 &&
@@ -70,6 +77,12 @@ class Register extends Component {
             } else { 
                 this.signup_disabled = false; 
             }
+            console.log(this.state.redirect); 
+
+        if(prevState.redirect == true) {
+             this.redirect="/"; 
+        }
+
      }
  
      
@@ -197,10 +210,7 @@ class Register extends Component {
               </div> 
 
           ); 
-
      } 
-
- 
      signUp() {
         return (
         
@@ -281,25 +291,68 @@ class Register extends Component {
 
         )
     }
+    handleChangeLogin(event , attribute ) 
+     { 
+         var login = this.state.login; 
+         login[attribute] = event.target.value ; 
+          this.setState( { 
+            login : login 
+          }); 
+      }
+    handleLogin(event) { 
+        event.preventDefault ; 
+        const login = this.state.login ; 
+        const spinner_hidden= false; 
+        $('#modal-login').modal('show');
+        this.setState ({
+            modal_message :{
+                "title" :  <div> <div class="spinner-border" role="status" hidden={spinner_hidden} >  </div>  Loading...</div> , 
+                "body" :   <p> </p> , 
+                "button_hidden": true 
+             }
 
+        });
+
+        axios.post(this.state.host +"/login" ,login)
+              .then((res) => { 
+             this.setState({
+                 redirect:true
+             });
+             $('#modal-login').modal('hide');                   
+                   
+            }).catch((e)=>{ 
+               console.log(e) ; 
+            })
+
+    }
     login() {
         return (
             <div className="col-sm-3 rounded" id="signup">
+               <this.loginModal></this.loginModal>
                 <div className="col-sm  header">  Already registered? <strong className="form-header"> login </strong> </div>
-                <form>
+                <form onSubmit = {(e)=> { this.handleLogin(e)}}>
                     <div className="form-group">
                         <label htmlFor="email">Email</label>
-                        <input type="email" className="form-control" id="email"/>
+                        <input type="email" className="form-control" id="email" 
+                        value = {this.state.login["email"]}
+                        onChange= { (e) => {this.handleChangeLogin(e , "email") }}
+                        required/>
 
                     </div>
                     <div className="form-group">
                         <label htmlFor="password">Password</label>
-                        <input type="password" className="form-control" id="password"/>
+                        <input type="password" className="form-control" id="password"
+                         value = {this.state.login["password"] } 
+                         onChange= { (e) => {this.handleChangeLogin(e , "password") }}
+                         required/>
 
                     </div>
                     <div className="text-center form-group col-md-12" >
 
-                        <button type="submit" className="btn rounded-pill" id="submit">Submit</button>
+                    <button type="submit" className="btn rounded-pill" id="submit">Submit</button>
+         
+                    <Redirect   to ={this.redirect}>   </Redirect>
+            
                     </div>
 
                 </form>
