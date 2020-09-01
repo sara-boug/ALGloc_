@@ -29,22 +29,19 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
  
     public function supports(Request $request)
     {
-
           return true; 
     }
     
     public function getCredentials(Request $request)
     {   
-    
+     
         $extractor = new AuthorizationHeaderTokenExtractor(
             'Bearer', 
             'Authorization'
         );
-        $token = $extractor->extract($request);
-       
-
-        if (!$token) {
-            return $request->server->get('Authorization');
+        $token = $extractor->extract($request);      
+         if (!$token) {
+            return  false;
         }
          return $token;
 
@@ -52,14 +49,15 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
         try {
-            if ($credentials === null) {return null;}     
+            
+            if (!$credentials ) {  return null;}     
                  
              $data = $this->jwtEncoder->decode( str_replace('Bearer ', '' , $credentials));
               $user= $this->em->getRepository(Client::class)
                 ->findOneBy(['email' => $data['username']]);
              return $user;
         } catch ( Exception $e) {
-         
+           dd($e->getMessage()); 
             throw new CustomUserMessageAuthenticationException($e->getMessage());
         }
     }

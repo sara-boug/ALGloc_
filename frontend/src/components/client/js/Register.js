@@ -62,8 +62,7 @@ class Register extends Component {
              this.setState({ 
                 signup : signup  
               }); 
-            console.log(signup);
-           }); 
+            }); 
      } 
 
      componentWillUpdate(prevProps , prevState ) { // repition to be fixed 
@@ -77,8 +76,7 @@ class Register extends Component {
             } else { 
                 this.signup_disabled = false; 
             }
-            console.log(this.state.redirect); 
-
+ 
         if(prevState.redirect == true) {
              this.redirect="/"; 
         }
@@ -316,10 +314,12 @@ class Register extends Component {
         axios.post(this.state.host +"/login" ,login)
               .then((res) => { 
                 $('#modal-login').modal('hide');
-
-             this.setState({
-                 redirect:true
-             });
+                axios.get(this.state.host+"/client/current" , 
+                { headers : {'Authorization' : 'Bearer '+ res.data["api_token"] }}
+                 ).then(res2 => {
+                    console.log(res2);            
+                 })
+        
              }).catch((e) => { 
                 this.setState ({
                     modal_message :{

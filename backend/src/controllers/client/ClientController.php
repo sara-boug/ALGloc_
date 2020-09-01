@@ -140,7 +140,7 @@ class ClientController extends AbstractController
 
 
        /** @Route("/client/current" , name="get_current_client" , methods={"GET"}) */
-       public function getClientCurrent(int $id , RouteSettings $routeSettings ){ 
+       public function getClientCurrent( RouteSettings $routeSettings ){ 
          try { 
              $em = $this->getDoctrine()->getManager(); 
              if(! $this->getUser()) { 

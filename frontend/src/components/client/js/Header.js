@@ -8,7 +8,7 @@ class Header extends Component {
     constructor(props)  {
         super(props); 
         this.state = { 
-            host: `http://localhost`, 
+            host: `http://localhost:8000/`, 
             user:null
         }
         this.setupUser = this.setupUser.bind(this); 
@@ -17,30 +17,33 @@ class Header extends Component {
      componentDidMount(){ 
          var  headers = new Headers(); 
   
-         if(headers.get('Authorization')==null) {  // checking the authorization header
+         /* if(headers.get('Authorization')==null) {  // checking the authorization header
                return
-         }
-          axios.get(`http://localhost:8000/client/current`) 
+           }*/
+         /* axios.get(this.state.host+"client/current") 
           .then(res => {
                 this.setState({
                   user: res.data
-              })
-         });  
-         
+              });
+              console.log(res);            
+            }).catch((e) => { 
+               throw e ; 
+ //                console.log(e); 
+            }); */
     }
   
      setupUser() {  // this function deals with the nabbar whether to add  sigup/login button or display the user 
+ 
         if(this.state.user ==null){
-         return (
-             <div className="header-button">
-              <button type="button" className="btn btn-outline-primary btn-md rounded-pill">Sign In </button>
-               </div>
-         )
+            return (
+                <div className="header-button">
+                <button type="button" className="btn btn-outline-primary btn-md rounded-pill">Sign In </button>
+                </div>
+            );
         } 
         return (
             <div>user</div>
-        ) 
-   
+              ) 
      }
      render(){ 
          return( 

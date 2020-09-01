@@ -64,7 +64,6 @@
 
         private  $roles =[]; 
         /** @ORM\Column(type="text" , nullable= true ) 
-         *  @Serializer\Exclude 
         */
 
         private $api_token; 
